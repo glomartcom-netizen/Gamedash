@@ -1,1 +1,399 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMX Game Zone</title>
+    <style>
+        /* CSS அப்படியே மாற்றமின்றி */
+        body {
+            background: #020617;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .game-container {
+            max-width: 500px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .game-btn {
+            background: #0f172a;
+            border: 1px solid #06b6d4;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .game-btn:hover {
+            background: #06b6d4;
+            color: black;
+            transform: translateY(-3px);
+            box-shadow: 0 0 10px #06b6d4, 0 0 20px #06b6d4;
+        }
+
+        .game-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-bonus {
+            background: linear-gradient(90deg, #f59e0b, #ea580c);
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-bonus:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 12px orange;
+        }
+
+        #gamePanel {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid #1e293b;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            background: #0f172a;
+            display: none; /* ஆரம்பத்தில் மறைத்து வைக்கப்படும் */
+        }
+
+        .active-panel {
+            display: block !important;
+        }
+
+        #slotDisplay, #wheelDisplay, #diceDisplay {
+            font-size: 48px;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+
+        #slotDisplay {
+            animation: glow 1s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px gold; }
+            to { text-shadow: 0 0 20px orange; }
+        }
+
+        .game-section { display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>🎮 DMX GAME ZONE</h2>
+    <p>Wallet: <span id="walletStatus">Connected (Demo)</span></p>
+
+    <div class="game-container">
+        <div class="game-btn" onclick="openSpinWheel()">🎡 Spin Wheel</div>
+        <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
+        <div class="game-btn" onclick="openDiceGame()">🎲 Dice Roll</div>
+        <div class="game-btn" onclick="openTreasure()">💎 Treasure</div>
+        <div class="game-btn" onclick="openCardGame()">🃏 Card Flip</div>
+        <div class="game-btn" onclick="openTargetGame()">🎯 Target Shot</div>
+        <div class="game-btn" onclick="startSlot()">🎰 Slots</div>
+        <div class="game-btn" onclick="openGuessGame()">❓ Guess Num</div>
+        <div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
+    </div>
+
+    <div id="gamePanel" class="active-panel">
+        
+        <div id="spinWheelPanel" class="game-section">
+            <h3>Spin Wheel</h3>
+            <div id="wheelDisplay">🎡</div>
+            <button class="btn-bonus" onclick="spinWheelGame()">SPIN NOW</button>
+        </div>
+
+        <div id="luckyBoxPanel" class="game-section">
+            <h3>Lucky Box</h3>
+            <div style="font-size: 40px; margin: 10px;">🎁 🎁 🎁</div>
+            <button class="btn-bonus" onclick="openBox()">OPEN BOX</button>
+        </div>
+
+        <div id="diceGamePanel" class="game-section">
+            <h3>Dice Game</h3>
+            <div id="diceDisplay">🎲</div>
+            <button class="btn-bonus" onclick="rollDice()">ROLL DICE</button>
+        </div>
+
+        <div id="treasurePanel" class="game-section">
+            <h3>Pick a Chest</h3>
+            <div style="font-size: 40px;">📦 📦 📦</div>
+            <button class="btn-bonus" onclick="pickTreasure()">OPEN RANDOM CHEST</button>
+        </div>
+
+        <div id="cardGamePanel" class="game-section">
+            <h3>Card Flip</h3>
+            <div style="font-size: 40px;">🃏</div>
+            <button class="btn-bonus" onclick="flipCard()">FLIP CARD</button>
+        </div>
+
+        <div id="targetGamePanel" class="game-section">
+            <h3>Target Shot</h3>
+            <div style="font-size: 40px;">🎯</div>
+            <button class="btn-bonus" onclick="shootTarget()">FIRE!</button>
+        </div>
+
+        <div id="slotGame" class="game-section">
+            <h3>Lucky Slots</h3>
+            <div id="slotDisplay">❓ ❓ ❓</div>
+            <button class="btn-bonus" onclick="spinSlot()">SPIN SLOTS</button>
+        </div>
+
+        <div id="guessGamePanel" class="game-section">
+            <h3>Guess Number (1-5)</h3>
+            <div style="display: flex; gap: 5px; justify-content: center;">
+                <button class="game-btn" onclick="guessNumber(1)">1</button>
+                <button class="game-btn" onclick="guessNumber(2)">2</button>
+                <button class="game-btn" onclick="guessNumber(3)">3</button>
+                <button class="game-btn" onclick="guessNumber(4)">4</button>
+                <button class="game-btn" onclick="guessNumber(5)">5</button>
+            </div>
+        </div>
+
+        <div id="colorGamePanel" class="game-section">
+            <h3>Pick a Color</h3>
+            <button class="btn-bonus" style="background: green;" onclick="pickColor('green')">Green</button>
+            <button class="btn-bonus" style="background: red;" onclick="pickColor('red')">Red</button>
+            <button class="btn-bonus" style="background: orange;" onclick="pickColor('orange')">Orange</button>
+        </div>
+
+    </div>
+
+    <script>
+        // ஜாவாஸ்கிரிப்ட் வேரியபிள்கள்
+        let gameRunning = false;
+        let userAddress = "0x123...Demo"; // Demo address
+
+        // சவுண்ட் மற்றும் இதர பங்க்ஷன்கள் (Demo Mode)
+        function playSound() {} 
+        async function checkGameCooldown() { return true; }
+        async function claimGameReward(amount) {
+            console.log("Reward:", amount, "DMX");
+            alert("Reward credited: " + amount + " DMX (Demo)");
+            gameRunning = false;
+        }
+        function addWinner(wallet, reward) { console.log("Winner:", wallet, reward); }
+
+        function closeAllGames() {
+            const panels = [
+                "spinWheelPanel", "luckyBoxPanel", "diceGamePanel", 
+                "guessGamePanel", "cardGamePanel", "targetGamePanel", 
+                "treasurePanel", "slotGame", "colorGamePanel"
+            ];
+            document.getElementById("gamePanel").style.display = "block";
+            panels.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = "none";
+            });
+        }
+
+        // GAME 1 — SPIN WHEEL
+        function openSpinWheel() { closeAllGames(); document.getElementById("spinWheelPanel").style.display = "block"; }
+        async function spinWheelGame() {
+            if (gameRunning) return;
+            if (!userAddress) { alert("Connect wallet first"); return; }
+            gameRunning = true;
+            const rewards = [5, 10, 20, 30, 50, 100];
+            let spins = 0;
+            const display = document.getElementById("wheelDisplay");
+            const interval = setInterval(() => {
+                display.innerText = "🎡";
+                spins++;
+                if (spins > 15) {
+                    clearInterval(interval);
+                    const reward = rewards[Math.floor(Math.random() * rewards.length)];
+                    alert("🎡 Wheel Stopped!\n\nYou won " + reward + " DMX");
+                    claimGameReward(reward);
+                    addWinner(userAddress, reward);
+                }
+            }, 100);
+        }
+
+        // GAME 2 — LUCKY BOX
+        function openLuckyBox() { closeAllGames(); document.getElementById("luckyBoxPanel").style.display = "block"; }
+        async function openBox() {
+            if (gameRunning) return;
+            gameRunning = true;
+            const rewards = [5, 10, 20, 30, 50];
+            setTimeout(async () => {
+                const reward = rewards[Math.floor(Math.random() * rewards.length)];
+                alert("🎁 Lucky Box Opened!\n\nYou won " + reward + " DMX");
+                await claimGameReward(reward);
+                addWinner(userAddress, reward);
+            }, 1000);
+        }
+
+        // GAME 3 — DICE
+        function openDiceGame() { closeAllGames(); document.getElementById("diceGamePanel").style.display = "block"; }
+        async function rollDice() {
+            if (gameRunning) return;
+            gameRunning = true;
+            let rolls = 0;
+            const display = document.getElementById("diceDisplay");
+            const interval = setInterval(() => {
+                const dice = Math.floor(Math.random() * 6) + 1;
+                display.innerText = "🎲 " + dice;
+                rolls++;
+                if (rolls > 10) {
+                    clearInterval(interval);
+                    const finalDice = Math.floor(Math.random() * 6) + 1;
+                    display.innerText = "🎲 " + finalDice;
+                    let reward = finalDice >= 5 ? 50 : (finalDice >= 3 ? 20 : 5);
+                    alert("🎲 Dice Result: " + finalDice + "\n\nReward: " + reward + " DMX");
+                    claimGameReward(reward);
+                    addWinner(userAddress, reward);
+                }
+            }, 120);
+        }
+
+        // GAME 4 — TREASURE
+        function openTreasure() { closeAllGames(); document.getElementById("treasurePanel").style.display = "block"; }
+        async function pickTreasure() {
+            if (gameRunning) return;
+            gameRunning = true;
+            const rewards = [5, 10, 20, 50];
+            const reward = rewards[Math.floor(Math.random() * rewards.length)];
+            setTimeout(() => {
+                alert("💎 Treasure Opened!\n\nYou found " + reward + " DMX");
+                claimGameReward(reward);
+                addWinner(userAddress, reward);
+            }, 800);
+        }
+
+        // GAME 5 — CARD FLIP
+        function openCardGame() { closeAllGames(); document.getElementById("cardGamePanel").style.display = "block"; }
+        async function flipCard() {
+            if (gameRunning) return;
+            gameRunning = true;
+            const rewards = [5, 10, 20, 50];
+            const reward = rewards[Math.floor(Math.random() * rewards.length)];
+            setTimeout(() => {
+                alert("🃏 Card Flipped!\n\nYou won " + reward + " DMX");
+                claimGameReward(reward);
+                addWinner(userAddress, reward);
+            }, 800);
+        }
+
+        // GAME 6 — TARGET SHOT
+        function openTargetGame() { closeAllGames(); document.getElementById("targetGamePanel").style.display = "block"; }
+        async function shootTarget() {
+            if (gameRunning) return;
+            gameRunning = true;
+            const chance = Math.random();
+            if (chance > 0.6) {
+                const rewards = [20, 30, 50];
+                const reward = rewards[Math.floor(Math.random() * rewards.length)];
+                alert("🎯 Perfect Shot!\n\nYou won " + reward + " DMX");
+                claimGameReward(reward);
+                addWinner(userAddress, reward);
+            } else {
+                alert("❌ Missed Target\n\nTry again tomorrow");
+                gameRunning = false;
+            }
+        }
+
+        // GAME 7 — SLOTS
+        function startSlot() { closeAllGames(); document.getElementById("slotGame").style.display = "block"; }
+        async function spinSlot() {
+            if (gameRunning) return;
+            gameRunning = true;
+            const symbols = ["7️⃣", "🍒", "⭐", "💎", "🔔"];
+            const display = document.getElementById("slotDisplay");
+            let spins = 0;
+            const interval = setInterval(() => {
+                let a = symbols[Math.floor(Math.random() * symbols.length)];
+                let b = symbols[Math.floor(Math.random() * symbols.length)];
+                let c = symbols[Math.floor(Math.random() * symbols.length)];
+                display.innerText = a + " " + b + " " + c;
+                spins++;
+                if (spins > 15) {
+                    clearInterval(interval);
+                    let fA = symbols[Math.floor(Math.random() * symbols.length)];
+                    let fB = symbols[Math.floor(Math.random() * symbols.length)];
+                    let fC = symbols[Math.floor(Math.random() * symbols.length)];
+                    display.innerText = fA + " " + fB + " " + fC;
+                    checkSlotResult(fA, fB, fC);
+                }
+            }, 100);
+        }
+
+        async function checkSlotResult(a, b, c) {
+            let reward = 0;
+            if (a === b && b === c) {
+                reward = 100;
+                alert("🎉 JACKPOT!\nYou won 100 DMX");
+            } else if (a === b || b === c || a === c) {
+                reward = 20;
+                alert("👍 Small win\nYou won 20 DMX");
+            } else {
+                alert("❌ Try again tomorrow");
+                gameRunning = false;
+                return;
+            }
+            await claimGameReward(reward);
+            addWinner(userAddress, reward);
+        }
+
+        // GAME 8 — GUESS NUMBER
+        function openGuessGame() { closeAllGames(); document.getElementById("guessGamePanel").style.display = "block"; }
+        async function guessNumber(num) {
+            if (gameRunning) return;
+            gameRunning = true;
+            const random = Math.floor(Math.random() * 5) + 1;
+            setTimeout(async () => {
+                if (num === random) {
+                    const reward = 50;
+                    alert("🎉 Correct Guess!\n\nYour Number: " + num + "\nWinning Number: " + random + "\n\nReward: " + reward + " DMX");
+                    await claimGameReward(reward);
+                    addWinner(userAddress, reward);
+                } else {
+                    alert("❌ Wrong Guess\n\nYour Number: " + num + "\nWinning Number: " + random);
+                    gameRunning = false;
+                }
+            }, 800);
+        }
+
+        // GAME 9 — COLOR PICK
+        function openColorGame() { closeAllGames(); document.getElementById("colorGamePanel").style.display = "block"; }
+        async function pickColor(userColor) {
+            if (gameRunning) return;
+            gameRunning = true;
+            const colors = ["green", "red", "orange"];
+            const result = colors[Math.floor(Math.random() * 3)];
+            if (userColor === result) {
+                const reward = 30;
+                alert("🎉 Correct Color!\n\nYou chose: " + userColor + "\nResult: " + result + "\n\nReward: " + reward + " DMX");
+                await claimGameReward(reward);
+                addWinner(userAddress, reward);
+            } else {
+                alert("❌ Wrong Color\n\nResult color: " + result);
+                gameRunning = false;
+            }
+        }
+    </script>
+</body>
+</html>
 
