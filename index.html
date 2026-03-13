@@ -966,7 +966,8 @@ animation:coinPop 0.8s ease-out;
 100%{transform:translateY(-120px) scale(1);opacity:0;}
 }        
 
-   /* MAGIC TILES 3D STYLES */
+/* MAGIC TILES 3D STYLES */
+
 .tiles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -983,11 +984,15 @@ animation:coinPop 0.8s ease-out;
     border: 2px solid #06b6d4;
     border-radius: 10px;
     cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-size: 24px;
+
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
     transform-style: preserve-3d;
 }
 
@@ -999,128 +1004,247 @@ animation:coinPop 0.8s ease-out;
 .tile.revealed-gold {
     background: linear-gradient(145deg, #fbbf24, #b45309);
     border-color: #fbbf24;
+
     transform: rotateY(180deg);
+
     color: white;
 }
 
 .tile.revealed-bomb {
     background: linear-gradient(145deg, #ef4444, #7f1d1d);
     border-color: #ef4444;
+
     transform: rotateY(180deg);
 }
 
+
+/* Grid shake animation */
+
 @keyframes shakeGrid {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
 
-.grid-shake { animation: shakeGrid 0.2s 3; }
-    
-.crash-area {
-    height: 150px;
-    background: #020617;
-    border-radius: 15px;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #1e293b;
-    margin-bottom: 15px;
-}
-#crashMultiplier {
-    font-size: 40px;
-    font-weight: bold;
-    color: #22c55e;
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-}
-.rocket {
-    position: absolute;
-    bottom: 10px; left: 10px;
-    font-size: 30px;
-    transition: all 0.1s linear;
-        }
-
-    .game-container{
-max-width:500px;
-width:100%;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-margin:auto;
-margin-top:20px;
-}
-
-.game-btn{
-background:#0f172a;
-border:1px solid #06b6d4;
-padding:16px;
-border-radius:12px;
-font-weight:bold;
-cursor:pointer;
-text-align:center;
-color:white;
-transition:all .3s;
-}
-
-.game-btn:hover{
-background:#06b6d4;
-color:black;
-transform:translateY(-3px);
-box-shadow:0 0 10px #06b6d4;
-}
-
-.btn-bonus{
-background:linear-gradient(90deg,#f59e0b,#ea580c);
-padding:10px;
-border-radius:10px;
-font-weight:bold;
-margin-top:10px;
-cursor:pointer;
-border:none;
-color:white;
+    0%, 100% {
+        transform: translateX(0);
     }
 
- .scene{
-width:120px;
-height:120px;
-margin:40px auto;
-perspective:600px;
- }  
+    25% {
+        transform: translateX(-5px);
+    }
 
-body{
-background:#020617;
-color:white;
-font-family:sans-serif;
-text-align:center;
-padding:20px;
-}  
+    75% {
+        transform: translateX(5px);
+    }
+
+}
+
+.grid-shake {
+    animation: shakeGrid 0.2s 3;
+}
+
+
+
+/* CRASH GAME AREA */
+
+.crash-area {
+    height: 150px;
+
+    background: #020617;
+
+    border-radius: 15px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border: 2px solid #1e293b;
+
+    margin-bottom: 15px;
+}
+
+#crashMultiplier {
+
+    font-size: 40px;
+
+    font-weight: bold;
+
+    color: #22c55e;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 5;
+}
+
+.rocket {
+
+    position: absolute;
+
+    bottom: 10px;
+    left: 10px;
+
+    font-size: 30px;
+
+    transition: all 0.1s linear;
+}
+
+
+
+/* GAME BUTTON GRID */
+
+.game-container {
+
+    max-width: 500px;
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+
+    margin: auto;
+
+    margin-top: 20px;
+
+}
+
+.game-btn {
+
+    background: #0f172a;
+
+    border: 1px solid #06b6d4;
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    text-align: center;
+
+    color: white;
+
+    transition: all .3s;
+
+}
+
+.game-btn:hover {
+
+    background: #06b6d4;
+
+    color: black;
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 0 10px #06b6d4;
+
+}
+
+.btn-bonus {
+
+    background: linear-gradient(90deg,#f59e0b,#ea580c);
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    margin-top: 10px;
+
+    cursor: pointer;
+
+    border: none;
+
+    color: white;
+
+}
+
+
+
+.scene {
+
+    width: 120px;
+
+    height: 120px;
+
+    margin: 40px auto;
+
+    perspective: 600px;
+
+}
+
+
+
+body {
+
+    background: #020617;
+
+    color: white;
+
+    font-family: sans-serif;
+
+    text-align: center;
+
+    padding: 20px;
+
+}
+
+
+
+/* Win spark particle */
+
+.spark {
+
+    position: fixed;
+
+    width: 6px;
+
+    height: 6px;
+
+    background: yellow;
+
+    border-radius: 50%;
+
+    animation: spark 1s linear;
+
+}
+
+@keyframes spark {
+
+    0% { transform: scale(1); }
+
+    100% { transform: scale(4); opacity: 0; }
+
+}
+
+
+
+/* Win flash effect */
+
+.win-flash {
+
+    animation: flashWin 0.5s 6;
+
+}
+
+@keyframes flashWin {
+
+    0% { background: #020617; }
+
+    50% { background: #22c55e; }
+
+    100% { background: #020617; }
+
+    }
+
         
-.spark{
-position:fixed;
-width:6px;
-height:6px;
-background:yellow;
-border-radius:50%;
-animation:spark 1s linear;
-}
-
-@keyframes spark{
-0%{transform:scale(1);}
-100%{transform:scale(4);opacity:0;}
-    }  
-
-  .win-flash{
-animation:flashWin 0.5s 6;
-}
-
-@keyframes flashWin{
-0%{background:#020617;}
-50%{background:#22c55e;}
-100%{background:#020617;}
-    }           
-
     </style>
 </head>
 <body>
@@ -1466,102 +1590,206 @@ TAKE PROFIT (Collect Profit)
 </div>
 
 <script>
-// ===== SOUND SYSTEM =====
+// ===============================
+// GLOBAL SOUND SYSTEM
+// ===============================
 
-// background music
+// Background music
 const bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.25;
 
-// game sounds
-const spinSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3");
-const winSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a2b8b8b6b.mp3");
-const loseSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e2e2c2f.mp3");
+
+// Game sounds
+const spinSound  = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3");
+const winSound   = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a2b8b8b6b.mp3");
+const loseSound  = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e2e2c2f.mp3");
 const clickSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f9f2f8a4a.mp3");
 
-// helper function
+
+// ===============================
+// PLAY SOUND HELPER
+// ===============================
+
 function playSound(sound){
-if(sound){
-sound.currentTime = 0;
-sound.play();
-}
+
+    if(!sound) return;
+
+    sound.currentTime = 0;
+    sound.play().catch(()=>{});
+
 }
 
- window.onload = function(){
 
-bgMusic.play().catch(()=>{
-console.log("User interaction required for sound");
+// ===============================
+// AUTO START MUSIC
+// ===============================
+
+window.onload = function(){
+
+    bgMusic.play().catch(()=>{
+        console.log("User interaction required for sound");
+    });
+
+};
+
+
+// ===============================
+// BUTTON CLICK SOUND
+// ===============================
+
+document.querySelectorAll("button").forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+        playSound(clickSound);
+    });
+
 });
 
- }  
 
- document.querySelectorAll("button").forEach(btn=>{
-btn.addEventListener("click",()=>{
-playSound(clickSound);
-});
-});   
+// ===============================
+// TOGGLE MUSIC BUTTON
+// ===============================
 
- function openSpinWheel(){
+function toggleMusic(){
 
-playSound(spinSound);
+    if(bgMusic.paused){
 
-document.querySelector(".wheel-container")
-.scrollIntoView({behavior:"smooth"});
+        bgMusic.play();
 
-        }  
+    }else{
 
-  function toggleMusic(){
+        bgMusic.pause();
 
-if(bgMusic.paused){
-bgMusic.play();
-}else{
-bgMusic.pause();
-}
-
-        } 
-
-   function loseSound(){
-
-const audio = new Audio(
-"https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"
-);
-
-audio.play();
-
-        }   
-
- function winEffect(){
-
-document.body.classList.add("win-flash");
-
-setTimeout(()=>{
-document.body.classList.remove("win-flash");
-},1500);
-
-        } 
-
-  function fireworks(){
-
-for(let i=0;i<20;i++){
-
-let spark=document.createElement("div");
-spark.className="spark";
-
-spark.style.left=Math.random()*100+"vw";
-spark.style.top=Math.random()*100+"vh";
-
-document.body.appendChild(spark);
-
-setTimeout(()=>spark.remove(),1000);
+    }
 
 }
 
-        }  
-    orb.classList.add("orb-win");
-    display.classList.add("safe-open");
-    document.body.classList.add("coin-burst");
 
-        function openSpinWheel(){
+// ===============================
+// OPEN SPIN WHEEL
+// ===============================
+
+function openSpinWheel(){
+
+    playSound(spinSound);
+
+    document
+    .querySelector(".wheel-container")
+    .scrollIntoView({behavior:"smooth"});
+
+}
+
+
+// ===============================
+// LOSE SOUND EFFECT
+// ===============================
+
+function playLoseSound(){
+
+    playSound(loseSound);
+
+}
+
+
+// ===============================
+// WIN FLASH EFFECT
+// ===============================
+
+function winEffect(){
+
+    document.body.classList.add("win-flash");
+
+    setTimeout(()=>{
+        document.body.classList.remove("win-flash");
+    },1500);
+
+}
+
+
+// ===============================
+// SPARK PARTICLE EFFECT
+// ===============================
+
+function sparkEffect(){
+
+    for(let i=0;i<30;i++){
+
+        let s=document.createElement("div");
+
+        s.className="spark";
+
+        s.style.left=Math.random()*window.innerWidth+"px";
+        s.style.top=Math.random()*window.innerHeight+"px";
+
+        document.body.appendChild(s);
+
+        setTimeout(()=>s.remove(),1000);
+
+    }
+
+}
+
+
+// ===============================
+// FIREWORKS EFFECT
+// ===============================
+
+function fireworks(){
+
+    for(let i=0;i<20;i++){
+
+        let spark=document.createElement("div");
+
+        spark.className="spark";
+
+        spark.style.left=Math.random()*100+"vw";
+        spark.style.top=Math.random()*100+"vh";
+
+        document.body.appendChild(spark);
+
+        setTimeout(()=>spark.remove(),1000);
+
+    }
+
+}
+
+
+// ===============================
+// JACKPOT EFFECT
+// ===============================
+
+function jackpotEffect(){
+
+    playSound(winSound);
+
+    winEffect();
+
+    sparkEffect();
+
+    fireworks();
+
+}
+
+    if(finalDice >=5){
+reward = 50;
+playSound(winSound);
+}
+else if(finalDice >=3){
+reward = 20;
+playSound(winSound);
+}
+else{
+reward = 5;
+playSound(loseSound);
+    }
+
+        // ===============================
+// GAME NAVIGATION FUNCTIONS
+// Scroll to selected game section
+// ===============================
+
+function openSpinWheel(){
 document.querySelector(".wheel-container").scrollIntoView({behavior:"smooth"});
 }
 
@@ -1603,20 +1831,42 @@ document.querySelector("#magicTilesPanel").scrollIntoView({behavior:"smooth"});
 
 function openCrashGame(){
 document.querySelector("#crashGamePanel").scrollIntoView({behavior:"smooth"});
-        }
-        
-        // ஜாவாஸ்கிரிப்ட் வேரியபிள்கள்
-        let gameRunning = false;
-        let userAddress = "0x123...Demo"; // Demo address
+}
 
-        // சவுண்ட் மற்றும் இதர பங்க்ஷன்கள் (Demo Mode)
-        function playSound() {} 
-        async function checkGameCooldown() { return true; }
-        async function claimGameReward(amount) {
-            console.log("Reward:", amount, "DMX");
-            alert("Reward credited: " + amount + " DMX (Demo)");
-            gameRunning = false;
-        }
+
+// ===============================
+// GAME VARIABLES
+// ===============================
+
+let gameRunning = false;
+let userAddress = "0x123...Demo"; // Demo wallet address
+
+
+// ===============================
+// HELPER FUNCTIONS (Demo Mode)
+// ===============================
+
+
+// Play sound (placeholder if sound system not loaded)
+function playSound(){}
+
+
+// Check cooldown before playing game
+async function checkGameCooldown(){
+return true;
+}
+
+
+// Reward distribution (Demo mode)
+async function claimGameReward(amount){
+
+console.log("Reward:", amount, "DMX");
+
+alert("Reward credited: " + amount + " DMX (Demo)");
+
+gameRunning = false;
+
+}
         
 
         // Initial wheel rotation angle
@@ -1795,543 +2045,943 @@ async function openBoxAnimation() {
 }
 
 
-        async function rollDice() {
+async function rollDice() {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
-    
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     // Cooldown check (demo mode returns true)
     if (!(await checkGameCooldown(userAddress))) return;
 
     gameRunning = true;
-    playSound(diceSound); // Assuming diceSound is defined
+
+    playSound(diceSound); // dice rolling sound
 
     const diceElement = document.getElementById("diceElement");
-    
-    // 1. குலுங்கும் அனிமேஷனைத் தொடங்கு (Start shaking)
+
+
+    // 1. Start shaking animation
     diceElement.classList.add("dice-rolling");
 
-    // finalDice ஐ முன்கூட்டியே தீர்மானிக்கவும் (Or get from backend)
+
+    // Decide the final dice number (or get from backend)
     const finalDice = Math.floor(Math.random() * 6) + 1;
 
+
     setTimeout(() => {
-        // 2. குலுங்கும் அனிமேஷனை நிறுத்து (Stop shaking)
+
+        // 2. Stop shaking animation
         diceElement.classList.remove("dice-rolling");
 
-        // 3. விழுந்த எண்ணுக்கு ஏற்ப டைஸை திருப்பு (Rotate to final face)
-        // ஒவ்வொரு எண்ணுக்கும் தேவையான XYZ கோணங்கள் (Angles for each face)
+
+        // 3. Rotate the dice to show the final number
+        // Rotation angles required for each face
         const angles = {
+
             1: { x: 0,   y: 0 },
             2: { x: 0,   y: -90 },
             3: { x: 0,   y: -180 },
             4: { x: 0,   y: 90 },
             5: { x: -90, y: 0 },
             6: { x: 90,  y: 0 }
+
         };
 
         const resultAngle = angles[finalDice];
-        // கூடுதல் சுழற்சிகளைச் சேர்ப்பதன் மூலம் (e.g., +720deg) அனிமேஷன் இன்னும் சிறப்பாக இருக்கும்
-        diceElement.style.transform = `translateZ(-50px) rotateX(${resultAngle.x + 720}deg) rotateY(${resultAngle.y + 720}deg)`;
 
-        // 4. முடிவைக் காட்டு (Show result after animation completes)
+
+        // Add extra rotations (e.g. +720deg) for better animation
+        diceElement.style.transform =
+        `translateZ(-50px) rotateX(${resultAngle.x + 720}deg) rotateY(${resultAngle.y + 720}deg)`;
+
+
+        // 4. Show result after animation completes
         setTimeout(() => {
+
             let reward = 0;
-            if (finalDice >= 5) { reward = 50; }
-            else if (finalDice >= 3) { reward = 20; }
-            else { reward = 5; }
+
+            if (finalDice >= 5) {
+
+                reward = 50;
+
+            }
+            else if (finalDice >= 3) {
+
+                reward = 20;
+
+            }
+            else {
+
+                reward = 5;
+
+            }
+
 
             playSound(winSound);
-            
-            // பாடி ஷேக் எஃபெக்ட் (சிறிய அளவில்)
+
+
+            // Small body shake effect
             document.body.style.transform = "translateX(5px)";
             setTimeout(()=> document.body.style.transform = "translateX(0)", 100);
 
+
             alert("🎲 Dice Result: " + finalDice + "\n\nReward: " + reward + " DMX");
 
+
             claimGameReward(reward);
+
             addWinner(userAddress, reward);
+
+
             gameRunning = false; // Reset game state
 
-        }, 1100); // CSS transition time (1s) + small buffer
 
-    }, 2000); // 2 வினாடிகள் குலுங்கும் (Rolling time)
+        }, 1100); // CSS transition time (1s) + buffer
+
+
+    }, 2000); // Rolling time (2 seconds)
+
 }
 
 
         async function pickTreasureAnimation(choice) {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     if (!(await checkGameCooldown(userAddress))) return;
 
     gameRunning = true;
-    
-    // அனைத்து பெட்டிகளையும் மீட்டமை (Reset)
-    for(let i=1; i<=3; i++) {
+
+
+    // Reset all treasure chests
+    for (let i = 1; i <= 3; i++) {
         document.getElementById(`chest${i}`).classList.remove("chest-open");
     }
 
+
     const selectedChest = document.getElementById(`chest${choice}`);
-    
-    // 1. திறக்கும் சத்தம்
+
+
+    // 1. Play opening sound
     playSound(treasureSound);
 
-    // 2. பெட்டியைத் திற (Open Animation)
+
+    // 2. Open chest animation
     selectedChest.classList.add("chest-open");
 
+
     setTimeout(async () => {
+
         const rewards = [5, 10, 20, 50];
+
         const reward = rewards[Math.floor(Math.random() * rewards.length)];
 
+
         playSound(winSound);
-        
-        // 3. பாடி ஷேக் எஃபெக்ட்
+
+
+        // 3. Small body shake effect
         document.body.style.transform = "scale(1.02)";
+
         setTimeout(() => document.body.style.transform = "scale(1)", 150);
 
+
         setTimeout(() => {
-            alert("💎 Treasure Opened!\n\nவாழ்த்துகள்! நீங்கள் தேர்ந்தெடுத்த பெட்டியில் " + reward + " DMX இருந்தது.");
+
+            alert(
+            "💎 Treasure Opened!\n\n" +
+            "Congratulations! The chest you selected contained " +
+            reward + " DMX."
+            );
+
             claimGameReward(reward);
+
             addWinner(userAddress, reward);
+
             gameRunning = false;
+
         }, 300);
 
     }, 800);
+
 }
+    fireworks();
+
+    
 
 let tileReward = 0;
 let bombLocation = 0;
 let activeTilesGame = true;
 
+
 function openMagicTiles() {
+
     closeAllGames();
+
     document.getElementById("magicTilesPanel").style.display = "block";
+
     resetTilesGame();
+
 }
+
 
 function resetTilesGame() {
+
     activeTilesGame = true;
+
     tileReward = 0;
+
     bombLocation = Math.floor(Math.random() * 9);
-    document.getElementById("tilesScore").innerText = "தற்போதைய லாபம்: 0 DMX";
+
+    document.getElementById("tilesScore").innerText = "Current Profit: 0 DMX";
+
     document.getElementById("cashoutBtn").style.display = "none";
-    
+
+
     const grid = document.getElementById("tilesGrid");
+
     grid.innerHTML = "";
+
     grid.classList.remove("grid-shake");
 
+
     for (let i = 0; i < 9; i++) {
+
         const tile = document.createElement("div");
+
         tile.className = "tile";
+
         tile.id = `tile-${i}`;
+
         tile.innerHTML = "❓";
+
         tile.onclick = () => clickTile(i);
+
         grid.appendChild(tile);
+
     }
+
 }
+
+
 
 async function clickTile(index) {
+
     if (!activeTilesGame || gameRunning) return;
-    
+
+
     const tile = document.getElementById(`tile-${index}`);
+
+
     if (tile.classList.contains("revealed-gold")) return;
 
+
     if (index === bombLocation) {
-        // குண்டு வெடித்தது (Game Over)
+
+        // Bomb exploded (Game Over)
+
         activeTilesGame = false;
+
         tile.classList.add("revealed-bomb");
+
         tile.innerHTML = "💣";
+
         document.getElementById("tilesGrid").classList.add("grid-shake");
-        playSound(diceSound); // குண்டு சத்தம்
+
+        playSound(diceSound); // bomb sound
+
 
         setTimeout(() => {
-            alert("💥 BOOM! குண்டு வெடித்துவிட்டது. நீங்கள் அனைத்து DMX-களையும் இழந்துவிட்டீர்கள்.");
+
+            alert("💥 BOOM! The bomb exploded. You lost all DMX.");
+
             resetTilesGame();
+
         }, 1000);
-    } else {
-        // தங்கம் கிடைத்தது (Success)
+
+    } 
+    else {
+
+        // Gold found (Success)
+
         tile.classList.add("revealed-gold");
+
         tile.innerHTML = "💰";
+
         tileReward += 10;
-        document.getElementById("tilesScore").innerText = `தற்போதைய லாபம்: ${tileReward} DMX`;
+
+        document.getElementById("tilesScore").innerText =
+        `Current Profit: ${tileReward} DMX`;
+
         document.getElementById("cashoutBtn").style.display = "block";
+
         playSound(winSound);
+
     }
+
 }
 
-async function tilesCashout() {
-    if (tileReward <= 0 || !activeTilesGame) return;
-    
-    gameRunning = true;
-    activeTilesGame = false;
-    
-    alert(`🎉 வாழ்த்துகள்! நீங்கள் ${tileReward} DMX வென்றுள்ளீர்கள்.`);
-    await claimGameReward(tileReward);
-    addWinner(userAddress, tileReward);
-    
-    gameRunning = false;
-    resetTilesGame();
-        }
 
- let crashValue = 1.0;
+
+async function tilesCashout() {
+
+    if (tileReward <= 0 || !activeTilesGame) return;
+
+
+    gameRunning = true;
+
+    activeTilesGame = false;
+
+
+    alert(`🎉 Congratulations! You won ${tileReward} DMX.`);
+
+    await claimGameReward(tileReward);
+
+    addWinner(userAddress, tileReward);
+
+
+    gameRunning = false;
+
+    resetTilesGame();
+
+}
+    
+
+let crashValue = 1.0;
 let crashInterval;
 let isCrashed = false;
 
+
 function openCrashGame() {
+
     closeAllGames();
+
     document.getElementById("crashGamePanel").style.display = "block";
+
     resetCrash();
+
 }
+
 
 function resetCrash() {
+
     isCrashed = false;
+
     crashValue = 1.0;
+
     document.getElementById("crashMultiplier").innerText = "1.00x";
+
     document.getElementById("crashMultiplier").style.color = "#22c55e";
+
     document.getElementById("rocket").style.bottom = "10px";
+
     document.getElementById("rocket").style.left = "10px";
+
     document.getElementById("launchBtn").style.display = "block";
+
     document.getElementById("takeProfitBtn").style.display = "none";
+
 }
+
 
 function startCrash() {
+
     if(gameRunning) return;
+
     gameRunning = true;
+
     document.getElementById("launchBtn").style.display = "none";
+
     document.getElementById("takeProfitBtn").style.display = "block";
-    
-    let limit = Math.random() * 5 + 1; // 1x லிருந்து 6x வரை ரேண்டமாக வெடிக்கும்
+
+
+    // Crash limit randomly between 1x and 6x
+    let limit = Math.random() * 5 + 1;
+
 
     crashInterval = setInterval(() => {
+
         crashValue += 0.05;
-        document.getElementById("crashMultiplier").innerText = crashValue.toFixed(2) + "x";
-        
-        // ராக்கெட் மேலே செல்வது போன்ற அனிமேஷன்
+
+        document.getElementById("crashMultiplier").innerText =
+        crashValue.toFixed(2) + "x";
+
+
+        // Rocket flying animation
         let pos = (crashValue - 1) * 20;
+
         document.getElementById("rocket").style.bottom = (10 + pos) + "px";
+
         document.getElementById("rocket").style.left = (10 + pos) + "px";
 
+
         if (crashValue >= limit) {
+
             rocketExplode();
+
         }
+
     }, 100);
+
 }
+
 
 function rocketExplode() {
+
     clearInterval(crashInterval);
+
     isCrashed = true;
+
     gameRunning = false;
+
     document.getElementById("crashMultiplier").innerText = "CRASHED!";
+
     document.getElementById("crashMultiplier").style.color = "red";
+
     document.getElementById("rocket").innerText = "💥";
+
     document.getElementById("takeProfitBtn").style.display = "none";
+
     setTimeout(resetCrash, 2000);
+
 }
 
+
 async function takeProfit() {
+
     if (isCrashed) return;
+
     clearInterval(crashInterval);
+
     let winAmount = Math.floor(crashValue * 10);
-    alert(`💰 வெற்றி! நீங்கள் ${winAmount} DMX வென்றுள்ளீர்கள்.`);
+
+    alert(`💰 Victory! You won ${winAmount} DMX.`);
+
     await claimGameReward(winAmount);
+
     gameRunning = false;
+
     resetCrash();
-        }
-        
-        
-        
+
+}
+
+playSound(loseSound);
+fireworks();    
 
 
-        // ===============================
+// ===============================
 // GAME 5 — CARD FLIP (3D)
 // ===============================
 
-// 1. விளையாட்டைத் திறக்கும் போது கார்டை மீட்டமைக்க வேண்டும்
+
+// 1. Reset the card when the game opens
 function openCardGame() {
+
     closeAllGames();
+
     const cardElement = document.getElementById("cardElement");
+
     const panel = document.getElementById("cardGamePanel");
-    
-    // கார்டை அதன் ஆரம்ப நிலைக்குக் கொண்டு வா (Unflip)
+
+
+    // Reset the card to its original state (unflip)
     cardElement.classList.remove("is-flipped");
+
     document.getElementById("cardValueDisplay").innerText = "0 DMX";
-    
+
+
     panel.style.display = "block";
+
 }
 
-// 2. கார்டைக் கிளிக் செய்யும் போது அனிமேஷன் மற்றும் முடிவைக் காட்டும் ஃபங்க்ஷன்
+// 2. Function to flip the card and show result when clicked
 async function flipCardAnimation() {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     if (!(await checkGameCooldown(userAddress))) return;
 
+
     gameRunning = true;
-    playSound(cardSound); // Assuming cardSound is defined
+
+    playSound(cardSound); // card flip sound
+
 
     const cardElement = document.getElementById("cardElement");
+
     const valueDisplay = document.getElementById("cardValueDisplay");
-    
-    // வெகுமதியைத் தீர்மானி (Determine reward)
+
+
+    // Determine reward
     const rewards = [5, 10, 20, 50];
+
     const reward = rewards[Math.floor(Math.random() * rewards.length)];
-    
-    // கார்டின் முன்புறத்தில் வெகுமதியை அமை (Set reward on front face before flipping)
+
+
+    // Set reward value on the front side of the card before flipping
     valueDisplay.innerText = reward + " DMX";
 
-    // 1. கார்டைத் திருப்பு (Flip the card by adding CSS class)
+
+    // 1. Flip the card by adding CSS class
     cardElement.classList.add("is-flipped");
 
-    // 2. அனிமேஷன் முடிந்ததும் முடிவைக் காட்டு
+
+    // 2. Show result after animation finishes
     setTimeout(() => {
+
         playSound(winSound);
-        
-        // பாடி ஷேக் எஃபெக்ட் (Scale effect on win)
+
+
+        // Small body scale effect on win
         document.body.style.transform = "scale(1.01)";
+
         setTimeout(()=> document.body.style.transform = "scale(1)", 150);
+
 
         alert("🃏 Card Flipped!\n\nYou won " + reward + " DMX");
 
+
         claimGameReward(reward);
+
         addWinner(userAddress, reward);
-        gameRunning = false; // Reset game state so it can be played again (after openCardGame resets it)
+
+
+        // Reset game state so it can be played again
+        gameRunning = false;
 
     }, 900); // 0.8s transition + small buffer
+
 }
 
-// பழைய flipCard ஃபங்க்ஷனை நீக்கிவிடலாம், 
-// ஏனெனில் HTML இல் இப்போது flipCardAnimation() ஐ அழைக்கிறோம்.
+
+// Old flipCard function can be removed
+// because HTML now calls flipCardAnimation()
 
 
 async function shootTargetAnimation() {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     if (!(await checkGameCooldown(userAddress))) return;
 
     gameRunning = true;
-    
+
     const projectile = document.getElementById("projectile");
     const board = document.getElementById("targetBoard");
     const status = document.getElementById("targetStatus");
 
-    // 1. ஆரம்ப நிலை
+
+    // 1. Reset initial state
     projectile.classList.remove("is-shooting");
     board.classList.remove("board-hit");
-    void projectile.offsetWidth; // Reset animation
-    
-    status.innerText = "சுடப்படுகிறது...";
-    
-    // 2. சுடும் அனிமேஷன் (Shoot)
+
+    void projectile.offsetWidth; // reset animation
+
+
+    status.innerText = "Shooting...";
+
+
+    // 2. Start shooting animation
     projectile.classList.add("is-shooting");
-    playSound(diceSound); // சுடும் சத்தம் (அலது பொருத்தமான சத்தம்)
+
+    playSound(diceSound); // shooting sound
+
 
     setTimeout(() => {
-        // 3. இலக்கைத் தாக்கும்போது (Hit)
+
+        // 3. When the projectile hits the board
         board.classList.add("board-hit");
-        
+
         const chance = Math.random();
-        
+
         if (chance > 0.4) {
-            // வெற்றி (Hit)
+
+            // HIT (WIN)
+
             const rewards = [20, 30, 50];
+
             const reward = rewards[Math.floor(Math.random() * rewards.length)];
-            
-            status.innerText = "🎯 சரியான இலக்கு!";
+
+            status.innerText = "🎯 Perfect Shot!";
+
             playSound(winSound);
 
+
             setTimeout(() => {
-                alert("🎯 Perfect Shot!\n\nYou hit the target and won " + reward + " DMX");
+
+                alert(
+                "🎯 Perfect Shot!\n\n" +
+                "You hit the target and won " + reward + " DMX"
+                );
+
                 claimGameReward(reward);
+
                 addWinner(userAddress, reward);
+
                 gameRunning = false;
+
             }, 500);
 
-        } else {
-            // தோல்வி (Miss)
-            status.innerText = "❌ குறி தவறிவிட்டது!";
-            projectile.style.opacity = "0"; // மறைத்துவிடு
-            
+        } 
+        else {
+
+            // MISS (LOSE)
+
+            playSound(loseSound);
+status.innerText = "❌ Missed Target!";
+
+            projectile.style.opacity = "0"; // hide projectile
+
+
             setTimeout(() => {
-                alert("❌ Missed Target\n\nஅம்பு இலக்கை அடையவில்லை. மீண்டும் முயலவும்!");
+
+                alert(
+                "❌ Missed Target\n\n" +
+                "The arrow missed the target. Try again!"
+                );
+
                 gameRunning = false;
+
             }, 500);
+
         }
-    }, 400); // அனிமேஷன் முடியும் நேரம்
+
+    }, 400); // animation duration
+
 }
 
 
         async function spinSlot() {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     if (!(await checkGameCooldown(userAddress))) return;
 
     gameRunning = true;
+
     playSound(spinSound);
 
+
     const symbols = ["7️⃣", "🍒", "⭐", "💎", "🔔"];
+
     const reels = [
         document.getElementById("reel1"),
         document.getElementById("reel2"),
         document.getElementById("reel3")
     ];
 
-    // ஜாக்பாட் கிளாஸை நீக்கு
+
+    // Remove jackpot highlight class
     document.querySelector('.slot-window').classList.remove('slot-jackpot');
 
-    // முடிவுகளை முன்கூட்டியே தீர்மானி
+
+    // Decide results in advance
     const resultA = symbols[Math.floor(Math.random() * symbols.length)];
     const resultB = symbols[Math.floor(Math.random() * symbols.length)];
     const resultC = symbols[Math.floor(Math.random() * symbols.length)];
 
+
     reels.forEach((reel, index) => {
-        // ஒவ்வொரு ரீலுக்கும் ஒரு சீரற்ற சுழற்சி (Random rotation)
-        const randomExtraSpins = (index + 3) * 5; // ஒவ்வொரு ரீலும் வெவ்வேறு வேகத்தில் நிற்க
+
+        // Random extra spins for each reel
+        const randomExtraSpins = (index + 3) * 5; // each reel stops at different speed
+
         const symbolIndex = symbols.indexOf([resultA, resultB, resultC][index]);
-        
-        // சுழலும் தூரத்தைக் கணக்கிடு (80px என்பது ஒரு சின்னத்தின் உயரம்)
+
+        // Calculate spin distance (80px = symbol height)
         const moveY = -(symbolIndex * 80 + (randomExtraSpins * 80));
-        
+
         reel.style.transition = `transform ${2 + index}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
+
         reel.style.transform = `translateY(${moveY}px)`;
+
     });
 
-    // கடைசி ரீல் நின்ற பிறகு முடிவைச் சரிபார்
+
+    // Check result after the last reel stops
     setTimeout(() => {
+
         checkSlotResult(resultA, resultB, resultC);
-        
-        // ரீல்களை ரீசெட் செய் (அடுத்த முறைக்குத் தயார் செய்ய - அனிமேஷன் இல்லாமல்)
+
+
+        // Reset reels for the next spin (without animation)
         setTimeout(() => {
+
             reels.forEach((reel, index) => {
+
                 const finalPos = -(symbols.indexOf([resultA, resultB, resultC][index]) * 80);
+
                 reel.style.transition = 'none';
+
                 reel.style.transform = `translateY(${finalPos}px)`;
+
             });
+
         }, 500);
-        
+
     }, 4500);
+
 }
 
+
+
 async function checkSlotResult(a, b, c) {
+
     let reward = 0;
+
     const windowEl = document.querySelector('.slot-window');
 
+
     if (a === b && b === c) {
+
         reward = 100;
+
         windowEl.classList.add('slot-jackpot');
+
         playSound(winSound);
+
         alert("🎉 JACKPOT! 777\nYou won 100 DMX");
+
     } 
     else if (a === b || b === c || a === c) {
+
         reward = 20;
+
         playSound(winSound);
+
         alert("👍 Small win\nYou won 20 DMX");
+
     } 
     else {
-        alert("❌ Try again tomorrow");
+
+        playSound(loseSound);
+alert("❌ No match. Try again tomorrow");
+
         gameRunning = false;
+
         return;
+
     }
 
+
     await claimGameReward(reward);
+
     addWinner(userAddress, reward);
+
 }
 
         async function guessNumberAnimation(num) {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     if (!(await checkGameCooldown(userAddress))) return;
 
     gameRunning = true;
-    
-    const display = document.getElementById("guessStatusDisplay");
-    display.classList.remove("guess-success", "guess-fail");
-    
-    // பயனர் அழுத்திய எண்ணை முதலில் காட்டு
-    display.innerText = num;
-    playSound(spinSound); // கிளிக் சத்தம்
 
-    // 1. "Checking..." எஃபெக்ட்
+    const display = document.getElementById("guessStatusDisplay");
+
+    display.classList.remove("guess-success", "guess-fail");
+
+
+    // Show the number selected by the user
+    display.innerText = num;
+
+    playSound(spinSound); // click sound
+
+
+    // 1. "Checking..." effect
     setTimeout(async () => {
+
         const random = Math.floor(Math.random() * 5) + 1;
-        
+
         if (num === random) {
-            // வெற்றி (Win)
+
+            // WIN
             display.classList.add("guess-success");
+
             display.innerText = "OK";
+
             playSound(winSound);
 
+
             setTimeout(async () => {
-                alert("🎉 Correct Guess!\n\nலாக்கர் திறக்கப்பட்டது!\nWinning Number: " + random + "\n\nReward: 50 DMX");
+
+                alert(
+                "🎉 Correct Guess!\n\n" +
+                "Locker opened!\n" +
+                "Winning Number: " + random +
+                "\n\nReward: 50 DMX"
+                );
+
                 await claimGameReward(50);
+
                 addWinner(userAddress, 50);
+
                 gameRunning = false;
-                display.innerText = "0"; // Reset
+
+                display.innerText = "0"; // Reset display
+
             }, 1000);
 
-        } else {
-            // தோல்வி (Fail)
-            display.classList.add("guess-fail");
-            display.innerText = "ERR";
-            
-            setTimeout(() => {
-                alert("❌ Wrong Guess\n\nகுறியீடு தவறானது!\nCorrect Number: " + random);
-                gameRunning = false;
-                display.innerText = "0"; // Reset
-            }, 1000);
-        }
+        } 
+        else {
+
+display.classList.add("guess-fail");
+display.innerText = "ERR";
+
+playSound(loseSound);
+
+setTimeout(()=>{
+
+alert(
+"❌ Wrong Guess\n\n"+
+"Incorrect code!\n"+
+"Correct Number: "+random
+);
+
+gameRunning=false;
+display.innerText="0";
+
+},1000);
+
+}
+
     }, 800);
+
 }
 
 
         async function pickColor(userColor) {
+
     if (gameRunning) return;
-    if (!userAddress) { alert("Connect wallet first"); return; }
+
+    if (!userAddress) { 
+        alert("Connect wallet first"); 
+        return; 
+    }
+
     if (!(await checkGameCooldown(userAddress))) return;
 
     gameRunning = true;
 
-    // 1. UI-இல் எதை தேர்வு செய்தோம் என்பதை காட்டவும்
+
+    // 1. Show which color the user selected in the UI
     const pods = ['green', 'red', 'orange'];
-    pods.forEach(p => document.getElementById(`pod-${p}`).classList.remove('pod-selected'));
+
+    pods.forEach(p =>
+        document.getElementById(`pod-${p}`).classList.remove('pod-selected')
+    );
+
     document.getElementById(`pod-${userColor}`).classList.add('pod-selected');
 
-    // 2. ரிசல்ட் பந்தை காட்டவும்
-    const orb = document.getElementById("resultOrb");
-    orb.classList.remove('orb-active');
-    void orb.offsetWidth; // ரிகோட் செய்ய கட்டாயப்படுத்துதல் (Reflow)
-    orb.classList.add('orb-active');
-    orb.style.background = "#475569"; // பந்தை ரீசெட் செய்தல்
 
-    // சத்தம் - சுழலும் போது
+    // 2. Show the result orb animation
+    const orb = document.getElementById("resultOrb");
+
+    orb.classList.remove('orb-active');
+
+    void orb.offsetWidth; // force reflow to restart animation
+
+    orb.classList.add('orb-active');
+
+    orb.style.background = "#475569"; // reset orb color
+
+
+    // play spinning sound
     playSound(spinSound);
 
+
     setTimeout(async () => {
+
         const colors = ["green", "red", "orange"];
+
         const result = colors[Math.floor(Math.random() * 3)];
 
-        // 3. பந்து விழும் வண்ணமாக மாறவும்
+
+        // 3. Change orb color to the result color
         const colorMap = {
+
             green: "#22c55e",
             red: "#ef4444",
             orange: "#f97316"
+
         };
+
         orb.style.background = colorMap[result];
+
         orb.style.boxShadow = `0 0 30px ${colorMap[result]}`;
 
+
         setTimeout(async () => {
+
             if (userColor === result) {
+
                 const reward = 30;
+
                 playSound(winSound);
-                alert("🎉 Correct Color!\n\nYou chose: " + userColor.toUpperCase() + 
-                      "\nResult: " + result.toUpperCase() + 
-                      "\n\nReward: 30 DMX");
+
+                alert(
+                "🎉 Correct Color!\n\n" +
+                "You chose: " + userColor.toUpperCase() +
+                "\nResult: " + result.toUpperCase() +
+                "\n\nReward: 30 DMX"
+                );
+
                 await claimGameReward(reward);
+
                 addWinner(userAddress, reward);
-            } else {
-                alert("❌ Wrong Color\n\nYour Pick: " + userColor.toUpperCase() + 
-                      "\nResult: " + result.toUpperCase());
-                gameRunning = false;
-            }
+
+            } 
+            else{
+
+playSound(loseSound);
+
+document.body.style.transform="translateX(8px)";
+setTimeout(()=>document.body.style.transform="translateX(0)",120);
+
+alert(
+"❌ Wrong Color\n\n"+
+"Your Pick: "+userColor.toUpperCase()+
+"\nResult: "+result.toUpperCase()
+);
+
+gameRunning=false;
+
+}
+
         }, 500);
 
-    }, 1200); // பந்து 1.2 வினாடிகள் சுழலும்
+    }, 1200); // orb spins for 1.2 seconds
+
 }
 
     </script>
