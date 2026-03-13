@@ -765,16 +765,26 @@ padding:20px;
         <div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
         
     </div>
-        
+
 <div class="scene">
+
   <div class="dice" id="diceElement">
+
     <div class="dice__face dice__face--1">●</div>
     <div class="dice__face dice__face--2">● ●</div>
     <div class="dice__face dice__face--3">●<br>●<br>●</div>
     <div class="dice__face dice__face--4">● ●<br>● ●</div>
     <div class="dice__face dice__face--5">● ●<br> ● <br>● ●</div>
     <div class="dice__face dice__face--6">● ●<br>● ●<br>● ●</div>
+
   </div>
+
+</div>
+
+<button class="btn-bonus" onclick="rollDice()">
+🎲 ROLL DICE
+</button>
+    
 </div>
     <div class="wheel-container">
 
@@ -945,6 +955,50 @@ const boxSound=null;
 const diceSound=null;
 const treasureSound=null;
 const cardSound=null;
+
+        function openSpinWheel(){
+document.querySelector(".wheel-container").scrollIntoView({behavior:"smooth"});
+}
+
+function openLuckyBox(){
+document.querySelector(".box-scene").scrollIntoView({behavior:"smooth"});
+}
+
+function openDiceGame(){
+document.querySelector(".scene").scrollIntoView({behavior:"smooth"});
+}
+
+function openTreasure(){
+document.querySelector(".treasure-zone").scrollIntoView({behavior:"smooth"});
+}
+
+function openCardGame(){
+document.querySelector(".card-scene").scrollIntoView({behavior:"smooth"});
+}
+
+function openTargetGame(){
+document.querySelector(".target-scene").scrollIntoView({behavior:"smooth"});
+}
+
+function startSlot(){
+document.querySelector(".slot-machine-container").scrollIntoView({behavior:"smooth"});
+}
+
+function openGuessGame(){
+document.querySelector(".guess-container").scrollIntoView({behavior:"smooth"});
+}
+
+function openColorGame(){
+document.querySelector(".color-game-container").scrollIntoView({behavior:"smooth"});
+}
+
+function openMagicTiles(){
+document.querySelector("#magicTilesPanel").scrollIntoView({behavior:"smooth"});
+}
+
+function openCrashGame(){
+document.querySelector("#crashGamePanel").scrollIntoView({behavior:"smooth"});
+        }
         
         // ஜாவாஸ்கிரிப்ட் வேரியபிள்கள்
         let gameRunning = false;
