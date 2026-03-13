@@ -1590,6 +1590,27 @@ TAKE PROFIT (Collect Profit)
 </div>
 
 <script>
+
+ // ===== CORE FIX SYSTEM =====
+
+// Prevent missing function errors
+function closeAllGames(){
+document.querySelectorAll(".game-section").forEach(section=>{
+section.style.display="none";
+});
+}
+
+// Leaderboard placeholder
+function addWinner(address,reward){
+console.log("Winner:",address,"won",reward,"DMX");
+}
+
+// Extra sound effects
+const diceSound = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+const treasureSound = new Audio("https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg");
+const cardSound = new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg");
+const boxSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+    
 // ===============================
 // GLOBAL SOUND SYSTEM
 // ===============================
@@ -1770,19 +1791,7 @@ function jackpotEffect(){
     fireworks();
 
 }
-
-    if(finalDice >=5){
-reward = 50;
-playSound(winSound);
-}
-else if(finalDice >=3){
-reward = 20;
-playSound(winSound);
-}
-else{
-reward = 5;
-playSound(loseSound);
-    }
+  
 
         // ===============================
 // GAME NAVIGATION FUNCTIONS
@@ -2472,10 +2481,7 @@ async function takeProfit() {
 
     resetCrash();
 
-}
-
-playSound(loseSound);
-fireworks();    
+}    
 
 
 // ===============================
