@@ -1422,7 +1422,9 @@ CASHOUT (Claim your reward)
 Pick any chest and test your luck!
     </p>
 
-       <div class="card" id="cardElement" onclick="flipCardAnimation()">
+<div class="card-scene">
+
+<div class="card" id="cardElement" onclick="flipCardAnimation()">
 
 <div class="card__face card__face--back">
 <div class="card-pattern">DMX</div>
@@ -1434,6 +1436,7 @@ Pick any chest and test your luck!
 </div>
 
 </div>
+
 </div>
 
 <p style="color:#94a3b8;font-size:14px;margin-top:-10px;">
@@ -1600,10 +1603,14 @@ TAKE PROFIT (Collect Profit)
 
 // Prevent missing function errors
 function closeAllGames(){
-document.querySelectorAll(".game-section").forEach(section=>{
-section.style.display="none";
+
+document.querySelectorAll(
+".scene,.wheel-container,.box-scene,.treasure-zone,.card-scene,.target-scene,.slot-machine-container,.guess-container,.color-game-container,#magicTilesPanel,#crashGamePanel"
+).forEach(el=>{
+el.style.display="none";
 });
-}   
+
+}
 
 // Leaderboard placeholder
 function addWinner(address,reward){
@@ -1688,21 +1695,6 @@ function toggleMusic(){
         bgMusic.pause();
 
     }
-
-}
-
-
-// ===============================
-// OPEN SPIN WHEEL
-// ===============================
-
-function openSpinWheel(){
-
-    playSound(spinSound);
-
-    document
-    .querySelector(".wheel-container")
-    .scrollIntoView({behavior:"smooth"});
 
 }
 
@@ -1808,47 +1800,58 @@ bgMusic.play().catch(()=>{});
 // ===============================
 
 function openSpinWheel(){
-document.querySelector(".wheel-container").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".wheel-container").style.display="block";
 }
 
 function openLuckyBox(){
-document.querySelector(".box-scene").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".box-scene").style.display="block";
 }
 
 function openDiceGame(){
-document.querySelector(".scene").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".scene").style.display="block";
 }
 
 function openTreasure(){
-document.querySelector(".treasure-zone").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".treasure-zone").style.display="block";
 }
 
 function openCardGame(){
-document.querySelector(".card-scene").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".card-scene").style.display="block";
 }
 
 function openTargetGame(){
-document.querySelector(".target-scene").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".target-scene").style.display="block";
 }
 
 function startSlot(){
-document.querySelector(".slot-machine-container").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".slot-machine-container").style.display="block";
 }
 
 function openGuessGame(){
-document.querySelector(".guess-container").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".guess-container").style.display="block";
 }
 
 function openColorGame(){
-document.querySelector(".color-game-container").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector(".color-game-container").style.display="block";
 }
 
 function openMagicTiles(){
-document.querySelector("#magicTilesPanel").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector("#magicTilesPanel").style.display="block";
 }
 
 function openCrashGame(){
-document.querySelector("#crashGamePanel").scrollIntoView({behavior:"smooth"});
+closeAllGames();
+document.querySelector("#crashGamePanel").style.display="block";
 }
 
 
