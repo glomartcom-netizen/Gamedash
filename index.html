@@ -194,7 +194,9 @@ padding:8px;
 
 }
 </style>  
-</head>  <body class="pb-20">  <header class="p-4 border-b border-white/5 flex justify-between items-center sticky top-0 bg-[#010409]/95 z-50">  <div class="flex items-center gap-2">  <img src="https://i.ibb.co/HpqwGFqt/logo.png" class="w-10 h-10 rounded-lg">  <span class="text-xl font-black tracking-tighter text-amber-500 italic gold-glow">  
+</head>  
+    <p id="dashbordStatus" class="text-xs text-emerald-400 text-center"></p>
+    <body class="pb-20">  <header class="p-4 border-b border-white/5 flex justify-between items-center sticky top-0 bg-[#010409]/95 z-50">  <div class="flex items-center gap-2">  <img src="https://i.ibb.co/HpqwGFqt/logo.png" class="w-10 h-10 rounded-lg">  <span class="text-xl font-black tracking-tighter text-amber-500 italic gold-glow">  
 DimeX   
 </span>  </div>  <button id="walletBtn"  
 onclick="window.appKitModal.open()"  
@@ -1040,8 +1042,11 @@ document.getElementById('myRefLink').value = window.location.origin + window.loc
 document.getElementById('walletBtn').innerText = "ONLINE";
 document.getElementById('walletBtn').style.backgroundColor = "#10b981";
 
-document.getElementById('dashbordStatus').innerText =
-"Verified: " + userAddress.slice(0,6)+"..."+userAddress.slice(-4);            
+const statusEl = document.getElementById('dashbordStatus');
+if(statusEl){
+statusEl.innerText =
+"Verified: " + userAddress.slice(0,6)+"..."+userAddress.slice(-4);
+}            
       
 refreshData();      
 showTab('stakes');      
