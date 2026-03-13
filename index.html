@@ -1961,44 +1961,11 @@ return rewards[Math.floor(Math.random()*rewards.length)];
 // ===============================
 
 async function checkGameCooldown(wallet){
-return true;
+return true; // demo mode
 }
 
 try{
 
-if(!contract || !wallet){
-
-alert("Connect wallet first");
-
-return false;
-
-}
-
-const last=await contract.lastGamePlayed(wallet);
-
-const lastPlayed=last.toNumber();
-
-const now=Math.floor(Date.now()/1000);
-
-if(now-lastPlayed<86400){
-
-alert("⏳ You already played today.\nCome back tomorrow.");
-
-return false;
-
-}
-
-return true;
-
-}catch(e){
-
-alert("Cooldown check failed");
-
-return false;
-
-}
-
-}
 
 // ===============================
 // CLAIM REWARD
