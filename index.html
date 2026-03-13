@@ -5,51 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DMX Game Zone</title>
     <style>
-        /* DICE 3D STYLES */
+/* DICE 3D STYLES */
+
 .dice {
   width: 100%;
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 1s ease-out; /* உருளும் அனிமேஷன் */
+
+  /* rolling animation */
+  transition: transform 1s ease-out;
+
   transform: translateZ(-50px);
 }
 
+
 .dice__face {
   position: absolute;
+
   width: 100px;
   height: 100px;
+
   border: 2px solid #ccc;
   border-radius: 15px;
-  background: white; /* டைஸ் நிறம் */
+
+  background: white; /* dice color */
+
   color: black;
   font-size: 24px;
   font-weight: bold;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   text-align: center;
+
   box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
 }
 
-/* 3D-யில் பக்கங்களை அமைத்தல் */
-.dice__face--1 { transform: rotateY(  0deg) translateZ(50px); }
-.dice__face--2 { transform: rotateY( 90deg) translateZ(50px); }
+
+/* Position faces in 3D space */
+
+.dice__face--1 { transform: rotateY(0deg) translateZ(50px); }
+
+.dice__face--2 { transform: rotateY(90deg) translateZ(50px); }
+
 .dice__face--3 { transform: rotateY(180deg) translateZ(50px); }
+
 .dice__face--4 { transform: rotateY(-90deg) translateZ(50px); }
-.dice__face--5 { transform: rotateX( 90deg) translateZ(50px); }
+
+.dice__face--5 { transform: rotateX(90deg) translateZ(50px); }
+
 .dice__face--6 { transform: rotateX(-90deg) translateZ(50px); }
 
-/* டைஸ் புள்ளிகளுக்கான ஸ்டைல் */
-.dice__face--1 { color: #e74c3c; font-size: 40px; } /* 1-ம் எண் சிவப்பு நிறம் */
 
-/* உருளும் போது ஏற்படும் குலுக்கல் அனிமேஷன் */
-@keyframes shakeDice {
-  0% { transform: translateZ(-50px) rotateX(0deg) rotateY(0deg); }
-  25% { transform: translateZ(-50px) rotateX(360deg) rotateY(180deg); }
-  50% { transform: translateZ(-50px) rotateX(180deg) rotateY(360deg); }
-  100% { transform: translateZ(-50px) rotateX(360deg) rotateY(360deg); }
+/* Dice dot style */
+
+.dice__face--1 {
+  color: #e74c3c;
+  font-size: 40px; /* number 1 highlighted in red */
 }
+
+
+/* Shake animation while rolling */
+
+@keyframes shakeDice {
+
+  0% {
+    transform: translateZ(-50px) rotateX(0deg) rotateY(0deg);
+  }
+
+  25% {
+    transform: translateZ(-50px) rotateX(360deg) rotateY(180deg);
+  }
+
+  50% {
+    transform: translateZ(-50px) rotateX(180deg) rotateY(360deg);
+  }
+
+  100% {
+    transform: translateZ(-50px) rotateX(360deg) rotateY(360deg);
+  }
+
+}
+
 
 .dice-rolling {
   animation: shakeDice 0.2s infinite linear;
@@ -120,11 +160,12 @@
 
         
 /* CARD FLIP 3D STYLES */
+
 .card-scene {
   width: 150px;
-  height: 210px; /* கார்டு விகிதம் 5:7 */
+  height: 210px; /* card ratio 5:7 */
   margin: 30px auto;
-  perspective: 1000px; /* 3D ஆழம் */
+  perspective: 1000px; /* 3D depth */
   cursor: pointer;
 }
 
@@ -133,12 +174,16 @@
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* மென்மையான திருப்பம் */
+
+  /* smooth flip animation */
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   border-radius: 12px;
 }
 
-/* கார்டு திரும்பிய நிலை (will be applied via JS) */
+/* flipped state (applied by JS) */
+
 .card.is-flipped {
   transform: rotateY(180deg);
 }
@@ -148,29 +193,41 @@
   width: 100%;
   height: 100%;
   border-radius: 12px;
-  backface-visibility: hidden; /* பின்புறம் தெரியாமல் இருக்க */
+
+  /* hide the backside when flipped */
+  backface-visibility: hidden;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   border: 2px solid #e2e8f0;
 }
 
-/* முன்புறம் (வெற்றித் தொகை) */
+
+/* front side (reward side) */
+
 .card__face--front {
   background: white;
   color: #1a1a1a;
-  transform: rotateY(180deg); /* ஆரம்பத்தில் தலைகீழாக இருக்கும் */
+
+  /* initially reversed */
+  transform: rotateY(180deg);
 }
 
-/* பின்புறம் (ஆரம்பத் தோற்றம்) */
+
+/* back side (initial card look) */
+
 .card__face--back {
-  background: linear-gradient(135deg, #0f172a, #1e293b); /* இருண்ட பேட்டர்ன் */
+  background: linear-gradient(135deg, #0f172a, #1e293b); /* dark pattern */
   color: #06b6d4;
   border: 2px solid #06b6d4;
 }
 
-/* கார்டு அலங்காரங்கள் */
+
+/* card decorations */
+
 .card-pattern {
   font-size: 24px;
   font-weight: bold;
@@ -184,8 +241,8 @@
 
 .card-suit {
   font-size: 60px;
-  color: #e74c3c; /* சிவப்பு நிற சூட் */
-    }
+  color: #e74c3c; /* red suit color */
+}
 
 /* LUCKY BOX 3D STYLES */
 
@@ -298,7 +355,8 @@
   }
 
 }
-    /* COLOR PICK 3D STYLES */
+/* COLOR PICK 3D STYLES */
+
 .color-game-container {
     text-align: center;
     perspective: 1000px;
@@ -316,13 +374,18 @@
     height: 80px;
     border-radius: 15px;
     cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-weight: bold;
     color: white;
+
     transition: all 0.3s ease;
+
     border: 4px solid rgba(255, 255, 255, 0.1);
+
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
@@ -335,14 +398,17 @@
     border-color: white;
 }
 
-/* தேர்வு செய்யப்பட்ட வண்ணத்தை குறிக்க */
+/* Highlight the selected color */
+
 .pod-selected {
     transform: translateY(-15px) scale(1.1);
     box-shadow: 0 0 20px white;
     border-color: gold !important;
 }
 
+
 /* 3D RESULT ORB */
+
 .result-orb-container {
     height: 100px;
     display: flex;
@@ -354,23 +420,53 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #475569; /* ஆரம்ப நிறம் (சாம்பல்) */
-    box-shadow: inset -10px -10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(255,255,255,0.2);
+
+    background: #475569; /* default color (gray) */
+
+    box-shadow:
+    inset -10px -10px 20px rgba(0,0,0,0.5),
+    0 0 15px rgba(255,255,255,0.2);
+
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: none; /* விளையாடும் போது மட்டும் காட்டும் */
+
+    display: none; /* visible only while playing */
 }
 
-/* பந்து சுழலும் அனிமேஷன் */
+
+/* Ball spawn animation */
+
 @keyframes orbSpawn {
-    0% { transform: scale(0) rotate(0deg); opacity: 0; }
-    50% { transform: scale(1.2) rotate(180deg); }
-    100% { transform: scale(1) rotate(360deg); opacity: 1; }
+
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(360deg);
+        opacity: 1;
+    }
+
 }
 
 .orb-active {
     display: block;
     animation: orbSpawn 0.6s forwards;
-        }
+}
+
+        .orb-win{
+animation:orbWinFlash 0.4s alternate 6;
+}
+
+@keyframes orbWinFlash{
+from{box-shadow:0 0 10px gold;}
+to{box-shadow:0 0 40px lime;}
+}
+        
 /* SLOT MACHINE 3D STYLES */
 .slot-machine-container {
     background: linear-gradient(180deg, #1e293b, #0f172a);
@@ -1246,7 +1342,8 @@ setTimeout(()=>spark.remove(),1000);
 
 }
 
-        }      
+        }  
+    orb.classList.add("orb-win");
 
         function openSpinWheel(){
 document.querySelector(".wheel-container").scrollIntoView({behavior:"smooth"});
