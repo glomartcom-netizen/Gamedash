@@ -1243,7 +1243,11 @@ body {
     100% { background: #020617; }
 
     }
-
+        
+.game-section{
+display:none;
+margin-top:30px;
+        }
         
     </style>
 </head>
@@ -1278,9 +1282,12 @@ Wallet: <span id="walletStatus">Connected (Demo)</span>
 
 <div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
 
+<div class="game-btn" onclick="openMagicTiles()">💎 Magic Tiles</div>
+
+<div class="game-btn" onclick="openCrashGame()">🚀 DMX Crash</div>
+
 </div>
-
-
+    
 
 <!-- DICE GAME -->
 
@@ -1354,8 +1361,6 @@ Wallet: <span id="walletStatus">Connected (Demo)</span>
 Click the box to open it
 </p>
 
-
-<div class="game-btn" onclick="openMagicTiles()">💎 Magic Tiles</div>
 
 <div id="magicTilesPanel" class="game-section">
 
@@ -1598,7 +1603,7 @@ function closeAllGames(){
 document.querySelectorAll(".game-section").forEach(section=>{
 section.style.display="none";
 });
-}
+}   
 
 // Leaderboard placeholder
 function addWinner(address,reward){
@@ -1791,6 +1796,10 @@ function jackpotEffect(){
     fireworks();
 
 }
+
+document.body.addEventListener("click",()=>{
+bgMusic.play().catch(()=>{});
+});    
   
 
         // ===============================
