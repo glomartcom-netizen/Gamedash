@@ -2027,13 +2027,13 @@ return;
 
 }
 
-const tx = await contract.claimGameReward(
-ethers.utils.parseEther(amount.toString())
-);
+// const tx = await contract.claimGameReward(
+// ethers.utils.parseEther(amount.toString())
+// );
 
 alert("Transaction sent...");
 
-await tx.wait();
+//await tx.wait();
 
 alert("💰 Reward received: "+amount+" DMX");
 
@@ -2904,7 +2904,7 @@ await claimGameReward(reward);
 
 /* leaderboard */
 
-addWinner(userAddress,reward);
+//addWinner(userAddress,reward);
 
 gameRunning=false;
 
