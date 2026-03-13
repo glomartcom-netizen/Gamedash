@@ -1,1 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DimeX Game Engine Test</title>
 
+<style>
+
+body{
+background:#010409;
+color:white;
+font-family:Arial;
+text-align:center;
+padding:40px;
+}
+
+button{
+padding:14px 18px;
+margin:6px;
+border-radius:10px;
+border:none;
+background:#06b6d4;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#22d3ee;
+}
+
+.panel{
+display:none;
+margin-top:20px;
+padding:20px;
+border:1px solid #06b6d4;
+border-radius:10px;
+}
+
+.display{
+font-size:50px;
+margin:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>DimeX Game Test</h1>
+
+<button onclick="openSpinWheel()">🎡 Spin Wheel</button>
+<button onclick="openLuckyBox()">🎁 Lucky Box</button>
+<button onclick="openDiceGame()">🎲 Dice</button>
+<button onclick="openGuessGame()">🔢 Guess</button>
+<button onclick="openCardGame()">🃏 Card</button>
+<button onclick="openTargetGame()">🎯 Target</button>
+<button onclick="openTreasure()">💎 Treasure</button>
+<button onclick="startSlot()">🎰 Slot</button>
+<button onclick="openColorGame()">🎨 Color</button>
+
+<hr>
+
+<button onclick="playPaidGame(10)">💰 10 DMX</button>
+<button onclick="playPaidGame(50)">🔥 50 DMX</button>
+<button onclick="playPaidGame(100)">💎 100 DMX</button>
+<button onclick="playPaidGame(200)">🚀 200 DMX</button>
+<button onclick="playPaidGame(500)">👑 500 DMX</button>
+
+<!-- PANELS -->
+
+<div id="spinWheelPanel" class="panel">
+<div id="wheelDisplay" class="display">🎡</div>
+<button onclick="spinWheelGame()">SPIN</button>
+</div>
+
+<div id="luckyBoxPanel" class="panel">
+<div class="display">📦</div>
+<button onclick="openBox()">OPEN</button>
+</div>
+
+<div id="diceGamePanel" class="panel">
+<div id="diceDisplay" class="display">🎲</div>
+<button onclick="rollDice()">ROLL</button>
+</div>
+
+<div id="guessGamePanel" class="panel">
+<button onclick="guessNumber(1)">1</button>
+<button onclick="guessNumber(2)">2</button>
+<button onclick="guessNumber(3)">3</button>
+<button onclick="guessNumber(4)">4</button>
+<button onclick="guessNumber(5)">5</button>
+</div>
+
+<div id="cardGamePanel" class="panel">
+<div class="display">🂠</div>
+<button onclick="flipCard()">FLIP</button>
+</div>
+
+<div id="targetGamePanel" class="panel">
+<div class="display">🎯</div>
+<button onclick="shootTarget()">SHOOT</button>
+</div>
+
+<div id="treasurePanel" class="panel">
+<div class="display">💎</div>
+<button onclick="pickTreasure()">OPEN</button>
+</div>
+
+<div id="slotGame" class="panel">
+<div id="slotDisplay" class="display">🍒 🍒 🍒</div>
+<button onclick="spinSlot()">SPIN</button>
+</div>
+
+<div id="colorGamePanel" class="panel">
+<button onclick="pickColor('green')" style="background:green">Green</button>
+<button onclick="pickColor('red')" style="background:red">Red</button>
+<button onclick="pickColor('orange')" style="background:orange">Orange</button>
+</div>
+
+<script>
+
+let gameRunning=false;
+
+function closeAllGames(){
+document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+}
+
+function openSpinWheel(){closeAllGames();spinWheelPanel.style.display="block";}
+function openLuckyBox(){closeAllGames();luckyBoxPanel.style.display="block";}
+function openDiceGame(){closeAllGames();diceGamePanel.style.display="block";}
+function openGuessGame(){closeAllGames();guessGamePanel.style.display="block";}
+function openCardGame(){closeAllGames();cardGamePanel.style.display="block";}
+function openTargetGame(){closeAllGames();targetGamePanel.style.display="block";}
+function openTreasure(){closeAllGames();treasurePanel.style.display="block";}
+function startSlot(){closeAllGames();slotGame.style.display="block";}
+function openColorGame(){closeAllGames();colorGamePanel.style.display="block";}
+
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+/* SPIN WHEEL */
+
+function spinWheelGame(){
+
+let spins=0;
+const rewards=[5,10,20,30,50,100];
+const display=document.getElementById("wheelDisplay");
+
+const interval=setInterval(()=>{
+
+display.innerText="🎡";
+
+spins++;
+
+if(spins>15){
+
+clearInterval(interval);
+
+const reward=rand(rewards);
+
+display.innerText="🎁 "+reward+" DMX";
+
+alert("You won "+reward+" DMX");
+
+}
+
+},100);
+
+}
+
+/* LUCKY BOX */
+
+function openBox(){
+
+const reward=rand([5,10,20,30,50]);
+
+alert("Lucky Box Reward "+reward+" DMX");
+
+}
+
+/* DICE */
+
+function rollDice(){
+
+let rolls=0;
+const display=document.getElementById("diceDisplay");
+
+const interval=setInterval(()=>{
+
+const dice=Math.floor(Math.random()*6)+1;
+
+display.innerText="🎲 "+dice;
+
+rolls++;
+
+if(rolls>10){
+
+clearInterval(interval);
+
+let reward=5;
+
+if(dice>=5) reward=50;
+else if(dice>=3) reward=20;
+
+alert("Dice "+dice+" Reward "+reward+" DMX");
+
+}
+
+},120);
+
+}
+
+/* GUESS */
+
+function guessNumber(n){
+
+const win=Math.floor(Math.random()*5)+1;
+
+if(n===win){
+
+alert("Correct! 50 DMX");
+
+}else{
+
+alert("Wrong number "+win);
+
+}
+
+}
+
+/* CARD */
+
+function flipCard(){
+
+alert("Card Reward "+rand([5,10,20,50])+" DMX");
+
+}
+
+/* TARGET */
+
+function shootTarget(){
+
+if(Math.random()>0.5){
+
+alert("Perfect Shot 30 DMX");
+
+}else{
+
+alert("Missed");
+
+}
+
+}
+
+/* TREASURE */
+
+function pickTreasure(){
+
+alert("Treasure Reward "+rand([5,10,20,50])+" DMX");
+
+}
+
+/* SLOT */
+
+function spinSlot(){
+
+const symbols=["🍒","⭐","💎","🔔"];
+const display=document.getElementById("slotDisplay");
+
+let spins=0;
+
+const interval=setInterval(()=>{
+
+const a=rand(symbols);
+const b=rand(symbols);
+const c=rand(symbols);
+
+display.innerText=a+" "+b+" "+c;
+
+spins++;
+
+if(spins>15){
+
+clearInterval(interval);
+
+let reward=0;
+
+if(a===b && b===c) reward=100;
+else if(a===b || b===c || a===c) reward=20;
+
+alert("Slot Reward "+reward+" DMX");
+
+}
+
+},100);
+
+}
+
+/* COLOR */
+
+function pickColor(c){
+
+const colors=["green","red","orange"];
+const res=rand(colors);
+
+if(c===res){
+
+alert("Correct color 30 DMX");
+
+}else{
+
+alert("Wrong color "+res);
+
+}
+
+}
+
+/* PAID GAME */
+
+function playPaidGame(entry){
+
+let reward=0;
+
+if(entry===10) reward=rand([5,10,15,20,30]);
+if(entry===50) reward=rand([20,40,80,100,150]);
+if(entry===100) reward=rand([50,80,150,300,1000]);
+if(entry===200) reward=rand([100,150,300,500,600]);
+if(entry===500) reward=rand([250,400,600,1000,1500]);
+
+alert("Entry "+entry+" DMX\nReward "+reward+" DMX");
+
+}
+
+</script>
+
+</body>
+</html>
