@@ -468,12 +468,17 @@ to{box-shadow:0 0 40px lime;}
 }
         
 /* SLOT MACHINE 3D STYLES */
+
 .slot-machine-container {
     background: linear-gradient(180deg, #1e293b, #0f172a);
     padding: 20px;
     border: 4px solid #334155;
     border-radius: 20px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(6, 182, 212, 0.2);
+
+    box-shadow:
+    0 0 30px rgba(0,0,0,0.5),
+    inset 0 0 15px rgba(6, 182, 212, 0.2);
+
     margin: 20px auto;
     width: fit-content;
 }
@@ -481,19 +486,27 @@ to{box-shadow:0 0 40px lime;}
 .slot-window {
     display: flex;
     gap: 10px;
+
     background: #020617;
+
     padding: 15px;
     border-radius: 10px;
+
     border: 2px solid #06b6d4;
+
     overflow: hidden;
-    height: 80px; /* ஒரு நேரத்தில் ஒரு சின்னம் மட்டும் தெரிய */
+
+    height: 80px; /* only one symbol visible at a time */
+
     position: relative;
 }
 
 .reel-container {
     width: 60px;
     height: 80px;
+
     background: #1e293b;
+
     border-radius: 5px;
     position: relative;
 }
@@ -502,41 +515,79 @@ to{box-shadow:0 0 40px lime;}
     display: flex;
     flex-direction: column;
     align-items: center;
+
     font-size: 40px;
-    line-height: 80px; /* சின்னங்கள் சரியாக நடுவில் அமைய */
+
+    line-height: 80px; /* center the symbols properly */
+
     transition: transform 3s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+
     transform: translateY(0);
 }
 
 .win-line {
     position: absolute;
+
     top: 50%;
     left: 0;
+
     width: 100%;
     height: 2px;
+
     background: rgba(255, 215, 0, 0.5);
+
     box-shadow: 0 0 10px gold;
+
     z-index: 5;
+
     pointer-events: none;
 }
 
-/* வெற்றி பெற்றால் மின்னுவதற்கு */
+
+/* Glow animation when player wins */
+
 @keyframes slotWinGlow {
-    from { box-shadow: 0 0 5px gold; border-color: gold; }
-    to { box-shadow: 0 0 30px #06b6d4; border-color: #06b6d4; }
+
+    from {
+        box-shadow: 0 0 5px gold;
+        border-color: gold;
+    }
+
+    to {
+        box-shadow: 0 0 30px #06b6d4;
+        border-color: #06b6d4;
+    }
+
 }
 
 .slot-jackpot {
     animation: slotWinGlow 0.5s infinite alternate;
-    }
+}
+
+@keyframes slotShake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-4px)}
+50%{transform:translateX(4px)}
+75%{transform:translateX(-4px)}
+100%{transform:translateX(0)}
+}
+
+.slot-jackpot{
+animation:slotWinGlow 0.5s infinite alternate,
+slotShake 0.2s infinite;
+}        
+        
 
 /* TARGET SHOT 3D STYLES */
+
 .target-scene {
     width: 200px;
     height: 200px;
     margin: 30px auto;
     position: relative;
+
     perspective: 1000px;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -545,12 +596,18 @@ to{box-shadow:0 0 40px lime;}
 .target-board {
     width: 150px;
     height: 150px;
+
     border-radius: 50%;
     background: white;
+
     position: relative;
-    transform: rotateX(20deg); /* 3D சாய்வு */
+
+    transform: rotateX(20deg); /* 3D tilt effect */
+
     border: 5px solid #1e293b;
+
     box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -563,51 +620,110 @@ to{box-shadow:0 0 40px lime;}
 }
 
 .ring-outer { width: 120px; height: 120px; background: #ef4444; }
+
 .ring-middle { width: 80px; height: 80px; background: white; }
+
 .ring-inner { width: 40px; height: 40px; background: #ef4444; }
-.bullseye { 
-    width: 15px; height: 15px; background: gold; 
-    border-radius: 50%; z-index: 2;
+
+.bullseye {
+    width: 15px;
+    height: 15px;
+
+    background: gold;
+
+    border-radius: 50%;
+
+    z-index: 2;
+
     box-shadow: 0 0 10px orange;
 }
 
-/* PROJECTILE (அம்பு அல்லது தோட்டா) */
+
+/* PROJECTILE (bullet or arrow) */
+
 .projectile {
     position: absolute;
+
     width: 10px;
     height: 10px;
+
     background: #06b6d4;
+
     border-radius: 50%;
+
     bottom: -50px;
     left: 50%;
+
     transform: translateX(-50%);
+
     opacity: 0;
+
     z-index: 10;
+
     box-shadow: 0 0 15px #06b6d4;
 }
 
-/* சுடும்போது ஏற்படும் அனிமேஷன் */
+
+/* Animation when shooting */
+
 @keyframes shootEffect {
-    0% { bottom: -50px; transform: translateX(-50%) scale(2); opacity: 1; }
-    100% { bottom: 85px; transform: translateX(-50%) scale(0.5); opacity: 1; }
+
+    0% {
+        bottom: -50px;
+        transform: translateX(-50%) scale(2);
+        opacity: 1;
+    }
+
+    100% {
+        bottom: 85px;
+        transform: translateX(-50%) scale(0.5);
+        opacity: 1;
+    }
+
 }
 
 .is-shooting {
     animation: shootEffect 0.4s ease-out forwards;
 }
 
-/* பலகை அதிர்வு (Hit Effect) */
+
+/* Target board hit effect */
+
 @keyframes boardHit {
-    0% { transform: rotateX(20deg) scale(1); }
-    50% { transform: rotateX(20deg) scale(0.95) translateY(5px); }
-    100% { transform: rotateX(20deg) scale(1); }
+
+    0% {
+        transform: rotateX(20deg) scale(1);
+    }
+
+    50% {
+        transform: rotateX(20deg) scale(0.95) translateY(5px);
+    }
+
+    100% {
+        transform: rotateX(20deg) scale(1);
+    }
+
 }
 
 .board-hit {
     animation: boardHit 0.2s ease-out;
-    }
+}
+
+.hit-spark{
+position:absolute;
+width:20px;
+height:20px;
+background:radial-gradient(circle,gold,transparent);
+animation:spark 0.4s ease-out;
+}
+
+@keyframes spark{
+0%{transform:scale(0);}
+100%{transform:scale(2);opacity:0;}
+        }        
         
 /* GUESS NUMBER 3D STYLES */
+
 .guess-container {
     background: #1e293b;
     padding: 20px;
@@ -621,13 +737,21 @@ to{box-shadow:0 0 40px lime;}
 .guess-display {
     background: #020617;
     color: #06b6d4;
+
     font-family: 'Courier New', Courier, monospace;
+
     font-size: 40px;
+
     padding: 10px;
+
     border-radius: 10px;
+
     margin-bottom: 20px;
+
     border: 2px solid #06b6d4;
+
     text-shadow: 0 0 15px #06b6d4;
+
     min-height: 50px;
 }
 
@@ -639,13 +763,21 @@ to{box-shadow:0 0 40px lime;}
 
 .num-btn {
     background: linear-gradient(145deg, #334155, #1e293b);
+
     border: 1px solid #475569;
+
     padding: 15px;
+
     border-radius: 10px;
+
     cursor: pointer;
+
     font-weight: bold;
+
     color: white;
+
     transition: all 0.2s;
+
     box-shadow: 0 4px 0 #0f172a;
 }
 
@@ -659,21 +791,58 @@ to{box-shadow:0 0 40px lime;}
     box-shadow: none;
 }
 
-/* வெற்றி/தோல்வி அனிமேஷன் */
+
+/* Win / Lose animations */
+
 @keyframes flashGreen {
-    0%, 100% { background: #020617; color: #06b6d4; }
-    50% { background: #14532d; color: #22c55e; border-color: #22c55e; }
+
+    0%,100% {
+        background: #020617;
+        color: #06b6d4;
+    }
+
+    50% {
+        background: #14532d;
+        color: #22c55e;
+        border-color: #22c55e;
+    }
+
 }
 
 @keyframes flashRed {
-    0%, 100% { background: #020617; color: #06b6d4; }
-    50% { background: #7f1d1d; color: #ef4444; border-color: #ef4444; }
+
+    0%,100% {
+        background: #020617;
+        color: #06b6d4;
+    }
+
+    50% {
+        background: #7f1d1d;
+        color: #ef4444;
+        border-color: #ef4444;
+    }
+
 }
 
-.guess-success { animation: flashGreen 0.5s 3; }
-.guess-fail { animation: flashRed 0.5s 2; }
+.guess-success {
+    animation: flashGreen 0.5s 3;
+}
+
+.guess-fail {
+    animation: flashRed 0.5s 2;
+}
+
+ .safe-open{
+animation:safeGlow 0.5s alternate 4;
+}
+
+@keyframes safeGlow{
+from{box-shadow:0 0 10px lime;}
+to{box-shadow:0 0 30px gold;}
+}   
         
-  /* TREASURE 3D STYLES */
+/* TREASURE 3D STYLES */
+
 .treasure-zone {
     perspective: 1000px;
     padding: 20px 0;
@@ -698,47 +867,71 @@ to{box-shadow:0 0 40px lime;}
     width: 80px;
     height: 60px;
     position: relative;
+
     transform-style: preserve-3d;
+
     transform: rotateX(-10deg) rotateY(10deg);
 }
 
 .chest-body {
     position: absolute;
+
     width: 100%;
     height: 100%;
-    background: #5d4037; /* மர நிறம் */
+
+    background: #5d4037; /* wood color */
+
     border: 2px solid #3e2723;
+
     border-radius: 4px;
+
     box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
 .chest-lid {
     position: absolute;
+
     width: 100%;
     height: 30px;
+
     top: -20px;
+
     background: #795548;
+
     border: 2px solid #3e2723;
+
     border-radius: 20px 20px 0 0;
+
     transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
     transform-origin: bottom;
+
     z-index: 2;
 }
 
-/* பெட்டி திறக்கும் அனிமேஷன் */
+
+/* Chest opening animation */
+
 .chest-open .chest-lid {
     transform: rotateX(-110deg) translateY(-10px);
 }
 
-/* உள்ளே இருக்கும் புதையல் ஒளி */
+
+/* Treasure glow inside the chest */
+
 .chest-loot {
     position: absolute;
+
     width: 80%;
     height: 40%;
+
     top: 0;
     left: 10%;
+
     background: radial-gradient(circle, gold, transparent);
+
     opacity: 0;
+
     transition: opacity 0.5s;
 }
 
@@ -747,10 +940,31 @@ to{box-shadow:0 0 40px lime;}
     animation: lootGlow 1s infinite alternate;
 }
 
+
+/* Treasure glow animation */
+
 @keyframes lootGlow {
-    from { box-shadow: 0 0 10px gold; }
-    to { box-shadow: 0 0 30px orange; }
-        }
+
+    from {
+        box-shadow: 0 0 10px gold;
+    }
+
+    to {
+        box-shadow: 0 0 30px orange;
+    }
+
+}
+
+.coin-burst{
+position:absolute;
+font-size:20px;
+animation:coinPop 0.8s ease-out;
+}
+
+@keyframes coinPop{
+0%{transform:translateY(0) scale(0);}
+100%{transform:translateY(-120px) scale(1);opacity:0;}
+}        
 
    /* MAGIC TILES 3D STYLES */
 .tiles-grid {
@@ -1344,6 +1558,8 @@ setTimeout(()=>spark.remove(),1000);
 
         }  
     orb.classList.add("orb-win");
+    display.classList.add("safe-open");
+    document.body.classList.add("coin-burst");
 
         function openSpinWheel(){
 document.querySelector(".wheel-container").scrollIntoView({behavior:"smooth"});
