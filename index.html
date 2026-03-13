@@ -1856,9 +1856,6 @@ let userAddress = "0x123...Demo"; // Demo wallet address
 // ===============================
 
 
-// Play sound (placeholder if sound system not loaded)
-function playSound(){}
-
 
 // Check cooldown before playing game
 async function checkGameCooldown(){
@@ -1983,15 +1980,15 @@ gameRunning = false;
 
 function openLuckyBox() {
 
-    closeAllGames();
+closeAllGames();
 
-    const box = document.getElementById("boxElement");
-    const panel = document.getElementById("luckyBoxPanel");
-    
-    // Reset the box state
-    box.classList.remove("box-open", "box-shaking");
-    
-    panel.style.display = "block";
+const box = document.getElementById("boxElement");
+
+box.classList.remove("box-open","box-shaking");
+
+document.querySelector(".box-scene")
+.scrollIntoView({behavior:"smooth"});
+
 }
 
 async function openBoxAnimation() {
@@ -2223,7 +2220,6 @@ async function rollDice() {
     }, 800);
 
 }
-    fireworks();
 
     
 
