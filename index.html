@@ -187,7 +187,8 @@
   color: #e74c3c; /* சிவப்பு நிற சூட் */
     }
 
-        /* LUCKY BOX 3D STYLES */
+/* LUCKY BOX 3D STYLES */
+
 .box-scene {
   width: 120px;
   height: 100px;
@@ -204,19 +205,21 @@
   transition: transform 0.5s;
 }
 
-/* பெட்டியின் உடல் (Body) */
+/* Box body */
+
 .box-body {
   position: absolute;
   width: 100%;
   height: 80%;
   bottom: 0;
-  background: linear-gradient(135deg, #f59e0b, #9a3412); /* தங்க நிறம் */
+  background: linear-gradient(135deg, #f59e0b, #9a3412); /* gold color */
   border: 2px solid #78350f;
   border-radius: 4px;
   box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
 }
 
-/* பெட்டியின் மூடி (Lid) */
+/* Box lid */
+
 .box-lid {
   position: absolute;
   width: 110%;
@@ -231,23 +234,36 @@
   transform-origin: back;
 }
 
-/* பெட்டி திறக்கும் போது மூடி சுழலும் (Lid Open) */
+/* Lid opens when box is opened */
+
 .box-open .box-lid {
   transform: rotateX(-110deg) translateY(-20px);
 }
 
-/* பெட்டி குலுங்கும் அனிமேஷன் (Shake) */
+/* Box shaking animation */
+
 @keyframes boxShake {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(5deg) scale(1.05); }
-  75% { transform: rotate(-5deg) scale(1.05); }
+
+  0%, 100% {
+    transform: rotate(0);
+  }
+
+  25% {
+    transform: rotate(5deg) scale(1.05);
+  }
+
+  75% {
+    transform: rotate(-5deg) scale(1.05);
+  }
+
 }
 
 .box-shaking {
   animation: boxShake 0.15s infinite;
 }
 
-/* உள்ளிருந்து வரும் ஒளி (Glow Effect) */
+/* Glow light coming from inside the box */
+
 .box-glow {
   position: absolute;
   top: 0;
@@ -260,16 +276,28 @@
   z-index: 1;
 }
 
+/* Glow visible when box opens */
+
 .box-open .box-glow {
   opacity: 1;
   animation: pulseGlow 1s infinite alternate;
 }
 
-@keyframes pulseGlow {
-  from { transform: scale(1); opacity: 0.7; }
-  to { transform: scale(1.5); opacity: 1; }
-        }
+/* Glow pulse animation */
 
+@keyframes pulseGlow {
+
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+
+  to {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+
+}
     /* COLOR PICK 3D STYLES */
 .color-game-container {
     text-align: center;
@@ -789,57 +817,89 @@ animation:flashWin 0.5s 6;
 
     <button onclick="toggleMusic()">🔊 Sound</button>
 
-    <h2>🎮 DMX GAME ZONE</h2>
-    <p>Wallet: <span id="walletStatus">Connected (Demo)</span></p>
+<h2>🎮 DMX GAME ZONE</h2>
 
-    <div class="game-container">
-        <div class="game-btn" onclick="openSpinWheel()">🎡 Spin Wheel</div>
-        <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
-        <div class="game-btn" onclick="openDiceGame()">🎲 Dice Roll</div>
-        <div class="game-btn" onclick="openTreasure()">💎 Treasure</div>
-        <div class="game-btn" onclick="openCardGame()">🃏 Card Flip</div>
-        <div class="game-btn" onclick="openTargetGame()">🎯 Target Shot</div>
-        <div class="game-btn" onclick="startSlot()">🎰 Slots</div>
-        <div class="game-btn" onclick="openGuessGame()">❓ Guess Num</div>
-        <div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
-        
-    </div>
+<p>
+Wallet: <span id="walletStatus">Connected (Demo)</span>
+</p>
+
+
+<div class="game-container">
+
+<div class="game-btn" onclick="openSpinWheel()">🎡 Spin Wheel</div>
+
+<div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
+
+<div class="game-btn" onclick="openDiceGame()">🎲 Dice Roll</div>
+
+<div class="game-btn" onclick="openTreasure()">💎 Treasure</div>
+
+<div class="game-btn" onclick="openCardGame()">🃏 Card Flip</div>
+
+<div class="game-btn" onclick="openTargetGame()">🎯 Target Shot</div>
+
+<div class="game-btn" onclick="startSlot()">🎰 Slot Machine</div>
+
+<div class="game-btn" onclick="openGuessGame()">❓ Guess Number</div>
+
+<div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
+
+</div>
+
+
+
+<!-- DICE GAME -->
 
 <div class="scene">
 
-  <div class="dice" id="diceElement">
+<div class="dice" id="diceElement">
 
-    <div class="dice__face dice__face--1">●</div>
-    <div class="dice__face dice__face--2">● ●</div>
-    <div class="dice__face dice__face--3">●<br>●<br>●</div>
-    <div class="dice__face dice__face--4">● ●<br>● ●</div>
-    <div class="dice__face dice__face--5">● ●<br> ● <br>● ●</div>
-    <div class="dice__face dice__face--6">● ●<br>● ●<br>● ●</div>
+<div class="dice__face dice__face--1">●</div>
 
-  </div>
+<div class="dice__face dice__face--2">● ●</div>
+
+<div class="dice__face dice__face--3">●<br>●<br>●</div>
+
+<div class="dice__face dice__face--4">● ●<br>● ●</div>
+
+<div class="dice__face dice__face--5">● ●<br> ● <br>● ●</div>
+
+<div class="dice__face dice__face--6">● ●<br>● ●<br>● ●</div>
 
 </div>
+
+</div>
+
 
 <button class="btn-bonus" onclick="rollDice()">
 🎲 ROLL DICE
 </button>
-    
-</div>
-    
-    <div class="wheel-container">
+
+
+
+
+<!-- WHEEL GAME -->
+
+<div class="wheel-container">
 
 <div class="wheel-pointer">▼</div>
 
 <div class="the-wheel" id="wheelElement">
 
 <div class="wheel-label" style="transform:rotate(30deg)">5</div>
+
 <div class="wheel-label" style="transform:rotate(90deg)">10</div>
+
 <div class="wheel-label" style="transform:rotate(150deg)">20</div>
+
 <div class="wheel-label" style="transform:rotate(210deg)">30</div>
+
 <div class="wheel-label" style="transform:rotate(270deg)">50</div>
+
 <div class="wheel-label" style="transform:rotate(330deg)">100</div>
 
 </div>
+
 
 <button class="btn-bonus" onclick="spinWheelGame()">
 🎡 SPIN WHEEL
@@ -850,77 +910,125 @@ animation:flashWin 0.5s 6;
 
         <div class="box-scene">
   <div class="box-container" id="boxElement" onclick="openBoxAnimation()">
-    <div class="box-lid" id="boxLid"></div> <div class="box-body"></div>           <div class="box-glow" id="boxGlow"></div> </div>
-</div>
-<p style="color: #94a3b8; font-size: 14px; margin-top: 20px;">பெட்டியைக் கிளிக் செய்து திறக்கவும்</p>
-
-
-        <div class="game-btn" onclick="openMagicTiles()">💎 Magic Tiles</div>
-<div id="magicTilesPanel" class="game-section">
-    <h3>Magic Tiles - தங்கம் எங்கே?</h3>
-    <p id="tilesScore">தற்போதைய லாபம்: 0 DMX</p>
-    <div class="tiles-grid" id="tilesGrid">
-        </div>
-    <button id="cashoutBtn" class="btn-bonus" style="display:none;" onclick="tilesCashout()">CASHOUT (வெற்றியைப் பெறு)</button>
-</div>
-    
-
-        <div class="treasure-zone">
-    <div class="chest-container">
-        <div class="chest-wrapper" onclick="pickTreasureAnimation(1)">
-            <div class="chest-3d" id="chest1">
-                <div class="chest-lid"></div>
-                <div class="chest-body"></div>
-                <div class="chest-loot"></div>
-            </div>
-        </div>
-        <div class="chest-wrapper" onclick="pickTreasureAnimation(2)">
-            <div class="chest-3d" id="chest2">
-                <div class="chest-lid"></div>
-                <div class="chest-body"></div>
-                <div class="chest-loot"></div>
-            </div>
-        </div>
-        <div class="chest-wrapper" onclick="pickTreasureAnimation(3)">
-            <div class="chest-3d" id="chest3">
-                <div class="chest-lid"></div>
-                <div class="chest-body"></div>
-                <div class="chest-loot"></div>
-            </div>
-        </div>
-    </div>
-</div>
-<p style="color: #94a3b8; font-size: 14px; margin-top: 15px;">ஏதேனும் ஒரு பெட்டியைத் தேர்ந்தெடுத்து அதிர்ஷ்டத்தைப் பாருங்கள்!</p>
-
-
-       <div class="card-scene">
-  <div class="card" id="cardElement" onclick="flipCardAnimation()">
-    <div class="card__face card__face--back">
-      <div class="card-pattern">DMX</div> </div>
-    <div class="card__face card__face--front">
-      <div class="card-value" id="cardValueDisplay">0 DMX</div>
-      <div class="card-suit">♦</div>
-    </div>
+    <div class="box-lid" id="boxLid"></div>
+    <div class="box-body"></div>
+    <div class="box-glow" id="boxGlow"></div>
   </div>
 </div>
-<p style="color: #94a3b8; font-size: 14px; margin-top: -10px;">கிளிக் செய்து திருப்பவும்</p>
+
+<p style="color:#94a3b8;font-size:14px;margin-top:20px;">
+Click the box to open it
+</p>
 
 
-        <div class="target-scene">
-    <div class="target-board" id="targetBoard">
-        <div class="ring ring-outer"></div>
-        <div class="ring ring-middle"></div>
-        <div class="ring ring-inner"></div>
-        <div class="bullseye"></div>
-    </div>
+<div class="game-btn" onclick="openMagicTiles()">💎 Magic Tiles</div>
 
-    <div class="projectile" id="projectile"></div>
+<div id="magicTilesPanel" class="game-section">
+
+<h3>Magic Tiles - Find the Gold</h3>
+
+<p id="tilesScore">
+Current Profit: 0 DMX
+</p>
+
+<div class="tiles-grid" id="tilesGrid"></div>
+
+<button
+id="cashoutBtn"
+class="btn-bonus"
+style="display:none;"
+onclick="tilesCashout()">
+
+CASHOUT (Claim your reward)
+
+</button>
+
 </div>
 
-<div id="targetStatus" style="margin-top: 15px; font-weight: bold; color: #06b6d4;">
-    தயார் நிலையில் இருங்கள்!
+
+
+<div class="treasure-zone">
+
+<div class="chest-container">
+
+<div class="chest-wrapper" onclick="pickTreasureAnimation(1)">
+<div class="chest-3d" id="chest1">
+<div class="chest-lid"></div>
+<div class="chest-body"></div>
+<div class="chest-loot"></div>
 </div>
-<button class="btn-bonus" onclick="shootTargetAnimation()">FIRE!</button>
+</div>
+
+<div class="chest-wrapper" onclick="pickTreasureAnimation(2)">
+<div class="chest-3d" id="chest2">
+<div class="chest-lid"></div>
+<div class="chest-body"></div>
+<div class="chest-loot"></div>
+</div>
+</div>
+
+<div class="chest-wrapper" onclick="pickTreasureAnimation(3)">
+<div class="chest-3d" id="chest3">
+<div class="chest-lid"></div>
+<div class="chest-body"></div>
+<div class="chest-loot"></div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<p style="color:#94a3b8;font-size:14px;margin-top:15px;">
+Pick any chest and test your luck!
+    </p>
+
+       <div class="card" id="cardElement" onclick="flipCardAnimation()">
+
+<div class="card__face card__face--back">
+<div class="card-pattern">DMX</div>
+</div>
+
+<div class="card__face card__face--front">
+<div class="card-value" id="cardValueDisplay">0 DMX</div>
+<div class="card-suit">♦</div>
+</div>
+
+</div>
+</div>
+
+<p style="color:#94a3b8;font-size:14px;margin-top:-10px;">
+Click to flip the card
+</p>
+
+
+<div class="target-scene">
+
+<div class="target-board" id="targetBoard">
+
+<div class="ring ring-outer"></div>
+<div class="ring ring-middle"></div>
+<div class="ring ring-inner"></div>
+<div class="bullseye"></div>
+
+</div>
+
+<div class="projectile" id="projectile"></div>
+
+</div>
+
+
+<div id="targetStatus"
+style="margin-top:15px;font-weight:bold;color:#06b6d4;">
+
+Get Ready!
+
+</div>
+
+<button class="btn-bonus" onclick="shootTargetAnimation()">
+FIRE!
+</button>
+
 
 
 <div class="slot-machine-container">
@@ -928,15 +1036,21 @@ animation:flashWin 0.5s 6;
 <div class="slot-window">
 
 <div class="reel-container">
-<div id="reel1" class="reel">7️⃣ 🍒 ⭐ 💎 🔔 7️⃣ 🍒 ⭐</div>
+<div id="reel1" class="reel">
+7️⃣ 🍒 ⭐ 💎 🔔 7️⃣ 🍒 ⭐
+</div>
 </div>
 
 <div class="reel-container">
-<div id="reel2" class="reel">🔔 💎 ⭐ 🍒 7️⃣ 🔔 💎 ⭐</div>
+<div id="reel2" class="reel">
+🔔 💎 ⭐ 🍒 7️⃣ 🔔 💎 ⭐
+</div>
 </div>
 
 <div class="reel-container">
-<div id="reel3" class="reel">⭐ 🍒 🔔 7️⃣ 💎 ⭐ 🍒 🔔</div>
+<div id="reel3" class="reel">
+⭐ 🍒 🔔 7️⃣ 💎 ⭐ 🍒 🔔
+</div>
 </div>
 
 <div class="win-line"></div>
@@ -951,53 +1065,97 @@ animation:flashWin 0.5s 6;
 
 
 <div class="guess-container">
-    <div class="guess-display" id="guessStatusDisplay">0</div>
-    
-    <div class="numpad">
-        <div class="num-btn" onclick="guessNumberAnimation(1)">1</div>
-        <div class="num-btn" onclick="guessNumberAnimation(2)">2</div>
-        <div class="num-btn" onclick="guessNumberAnimation(3)">3</div>
-        <div class="num-btn" onclick="guessNumberAnimation(4)">4</div>
-        <div class="num-btn" onclick="guessNumberAnimation(5)">5</div>
-    </div>
+
+<div class="guess-display" id="guessStatusDisplay">0</div>
+
+<div class="numpad">
+
+<div class="num-btn" onclick="guessNumberAnimation(1)">1</div>
+<div class="num-btn" onclick="guessNumberAnimation(2)">2</div>
+<div class="num-btn" onclick="guessNumberAnimation(3)">3</div>
+<div class="num-btn" onclick="guessNumberAnimation(4)">4</div>
+<div class="num-btn" onclick="guessNumberAnimation(5)">5</div>
+
 </div>
-<p style="color: #94a3b8; font-size: 14px; margin-top: 15px;">சரியான குறியீட்டை (Code) தேர்வு செய்து லாக்கரை திறக்கவும்!</p>
 
-        <div class="color-game-container">
-    <div class="color-selection-zone">
-        <div class="color-pod green" onclick="pickColor('green')" id="pod-green">
-            <span class="pod-label">GREEN</span>
-        </div>
-        <div class="color-pod red" onclick="pickColor('red')" id="pod-red">
-            <span class="pod-label">RED</span>
-        </div>
-        <div class="color-pod orange" onclick="pickColor('orange')" id="pod-orange">
-            <span class="pod-label">ORANGE</span>
-        </div>
-    </div>
-
-    <div class="result-orb-container">
-        <div id="resultOrb" class="result-orb"></div>
-    </div>
 </div>
-<p style="color: #94a3b8; font-size: 14px;">உங்களுக்கு பிடித்த வண்ணத்தை தேர்வு செய்யவும்!</p>
 
-<div class="game-btn" onclick="openCrashGame()">🚀 DMX Crash</div>
+<p style="color:#94a3b8;font-size:14px;margin-top:15px;">
+Choose the correct code to unlock the locker!
+</p>
+
+
+
+<div class="color-game-container">
+
+<div class="color-selection-zone">
+
+<div class="color-pod green" onclick="pickColor('green')" id="pod-green">
+<span class="pod-label">GREEN</span>
+</div>
+
+<div class="color-pod red" onclick="pickColor('red')" id="pod-red">
+<span class="pod-label">RED</span>
+</div>
+
+<div class="color-pod orange" onclick="pickColor('orange')" id="pod-orange">
+<span class="pod-label">ORANGE</span>
+</div>
+
+</div>
+
+<div class="result-orb-container">
+<div id="resultOrb" class="result-orb"></div>
+</div>
+
+</div>
+
+<p style="color:#94a3b8;font-size:14px;">
+Pick your favorite color!
+</p>
+
+
+
+<div class="game-btn" onclick="openCrashGame()">
+🚀 DMX Crash
+</div>
+
+
 
 <div id="crashGamePanel" class="game-section">
-    <h3>DMX Rocket Crash</h3>
-    <div class="crash-area">
-        <div id="crashMultiplier">1.00x</div>
-        <div id="rocket" class="rocket">🚀</div>
-    </div>
-    <div id="crashStatus" style="margin-bottom:10px;">தயார் நிலையில் இருங்கள்!</div>
-    <button id="launchBtn" class="btn-bonus" onclick="startCrash()">LAUNCH (தொடங்கு)</button>
-    <button id="takeProfitBtn" class="btn-bonus" style="display:none; background:green;" onclick="takeProfit()">TAKE PROFIT (லாபத்தை எடு)</button>
-</div>
-    
-    </div>
 
-    <script>
+<h3>DMX Rocket Crash</h3>
+
+<div class="crash-area">
+
+<div id="crashMultiplier">1.00x</div>
+
+<div id="rocket" class="rocket">🚀</div>
+
+</div>
+
+<div id="crashStatus" style="margin-bottom:10px;">
+Get Ready!
+</div>
+
+<button id="launchBtn" class="btn-bonus" onclick="startCrash()">
+LAUNCH (Start)
+</button>
+
+<button id="takeProfitBtn"
+class="btn-bonus"
+style="display:none;background:green;"
+onclick="takeProfit()">
+
+TAKE PROFIT (Collect Profit)
+
+</button>
+
+</div>
+
+</div>
+
+<script>
 // ===== SOUND SYSTEM =====
 
 // background music
