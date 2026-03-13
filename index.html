@@ -689,6 +689,61 @@
     font-size: 30px;
     transition: all 0.1s linear;
         }
+
+    .game-container{
+max-width:500px;
+width:100%;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin:auto;
+margin-top:20px;
+}
+
+.game-btn{
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:16px;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+text-align:center;
+color:white;
+transition:all .3s;
+}
+
+.game-btn:hover{
+background:#06b6d4;
+color:black;
+transform:translateY(-3px);
+box-shadow:0 0 10px #06b6d4;
+}
+
+.btn-bonus{
+background:linear-gradient(90deg,#f59e0b,#ea580c);
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+margin-top:10px;
+cursor:pointer;
+border:none;
+color:white;
+    }
+
+ .scene{
+width:120px;
+height:120px;
+margin:40px auto;
+perspective:600px;
+ }  
+
+body{
+background:#020617;
+color:white;
+font-family:sans-serif;
+text-align:center;
+padding:20px;
+}        
         
 
     </style>
@@ -708,7 +763,8 @@
         <div class="game-btn" onclick="startSlot()">🎰 Slots</div>
         <div class="game-btn" onclick="openGuessGame()">❓ Guess Num</div>
         <div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
-    </div
+        
+    </div>
         
 <div class="scene">
   <div class="dice" id="diceElement">
@@ -721,9 +777,16 @@
   </div>
 </div>
     <div class="wheel-container">
-    <div class="wheel-pointer">▼</div> <div class="the-wheel" id="wheelElement">
-        </div>
-    </div>
+
+<div class="wheel-pointer">▼</div>
+
+<div class="the-wheel" id="wheelElement"></div>
+
+<button class="btn-bonus" onclick="spinWheelGame()">
+🎡 SPIN WHEEL
+</button>
+
+</div>
     
 
         <div class="box-scene">
@@ -802,18 +865,29 @@
 
 
 <div class="slot-machine-container">
-    <div class="slot-window">
-        <div class="reel-container">
-            <div id="reel1" class="reel">7️⃣ 🍒 ⭐ 💎 🔔 7️⃣ 🍒 ⭐</div>
-        </div>
-        <div class="reel-container">
-            <div id="reel2" class="reel">🔔 💎 ⭐ 🍒 7️⃣ 🔔 💎 ⭐</div>
-        </div>
-        <div class="reel-container">
-            <div id="reel3" class="reel">⭐ 🍒 🔔 7️⃣ 💎 ⭐ 🍒 🔔</div>
-        </div>
-        <div class="win-line"></div>
-    </div>
+
+<div class="slot-window">
+
+<div class="reel-container">
+<div id="reel1" class="reel">7️⃣ 🍒 ⭐ 💎 🔔 7️⃣ 🍒 ⭐</div>
+</div>
+
+<div class="reel-container">
+<div id="reel2" class="reel">🔔 💎 ⭐ 🍒 7️⃣ 🔔 💎 ⭐</div>
+</div>
+
+<div class="reel-container">
+<div id="reel3" class="reel">⭐ 🍒 🔔 7️⃣ 💎 ⭐ 🍒 🔔</div>
+</div>
+
+<div class="win-line"></div>
+
+</div>
+
+<button class="btn-bonus" onclick="spinSlot()">
+🎰 SPIN SLOT
+</button>
+
 </div>
 
 
@@ -865,6 +939,13 @@
     </div>
 
     <script>
+const spinSound=null;
+const winSound=null;
+const boxSound=null;
+const diceSound=null;
+const treasureSound=null;
+const cardSound=null;
+        
         // ஜாவாஸ்கிரிப்ட் வேரியபிள்கள்
         let gameRunning = false;
         let userAddress = "0x123...Demo"; // Demo address
