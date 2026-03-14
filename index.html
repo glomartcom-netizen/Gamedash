@@ -647,12 +647,11 @@ width:10px;
 height:10px;
 background:#06b6d4;
 border-radius:50%;
-bottom:10px;
+bottom:-50px;
 left:50%;
 transform:translateX(-50%);
 opacity:0;
 z-index:10;
-box-shadow:0 0 15px #06b6d4;
 }
 
 
@@ -660,22 +659,22 @@ box-shadow:0 0 15px #06b6d4;
 
 @keyframes shootEffect {
 
-    0% {
-        bottom: -50px;
-        transform: translateX(-50%) scale(2);
-        opacity: 1;
-    }
+0%{
+bottom:-50px;
+transform:translateX(-50%) scale(2);
+opacity:1;
+}
 
-    100% {
-        bottom: 85px;
-        transform: translateX(-50%) scale(0.5);
-        opacity: 1;
-    }
+100%{
+bottom:80px;
+transform:translateX(-50%) scale(0.5);
+opacity:1;
+}
 
 }
 
-.is-shooting {
-    animation: shootEffect 0.4s ease-out forwards;
+.is-shooting{
+animation:shootEffect 0.4s ease-out forwards;
 }
 
 
@@ -2765,30 +2764,30 @@ status.innerText = "❌ Missed Target!";
     });
 
 
-    // Check result after the last reel stops
-    setTimeout(() => {
+// Check result after the last reel stops
+setTimeout(() => {
 
-        checkSlotResult(resultA, resultB, resultC);
+checkSlotResult(resultA, resultB, resultC);
 
+// Reset reels for next spin
+setTimeout(() => {
 
-        // Reset reels for the next spin (without animation)
-        setTimeout(() => {
+const results = [resultA, resultB, resultC];
 
-            reels.forEach((reel, index) => {
+reels.forEach((reel, index) => {
 
-                const finalPos = -(symbols.indexOf([resultA, resultB, resultC][index]) * 80);
+const symbolIndex = symbols.indexOf(results[index]);
 
-                reel.style.transition = 'none';
+const finalPos = -(symbolIndex * 80);
 
-                reel.style.transform = `translateY(${finalPos}px)`;
+reel.style.transition = "none";
+reel.style.transform = `translateY(${finalPos}px)`;
 
-            });
+});
 
-        }, 500);
+},100);
 
-    }, 4500);
-
-}
+},4500);
 
 
 
