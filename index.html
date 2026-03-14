@@ -665,7 +665,7 @@ width:10px;
 height:10px;
 background:#06b6d4;
 border-radius:50%;
-bottom:-50px;
+bottom:-30px;
 left:50%;
 transform:translateX(-50%);
 opacity:0;
@@ -1971,8 +1971,8 @@ const reward = rewards[rewardIndex];
 // Note: pointer is at the top (0deg) while wheel rotates clockwise
 
 const rewardAngles = [
-{ min:0, max:60 },
-{ min:60, max:120 },
+{ min:0,   max:60 },
+{ min:60,  max:120 },
 { min:120, max:180 },
 { min:180, max:240 },
 { min:240, max:300 },
@@ -2052,8 +2052,6 @@ box.classList.remove("box-open","box-shaking");
 
 async function openBoxAnimation() {
 
-const box = document.getElementById("boxElement");
-
 if (gameRunning) return;
 
 gameRunning = true;
@@ -2111,6 +2109,8 @@ rewardText.style.fontWeight = "bold";
 
 box.appendChild(rewardText);
 
+rewardText.classList.add("reward-pop");
+
 setTimeout(()=>rewardText.remove(),1500);
 
 
@@ -2130,6 +2130,7 @@ addWinner(userAddress, reward);
 gameRunning = false;
 
 }, 800);
+    }
 
 
 async function rollDice() {
@@ -2828,6 +2829,7 @@ reel.style.transform = `translateY(${finalPos}px)`;
 },100);
 
 },4500);
+    }
 
 
 
