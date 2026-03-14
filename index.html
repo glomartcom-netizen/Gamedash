@@ -315,6 +315,24 @@
 
 }
 
+.reward-pop{
+animation:rewardPop 1s ease-out forwards;
+}
+
+@keyframes rewardPop{
+
+0%{
+transform:translate(-50%,20px) scale(0.5);
+opacity:0;
+}
+
+100%{
+transform:translate(-50%,-40px) scale(1);
+opacity:1;
+}
+
+}        
+
 .box-shaking {
   animation: boxShake 0.15s infinite;
 }
@@ -2034,7 +2052,11 @@ box.classList.remove("box-open","box-shaking");
 
 async function openBoxAnimation() {
 
-    if (gameRunning) return;
+const box = document.getElementById("boxElement");
+
+if (gameRunning) return;
+
+gameRunning = true;
 
     if (!userAddress) {
         alert("Connect wallet first");
@@ -2060,36 +2082,54 @@ async function openBoxAnimation() {
 
         const rewards = [5, 10, 20, 30, 50];
 
-        const reward = rewards[Math.floor(Math.random() * rewards.length)];
+const reward = rewards[Math.floor(Math.random() * rewards.length)];
 
-        setTimeout(async () => {
+setTimeout(async () => {
 
-            playSound(winSound);
+playSound(winSound);
 
-            // Win animation (small body shake)
-            document.body.style.transform = "translateY(-5px)";
+// Win animation
+document.body.style.transform = "translateY(-5px)";
 
-            setTimeout(() => {
-                document.body.style.transform = "translateY(0)";
-            }, 100);
+setTimeout(() => {
+document.body.style.transform = "translateY(0)";
+}, 100);
 
-            alert(
-                "🎁 Lucky Box Opened!\n\n" +
-                "You won " + reward + " DMX"
-            );
 
-            // claim reward
-            await claimGameReward(reward);
+/* REWARD POP FROM BOX */
+const rewardText = document.createElement("div");
 
-            // update leaderboard
-            addWinner(userAddress, reward);
+rewardText.innerText = "+" + reward + " DMX";
 
-            gameRunning = false;
+rewardText.style.position = "absolute";
+rewardText.style.bottom = "20px";
+rewardText.style.left = "50%";
+rewardText.style.transform = "translateX(-50%)";
+rewardText.style.color = "gold";
+rewardText.style.fontSize = "22px";
+rewardText.style.fontWeight = "bold";
 
-        }, 800); // show message after glow animation
+box.appendChild(rewardText);
 
-    }, 1500); // shake duration (1.5 seconds)
-}
+setTimeout(()=>rewardText.remove(),1500);
+
+
+/* RESULT MESSAGE */
+alert(
+"🎁 Lucky Box Opened!\n\n" +
+"You won " + reward + " DMX"
+);
+
+
+// claim reward
+await claimGameReward(reward);
+
+// update leaderboard
+addWinner(userAddress, reward);
+
+gameRunning = false;
+
+}, 800);
 
 
 async function rollDice() {
