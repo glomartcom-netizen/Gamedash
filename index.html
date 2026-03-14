@@ -1249,6 +1249,23 @@ display:none;
 margin-top:30px;
         }
         
+.wheel-label{
+position:absolute;
+top:50%;
+left:50%;
+transform-origin:center;
+font-weight:bold;
+color:white;
+}
+
+ .wheel-container{
+margin:40px auto;
+display:flex;
+flex-direction:column;
+align-items:center;
+        }       
+         
+        
     </style>
 </head>
 <body>
@@ -1327,40 +1344,44 @@ Wallet: <span id="walletStatus">Connected (Demo)</span>
 
 <div class="the-wheel" id="wheelElement">
 
-<div class="wheel-label" style="transform:rotate(30deg)">5</div>
-
-<div class="wheel-label" style="transform:rotate(90deg)">10</div>
-
-<div class="wheel-label" style="transform:rotate(150deg)">20</div>
-
-<div class="wheel-label" style="transform:rotate(210deg)">30</div>
-
-<div class="wheel-label" style="transform:rotate(270deg)">50</div>
-
-<div class="wheel-label" style="transform:rotate(330deg)">100</div>
+<div class="wheel-label" style="transform:rotate(30deg) translateY(-110px)">5</div>
+<div class="wheel-label" style="transform:rotate(90deg) translateY(-110px)">10</div>
+<div class="wheel-label" style="transform:rotate(150deg) translateY(-110px)">20</div>
+<div class="wheel-label" style="transform:rotate(210deg) translateY(-110px)">30</div>
+<div class="wheel-label" style="transform:rotate(270deg) translateY(-110px)">50</div>
+<div class="wheel-label" style="transform:rotate(330deg) translateY(-110px)">100</div>
 
 </div>
-
 
 <button class="btn-bonus" onclick="spinWheelGame()">
 🎡 SPIN WHEEL
 </button>
 
-</div>
-    
+</div> <!-- wheel-container close -->
 
-        <div class="box-scene">
-  <div class="box-container" id="boxElement" onclick="openBoxAnimation()">
-    <div class="box-lid" id="boxLid"></div>
-    <div class="box-body"></div>
-    <div class="box-glow" id="boxGlow"></div>
-  </div>
+
+<!-- LUCKY BOX -->
+
+<div class="box-scene">
+
+<div class="box-container" id="boxElement" onclick="openBoxAnimation()">
+
+<div class="box-lid" id="boxLid"></div>
+
+<div class="box-body"></div>
+
+<div class="box-glow" id="boxGlow"></div>
+
+</div>
+
 </div>
 
 <p style="color:#94a3b8;font-size:14px;margin-top:20px;">
 Click the box to open it
 </p>
 
+
+<!-- MAGIC TILES -->
 
 <div id="magicTilesPanel" class="game-section">
 
