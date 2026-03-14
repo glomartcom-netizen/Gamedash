@@ -642,25 +642,18 @@ slotShake 0.2s infinite;
 /* PROJECTILE (bullet or arrow) */
 
 .projectile {
-    position: absolute;
-
-    width: 10px;
-    height: 10px;
-
-    background: #06b6d4;
-
-    border-radius: 50%;
-
-    bottom: -50px;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    opacity: 0;
-
-    z-index: 10;
-
-    box-shadow: 0 0 15px #06b6d4;
+.projectile{
+position:absolute;
+width:10px;
+height:10px;
+background:#06b6d4;
+border-radius:50%;
+bottom:10px;
+left:50%;
+transform:translateX(-50%);
+opacity:0;
+z-index:10;
+box-shadow:0 0 15px #06b6d4;
 }
 
 
@@ -1277,7 +1270,7 @@ justify-content:center;
 margin:40px auto;
 }
         
-   .scene,
+.scene,
 .wheel-container,
 .box-scene,
 .treasure-zone,
@@ -1289,7 +1282,8 @@ margin:40px auto;
 #magicTilesPanel,
 #crashGamePanel{
 display:none;
-    }      
+margin-top:30px;
+}
         
     </style>
 </head>
@@ -2037,16 +2031,15 @@ gameRunning = false;
 // GAME 2 — LUCKY BOX (3D)
 // ===============================
 
-function openLuckyBox() {
+function openLuckyBox(){
 
 closeAllGames();
 
-const box = document.getElementById("boxElement");
+document.querySelector(".box-scene").style.display="block";
+
+const box=document.getElementById("boxElement");
 
 box.classList.remove("box-open","box-shaking");
-
-document.querySelector(".box-scene")
-.scrollIntoView({behavior:"smooth"});
 
 }
 
@@ -2499,23 +2492,27 @@ function startCrash() {
 }
 
 
-function rocketExplode() {
+function rocketExplode(){
 
-    clearInterval(crashInterval);
+clearInterval(crashInterval);
 
-    isCrashed = true;
+isCrashed=true;
+gameRunning=false;
 
-    gameRunning = false;
+document.getElementById("crashMultiplier").innerText="CRASHED!";
+document.getElementById("crashMultiplier").style.color="red";
 
-    document.getElementById("crashMultiplier").innerText = "CRASHED!";
+document.getElementById("rocket").innerText="💥";
 
-    document.getElementById("crashMultiplier").style.color = "red";
+document.getElementById("takeProfitBtn").style.display="none";
 
-    document.getElementById("rocket").innerText = "💥";
+setTimeout(()=>{
 
-    document.getElementById("takeProfitBtn").style.display = "none";
+document.getElementById("rocket").innerText="🚀";
 
-    setTimeout(resetCrash, 2000);
+resetCrash();
+
+},2000);
 
 }
 
