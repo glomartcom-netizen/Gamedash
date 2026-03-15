@@ -1834,77 +1834,6 @@ el.innerText = Math.floor(Math.random()*5000)
     } catch (e) { console.log("Jackpot load error"); }
 }
 
-function claimGameReward(amount){
-
-if(gameRunning === false){
-console.log("Invalid reward trigger");
-return;
-}
-
-// save reward locally
-let reward = Number(localStorage.getItem("pendingReward")) || 0
-
-reward += amount
-
-localStorage.setItem("pendingReward", reward)
-
-console.log("Reward saved:",reward)
-
-jackpotEffect()
-
-}
-
-function playPaidGame(entry){
-
-if(!entry || entry < 10){
-alert("Minimum 10 DMX required");
-return;
-}
-
-if(gameRunning){
-alert("Game already running");
-return;
-}
-
-// save entry for dashboard
-localStorage.setItem("paidGameEntry", entry)
-
-console.log("Paid game entry saved:", entry)
-
-playSound(clickSound)
-
-}
-    
-async function checkGameCooldown(){
-
-let key = "lastPlay_" + gameMode
-
-let last = Number(localStorage.getItem(key)) || 0
-let now = Date.now()
-
-let diff = now - last
-
-if(diff < GAME_COOLDOWN){
-
-let remaining = GAME_COOLDOWN - diff
-
-let hours = Math.floor(remaining / 3600000)
-let minutes = Math.floor((remaining % 3600000) / 60000)
-
-alert(
-"Daily game already used\n" +
-"Try again in " + hours + "h " + minutes + "m"
-)
-
-return false
-
-}
-
-localStorage.setItem(key, now)
-
-return true
-
-}
 
 // ===============================
 // 5. VISUALS & SOCIAL
@@ -1926,20 +1855,158 @@ function addWinner(address, reward) {
     if(board.children.length > 20){
         board.removeChild(board.lastChild);
     }
+    }
+    
+
+// ===============================
+// CORE GAME SYSTEM
+// ===============================
+
+let gameRunning = false
+let gameMode = "promo"
+
+// reward claim (dashboard handle செய்யும்)
+function claimGameReward(amount){
+
+amount = Number(amount)
+
+if(!amount || amount <= 0){
+console.log("Invalid reward")
+return
 }
 
-function jackpotEffect() {
+console.log("Reward:",amount,"DMX")
 
-playSound(winSound);
+jackpotEffect()
 
-document.body.classList.add("win-flash");
+}
+
+// ===============================
+// GAME MODE SYSTEM
+// ===============================
+
+function setMode(mode){
+
+gameMode = mode
+
+alert("Game mode: "+mode)
+
+}
+
+// ===============================
+// PAID GAME SYSTEM
+// ===============================
+
+function playPaidGame(entry){
+
+entry = Number(entry)
+
+if(!entry || entry <= 0){
+alert("Invalid entry amount")
+return
+}
+
+if(gameRunning) return
+
+gameRunning = true
+
+// result probability
+let chance = Math.random()
+
+let reward = 0
+
+if(chance < 0.50){
+
+reward = 0 // lose
+
+}
+
+else if(chance < 0.75){
+
+reward = entry * 2
+
+}
+
+else if(chance < 0.90){
+
+reward = entry * 3
+
+}
+
+else{
+
+reward = entry * 5
+
+}
+
+// result
+setTimeout(function(){
+
+if(reward > 0){
+
+alert("🎉 You won "+reward+" DMX")
+
+claimGameReward(reward)
+
+}else{
+
+alert("❌ You lost")
+
+}
+
+gameRunning = false
+
+},1000)
+
+}
+
+// ===============================
+// GAME COOLDOWN
+// ===============================
+
+const GAME_COOLDOWN = 24 * 60 * 60 * 1000
+
+async function checkGameCooldown(){
+
+let last = Number(localStorage.getItem("lastPlay")) || 0
+let now = Date.now()
+
+if(now - last < GAME_COOLDOWN){
+
+let remaining = GAME_COOLDOWN - (now - last)
+
+let hours = Math.floor(remaining / 3600000)
+let minutes = Math.floor((remaining % 3600000) / 60000)
+
+alert("Daily limit reached\nTry again in "+hours+"h "+minutes+"m")
+
+return false
+
+}
+
+localStorage.setItem("lastPlay",now)
+
+return true
+
+}
+
+// ===============================
+// WIN EFFECT
+// ===============================
+
+function jackpotEffect(){
+
+playSound(winSound)
+
+document.body.classList.add("win-flash")
 
 setTimeout(function(){
-document.body.classList.remove("win-flash");
-},1500);
+
+document.body.classList.remove("win-flash")
+
+},1500)
 
 }
-
 
 // ===============================
 // GAME INITIALIZATION
@@ -1947,16 +2014,6 @@ document.body.classList.remove("win-flash");
 
 window.onload = function(){
 
-// start jackpot display immediately
-updateJackpot()
-
-// jackpot auto refresh
-clearInterval(jackpotTimer)
-
-jackpotTimer = setInterval(updateJackpot,5000)
-
-
-// button click sound
 document.body.addEventListener("click",function(e){
 
 if(e.target.tagName !== "BUTTON") return
@@ -1965,20 +2022,16 @@ playSound(clickSound)
 
 })
 
-
-// background music start after first interaction
 document.body.addEventListener("click",function(){
 
 if(bgMusic.paused){
-
 bgMusic.play().catch(function(){})
-
 }
 
 },{once:true})
 
 }
-
+    
 // ===============================
 // GLOBAL JACKPOT SYSTEM
 // ===============================
