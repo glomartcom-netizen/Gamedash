@@ -1710,7 +1710,6 @@ function toggleMusic() {
 let gameRunning = false;
 let gameMode = "promo"; 
 let userAddress = localStorage.getItem("walletAddress");
-let contract = window.contract || null;
 let jackpotTimer; 
 const GAME_COOLDOWN = 24 * 60 * 60 * 1000; 
 
@@ -1771,15 +1770,13 @@ const openCrashGame  = () => openGame("#crashGamePanel", crashSound);
 // ===============================
 
 // FIX: Real Jackpot with Null Protection
-async function updateJackpot() {
-    const el = document.getElementById("jackpotValue");
-    if (!el) return;
+function updateJackpot(){
 
-    if (!contract) {
-        let cur = parseFloat(el.innerText) || 0;
-        el.innerText = (cur + Math.floor(Math.random() * 5)).toString();
-        return;
-    };
+const el = document.getElementById("jackpotValue")
+
+el.innerText = Math.floor(Math.random()*5000)
+
+}
 
     try {
         let pool = await contract.gameRewardPool();
