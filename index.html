@@ -2606,37 +2606,37 @@ gameRunning=false;
 
 }
 
+    
+let tileReward = 0
+let bombLocation = 0
+let activeTilesGame = true
 
+async function clickTile(index){
 
-async function clickTile(index) {
+if(gameRunning) return
 
-if (gameRunning) return
-
-if (!(await checkGameCooldown())) return
-
-if (!activeTilesGame) return
+if(!activeTilesGame) return
 
 gameRunning = true
 
-const tile = document.getElementById(`tile-${index}`)
+const tile=document.getElementById(`tile-${index}`)
 
-if (tile.classList.contains("revealed-gold")) {
+if(tile.classList.contains("revealed-gold")){
 gameRunning=false
 return
 }
 
-if (index === bombLocation) {
+if(index===bombLocation){
 
-// bomb
-activeTilesGame = false
+activeTilesGame=false
 
 tile.classList.add("revealed-bomb")
 
-tile.innerHTML = "💣"
+tile.innerHTML="💣"
 
 document.getElementById("tilesGrid").classList.add("grid-shake")
 
-playSound(diceSound)
+playSound(loseSound)
 
 setTimeout(()=>{
 
@@ -2655,7 +2655,7 @@ tile.classList.add("revealed-gold")
 
 tile.innerHTML="💰"
 
-tileReward +=10
+tileReward+=10
 
 document.getElementById("tilesScore").innerText=
 `Current Profit: ${tileReward} DMX`
@@ -2671,6 +2671,36 @@ gameRunning=false
 }
 
 
+function resetTilesGame(){
+
+activeTilesGame=true
+tileReward=0
+bombLocation=Math.floor(Math.random()*9)
+
+document.getElementById("tilesScore").innerText="Current Profit: 0 DMX"
+document.getElementById("cashoutBtn").style.display="none"
+
+const grid=document.getElementById("tilesGrid")
+
+grid.innerHTML=""
+
+for(let i=0;i<9;i++){
+
+const tile=document.createElement("div")
+
+tile.className="tile"
+tile.id=`tile-${i}`
+tile.innerHTML="❓"
+
+tile.onclick=()=>clickTile(i)
+
+grid.appendChild(tile)
+
+}
+
+}
+
+
 async function tilesCashout(){
 
 if(tileReward<=0 || !activeTilesGame) return
@@ -2678,6 +2708,8 @@ if(tileReward<=0 || !activeTilesGame) return
 gameRunning=true
 
 activeTilesGame=false
+
+tileReward = applyRewardLimit(tileReward)
 
 alert(`🎉 Congratulations! You won ${tileReward} DMX.`)
 
@@ -2692,13 +2724,19 @@ resetTilesGame()
 }
     
 
+let crashValue = 1.0
+let crashInterval
+let isCrashed = false
+
 async function startCrash(){
 
 if(gameRunning) return
 
-if (!(await checkGameCooldown())) return
+if(!(await checkGameCooldown())) return
 
 gameRunning = true
+isCrashed = false
+crashValue = 1.0
 
 document.getElementById("launchBtn").style.display="none"
 document.getElementById("takeProfitBtn").style.display="block"
@@ -2707,17 +2745,17 @@ let limit = Math.random()*5+1
 
 crashInterval = setInterval(()=>{
 
-crashValue +=0.05
+crashValue += 0.05
 
-document.getElementById("crashMultiplier").innerText=
+document.getElementById("crashMultiplier").innerText =
 crashValue.toFixed(2)+"x"
 
-let pos=(crashValue-1)*20
+let pos = (crashValue-1)*20
 
 document.getElementById("rocket").style.bottom=(10+pos)+"px"
 document.getElementById("rocket").style.left=(10+pos)+"px"
 
-if(crashValue>=limit){
+if(crashValue >= limit){
 
 rocketExplode()
 
@@ -2727,12 +2765,15 @@ rocketExplode()
 
 }
 
+
 function rocketExplode(){
 
 clearInterval(crashInterval)
 
-isCrashed=true
-gameRunning=false
+isCrashed = true
+gameRunning = false
+
+playSound(loseSound)
 
 document.getElementById("crashMultiplier").innerText="CRASHED!"
 document.getElementById("crashMultiplier").style.color="red"
@@ -2752,13 +2793,32 @@ resetCrash()
 }
 
 
+function resetCrash(){
+
+isCrashed = false
+crashValue = 1.0
+
+document.getElementById("crashMultiplier").innerText="1.00x"
+document.getElementById("crashMultiplier").style.color="#22c55e"
+
+document.getElementById("rocket").style.bottom="10px"
+document.getElementById("rocket").style.left="10px"
+
+document.getElementById("launchBtn").style.display="block"
+document.getElementById("takeProfitBtn").style.display="none"
+
+}
+
+
 async function takeProfit(){
 
 if(isCrashed) return
 
 clearInterval(crashInterval)
 
-let winAmount=Math.floor(crashValue*10)
+let winAmount = Math.floor(crashValue*10)
+
+winAmount = applyRewardLimit(winAmount)
 
 alert(`💰 Victory! You won ${winAmount} DMX.`)
 
@@ -2766,7 +2826,7 @@ claimGameReward(winAmount)
 
 addWinner(userAddress,winAmount)
 
-gameRunning=false
+gameRunning = false
 
 resetCrash()
 
