@@ -1428,6 +1428,31 @@ onclick="openGameInfo()">
 
 </div>
 
+<div style="margin-top:25px">
+
+<h3>💳 Deposit DMX</h3>
+
+<input
+id="depositAmount"
+type="number"
+placeholder="Enter Deposit Amount"
+min="10"
+style="
+padding:10px;
+border-radius:8px;
+border:none;
+width:200px;
+text-align:center;
+">
+
+<br><br>
+
+<button class="btn-bonus" onclick="depositDMX()">
+Deposit
+</button>
+
+</div>    
+
 
 <!-- PLAYER BALANCE -->
 
@@ -2097,6 +2122,31 @@ return reward;
 
 }
 
+ function depositDMX(){
+
+let amount = Number(document.getElementById("depositAmount").value)
+
+if(!amount || amount <= 0){
+alert("Enter valid deposit amount")
+return
+}
+
+/* balance increase */
+
+claimBalance += amount
+
+/* save balance */
+
+localStorage.setItem("claimBalance",claimBalance)
+
+/* update display */
+
+updateBalance()
+
+alert("Deposit successful: "+amount+" DMX")
+
+    }   
+
 
 // ===============================
 // CLAIM REWARD
@@ -2265,6 +2315,13 @@ window.onload=function(){
 
 updateJackpot();
 
+/* Balance load */
+updateBalance();
+
+/* Magic tiles reset */
+resetTilesGame();
+
+/* Button click sound */
 document.body.addEventListener("click",function(e){
 
 if(e.target.tagName!=="BUTTON") return;
@@ -2273,6 +2330,7 @@ playSound(clickSound);
 
 });
 
+/* Start background music */
 document.body.addEventListener("click",function(){
 
 if(bgMusic.paused){
@@ -2284,17 +2342,52 @@ bgMusic.play().catch(()=>{});
 }
 
 
-// ===============================
-// RULES POPUP
-// ===============================
+/* =========================
+   BALANCE SYSTEM
+========================= */
+
+let claimBalance = Number(localStorage.getItem("claimBalance")) || 0;
+
+function updateBalance(){
+
+let el = document.getElementById("balanceValue");
+
+if(!el) return;
+
+el.innerText = claimBalance;
+
+}
+
+
+/* =========================
+   RULES POPUP
+========================= */
+
 function openGameInfo(){
-document.getElementById("gameInfoPopup").style.display="block";
+document.getElementById("gameInfoPopup").style.display = "block";
 }
 
 function closeGameInfo(){
-document.getElementById("gameInfoPopup").style.display="none";
+document.getElementById("gameInfoPopup").style.display = "none";
 }
-  
+
+
+/* =========================
+   CLICK OUTSIDE CLOSE POPUP
+========================= */
+
+window.addEventListener("click",function(e){
+
+let popup = document.getElementById("gameInfoPopup");
+
+if(!popup) return;
+
+if(e.target === popup){
+popup.style.display = "none";
+}
+
+});
+    
 
 // ===============================
 // GAME NAVIGATION FUNCTIONS
@@ -3256,29 +3349,6 @@ gameRunning=false
 
 }
 
-window.onload=function(){
-
-updateJackpot();
-
-resetTilesGame();
-
-document.body.addEventListener("click",function(e){
-
-if(e.target.tagName!=="BUTTON") return;
-
-playSound(clickSound);
-
-});
-
-document.body.addEventListener("click",function(){
-
-if(bgMusic.paused){
-bgMusic.play().catch(()=>{});
-}
-
-},{once:true});
-
-    }
     
     </script>
 </body>
