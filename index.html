@@ -1889,80 +1889,99 @@ function playSound(sound) {
 
 function toggleMusic() {
     bgMusic.paused ? bgMusic.play() : bgMusic.pause();
-}
-
-// ===============================
+    }
+    
+    // ===============================
 // 2. CORE GAME STATE & SECURITY
 // ===============================
 let gameRunning = false;
-let gameMode = "promo"; 
+let gameMode = "promo";
 let userAddress = localStorage.getItem("walletAddress");
-let jackpotTimer; 
-const GAME_COOLDOWN = 24 * 60 * 60 * 1000; 
+let jackpotTimer;
+const GAME_COOLDOWN = 24 * 60 * 60 * 1000;
 
-// FIX: Prevent Wallet Redirect Loop
+// Prevent Wallet Redirect Loop
 if (!userAddress) {
-    alert("Please open game from dashboard");
-    setTimeout(() => { window.location.href = "dashboard.html"; }, 500);
+alert("Please open game from dashboard");
+setTimeout(() => { window.location.href = "dashboard.html"; }, 500);
 }
 
-// FIX: Game Mode with UI Highlighting & Browser Compatibility
+
+// ===============================
+// GAME MODE SYSTEM
+// ===============================
 function setMode(mode,e){
 
-gameMode = mode
+gameMode = mode;
 
 document.querySelectorAll(".mode-btn").forEach(btn=>{
-btn.classList.remove("active-mode")
-})
+btn.classList.remove("active-mode");
+});
 
 if(e && e.target){
-e.target.classList.add("active-mode")
+e.target.classList.add("active-mode");
 }
 
-const indicator = document.getElementById("modeIndicator")
+const indicator = document.getElementById("modeIndicator");
 
 if(mode==="promo"){
-indicator.innerText="🟢 Promo Mode"
-indicator.style.color="#22c55e"
-document.getElementById("paidEntryPanel").style.display="none"
+indicator.innerText="🟢 Promo Mode";
+indicator.style.color="#22c55e";
+document.getElementById("paidGamePanel").style.display="none";
 }
 
 if(mode==="member"){
-indicator.innerText="🔵 Member Mode"
-indicator.style.color="#3b82f6"
-document.getElementById("paidEntryPanel").style.display="none"
+indicator.innerText="🔵 Member Mode";
+indicator.style.color="#3b82f6";
+document.getElementById("paidGamePanel").style.display="none";
 }
 
 if(mode==="paid"){
-indicator.innerText="🟣 Paid Mode"
-indicator.style.color="#a855f7"
-document.getElementById("paidEntryPanel").style.display="block"
+indicator.innerText="🟣 Paid Mode";
+indicator.style.color="#a855f7";
+document.getElementById("paidGamePanel").style.display="block";
 }
 
 }
+
 
 // ===============================
-// 3. NAVIGATION & DISPLAY ENGINE
+// NAVIGATION ENGINE
 // ===============================
 function closeAllGames() {
-    const gameSelectors = [
-        ".scene", ".wheel-container", ".box-scene", ".treasure-zone", 
-        ".card-scene", ".target-scene", ".slot-machine-container", 
-        ".guess-container", ".color-game-container", "#magicTilesPanel", "#crashGamePanel"
-    ];
-    gameSelectors.forEach(selector => {
-        const el = document.querySelector(selector);
-        if (el) el.style.display = "none";
-    });
+
+const gameSelectors = [
+".scene",
+".wheel-container",
+".box-scene",
+".treasure-zone",
+".card-scene",
+".target-scene",
+".slot-machine-container",
+".guess-container",
+".color-game-container",
+"#magicTilesPanel",
+"#crashGamePanel"
+];
+
+gameSelectors.forEach(selector=>{
+const el = document.querySelector(selector);
+if(el) el.style.display="none";
+});
+
 }
 
-function openGame(selector, specificSound) {
-    closeAllGames();
-    const el = document.querySelector(selector);
-    if (el) {
-        el.style.display = "block";
-        if (specificSound) playSound(specificSound);
-    }
+function openGame(selector,sound){
+
+closeAllGames();
+
+const el = document.querySelector(selector);
+
+if(el){
+el.style.display="block";
+if(sound) playSound(sound);
+}
+
 }
 
 const openSpinWheel  = () => openGame(".wheel-container", spinSound);
@@ -1976,286 +1995,12 @@ const openColorGame  = () => openGame(".color-game-container", colorSound);
 const openMagicTiles = () => openGame("#magicTilesPanel", tilesSound);
 const openCrashGame  = () => openGame("#crashGamePanel", crashSound);
 
-// ===============================
-// 4. BLOCKCHAIN INTERACTIONS
-// ===============================
-
-// FIX: Real Jackpot with Null Protection
-function updateJackpot(){
-
-const el = document.getElementById("jackpotValue")
-
-el.innerText = Math.floor(Math.random()*5000)
-
-}
-
-    try {
-        let pool = await contract.gameRewardPool();
-        el.innerText = ethers.utils.formatEther(pool);
-    } catch (e) { console.log("Jackpot load error"); }
-}
-
 
 // ===============================
-// 5. VISUALS & SOCIAL
+// JACKPOT SYSTEM
 // ===============================
-
-// FIX: Winner Board Overflow Protection (Limit to 20)
-function addWinner(address, reward) {
-    const board = document.getElementById("winnerBoard");
-    if (!board) return;
-    
-    const shortAddr = address.substring(0, 6) + "...";
-    const text = `${shortAddr} won ${reward} DMX 🔥 | `;
-    
-    const span = document.createElement("span");
-    span.textContent = text;
-    board.prepend(span);
-
-    // Remove oldest if list exceeds 20 winners to keep UI clean
-    if(board.children.length > 20){
-        board.removeChild(board.lastChild);
-    }
-    }
-    
-
-// ===============================
-// CORE GAME SYSTEM
-// ===============================
-
-let gameRunning = false
-let gameMode = "promo"
-
-// reward claim (dashboard handle செய்யும்)
-function claimGameReward(amount){
-
-amount = applyRewardLimit(amount)
-
-if(amount > jackpotPool){
-
-alert("Jackpot pool empty")
-return
-
-}
-
-jackpotPool -= amount
-
-updateJackpot()
-
-jackpotEffect()
-
-console.log("Reward:",amount,"DMX")
-
-}
-
-// ===============================
-// GAME MODE SYSTEM
-// ===============================
-
-function setMode(mode){
-
-gameMode = mode
-
-alert("Game mode: "+mode)
-
-}
-
-// ===============================
-// PAID GAME SYSTEM
-// ===============================
-
-function startPaidGame(entry){
-
-entry = Number(entry)
-
-const MIN_BET = 10
-const MAX_BET = 5000
-
-if(entry < MIN_BET){
-alert("Minimum bet is 10 DMX")
-return
-}
-
-if(entry > MAX_BET){
-alert("Maximum bet is 5000 DMX")
-return
-}
-
-if(gameRunning) return
-
-gameRunning = true
-
-let r = Math.random()
-let multiplier = 0
-
-// probability setup
-
-if(r < 0.55){
-multiplier = 0
-}
-else if(r < 0.75){
-multiplier = 1
-}
-else if(r < 0.87){
-multiplier = 2
-}
-else if(r < 0.95){
-multiplier = 3
-}
-else if(r < 0.99){
-multiplier = 4
-}
-else{
-multiplier = 5
-}
-
-let reward = entry * multiplier
-
-setTimeout(function(){
-
-if(multiplier === 0){
-
-alert("❌ You lost")
-
-}else{
-
-alert("🎉 You won "+reward+" DMX")
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-}
-
-gameRunning = false
-
-},1200)
-
-}
-
-// ===============================
-// GAME COOLDOWN
-// ===============================
-
-const GAME_COOLDOWN = 24 * 60 * 60 * 1000
-
-async function checkGameCooldown(){
-
-let last = Number(localStorage.getItem("lastPlay")) || 0
-let now = Date.now()
-
-if(now - last < GAME_COOLDOWN){
-
-let remaining = GAME_COOLDOWN - (now - last)
-
-let hours = Math.floor(remaining / 3600000)
-let minutes = Math.floor((remaining % 3600000) / 60000)
-
-alert("Daily limit reached\nTry again in "+hours+"h "+minutes+"m")
-
-return false
-
-}
-
-localStorage.setItem("lastPlay",now)
-
-return true
-
-}
-
-// ===============================
-// WIN EFFECT
-// ===============================
-
-function jackpotEffect(){
-
-playSound(winSound)
-
-document.body.classList.add("win-flash")
-
-setTimeout(function(){
-
-document.body.classList.remove("win-flash")
-
-},1500)
-
-}
-
-// ===============================
-// GAME INITIALIZATION
-// ===============================
-
-window.onload = function(){
-
-document.body.addEventListener("click",function(e){
-
-if(e.target.tagName !== "BUTTON") return
-
-playSound(clickSound)
-
-})
-
-document.body.addEventListener("click",function(){
-
-if(bgMusic.paused){
-bgMusic.play().catch(function(){})
-}
-
-},{once:true})
-
-}
-
-function openGameInfo(){
-document.getElementById("gameInfoPopup").style.display="block";
-}
-
-function closeGameInfo(){
-document.getElementById("gameInfoPopup").style.display="none";
-}
-
- // ===============================
-// GAME MODE REWARD CONTROL
-// ===============================
-
-function getRewardLimit(){
-
-if(gameMode === "promo"){
-return 100
-}
-
-if(gameMode === "member"){
-return 250
-}
-
-if(gameMode === "paid"){
-return 25000
-}
-
-return 100
-
-    }   
-
-function applyRewardLimit(reward){
-
-reward = Number(reward)
-
-let limit = getRewardLimit()
-
-if(reward > limit){
-reward = limit
-}
-
-return reward
-
-    }    
-    
-// ===============================
-// GLOBAL JACKPOT SYSTEM
-// ===============================
-
 let jackpotPool = 5000;
 
-// update jackpot UI
 function updateJackpot(){
 
 const el = document.getElementById("jackpotValue");
@@ -2267,36 +2012,238 @@ el.innerText = jackpotPool;
 }
 
 
-// reward claim
+// ===============================
+// WINNER BOARD
+// ===============================
+function addWinner(address,reward){
+
+const board = document.getElementById("winnerBoard");
+
+if(!board) return;
+
+const shortAddr = address.substring(0,6)+"...";
+
+const text = `${shortAddr} won ${reward} DMX 🔥 | `;
+
+const span = document.createElement("span");
+span.textContent=text;
+
+board.prepend(span);
+
+if(board.children.length>20){
+board.removeChild(board.lastChild);
+}
+
+}
+
+
+// ===============================
+// REWARD LIMIT SYSTEM
+// ===============================
+function getRewardLimit(){
+
+if(gameMode==="promo") return 100;
+
+if(gameMode==="member") return 250;
+
+if(gameMode==="paid") return 25000;
+
+return 100;
+
+}
+
+function applyRewardLimit(reward){
+
+reward = Number(reward);
+
+let limit = getRewardLimit();
+
+if(reward > limit){
+reward = limit;
+}
+
+return reward;
+
+}
+
+
+// ===============================
+// CLAIM REWARD
+// ===============================
 function claimGameReward(amount){
 
-// convert to number
-amount = Number(amount)
+amount = applyRewardLimit(amount);
 
-if(!amount || amount <= 0){
-console.log("Invalid reward")
-return
-}
-
-// jackpot protection
 if(amount > jackpotPool){
 
-alert("Jackpot pool empty")
-
-return
+alert("Jackpot pool empty");
+return;
 
 }
 
-// deduct from pool
-jackpotPool -= amount
+jackpotPool -= amount;
 
-// update UI
-updateJackpot()
+updateJackpot();
 
-// win effect
-jackpotEffect()
+jackpotEffect();
 
-    }    
+console.log("Reward:",amount,"DMX");
+
+}
+
+
+// ===============================
+// PAID GAME SYSTEM
+// ===============================
+function startPaidGame(entry){
+
+entry = Number(entry);
+
+const MIN_BET = 10;
+const MAX_BET = 5000;
+
+if(entry < MIN_BET){
+alert("Minimum bet is 10 DMX");
+return;
+}
+
+if(entry > MAX_BET){
+alert("Maximum bet is 5000 DMX");
+return;
+}
+
+if(gameRunning) return;
+
+gameRunning=true;
+
+let r=Math.random();
+let multiplier=0;
+
+if(r < 0.55){
+multiplier = 0;
+}
+else if(r < 0.75){
+multiplier = 1;
+}
+else if(r < 0.87){
+multiplier = 2;
+}
+else if(r < 0.95){
+multiplier = 3;
+}
+else if(r < 0.99){
+multiplier = 4;
+}
+else{
+multiplier = 5;
+}
+
+let reward = entry * multiplier;
+
+setTimeout(()=>{
+
+if(multiplier===0){
+
+alert("❌ You lost");
+
+}else{
+
+alert("🎉 You won "+reward+" DMX");
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+
+gameRunning=false;
+
+},1200);
+
+}
+
+
+// ===============================
+// GAME COOLDOWN
+// ===============================
+async function checkGameCooldown(){
+
+let last = Number(localStorage.getItem("lastPlay")) || 0;
+
+let now = Date.now();
+
+if(now-last < GAME_COOLDOWN){
+
+let remaining = GAME_COOLDOWN - (now-last);
+
+let hours = Math.floor(remaining/3600000);
+let minutes = Math.floor((remaining%3600000)/60000);
+
+alert("Daily limit reached\nTry again in "+hours+"h "+minutes+"m");
+
+return false;
+
+}
+
+localStorage.setItem("lastPlay",now);
+
+return true;
+
+}
+
+
+// ===============================
+// WIN EFFECT
+// ===============================
+function jackpotEffect(){
+
+playSound(winSound);
+
+document.body.classList.add("win-flash");
+
+setTimeout(()=>{
+document.body.classList.remove("win-flash");
+},1500);
+
+}
+
+
+// ===============================
+// GAME INITIALIZATION
+// ===============================
+window.onload=function(){
+
+updateJackpot();
+
+document.body.addEventListener("click",function(e){
+
+if(e.target.tagName!=="BUTTON") return;
+
+playSound(clickSound);
+
+});
+
+document.body.addEventListener("click",function(){
+
+if(bgMusic.paused){
+bgMusic.play().catch(()=>{});
+}
+
+},{once:true});
+
+}
+
+
+// ===============================
+// RULES POPUP
+// ===============================
+function openGameInfo(){
+document.getElementById("gameInfoPopup").style.display="block";
+}
+
+function closeGameInfo(){
+document.getElementById("gameInfoPopup").style.display="none";
+}
   
 
 // ===============================
