@@ -1984,17 +1984,6 @@ if(sound) playSound(sound);
 
 }
 
-const openSpinWheel  = () => openGame(".wheel-container", spinSound);
-const openLuckyBox   = () => openGame(".box-scene", boxSound);
-const openDiceGame   = () => openGame(".scene", diceSound);
-const openCardGame   = () => openGame(".card-scene", cardSound);
-const openTargetGame = () => openGame(".target-scene", targetSound);
-const startSlot      = () => openGame(".slot-machine-container", slotSound);
-const openGuessGame  = () => openGame(".guess-container", guessSound);
-const openColorGame  = () => openGame(".color-game-container", colorSound);
-const openMagicTiles = () => openGame("#magicTilesPanel", tilesSound);
-const openCrashGame  = () => openGame("#crashGamePanel", crashSound);
-
 
 // ===============================
 // JACKPOT SYSTEM
@@ -3205,6 +3194,31 @@ gameRunning=false
 },1200)
 
 }
+
+window.onload=function(){
+
+updateJackpot();
+
+resetTilesGame();
+
+document.body.addEventListener("click",function(e){
+
+if(e.target.tagName!=="BUTTON") return;
+
+playSound(clickSound);
+
+});
+
+document.body.addEventListener("click",function(){
+
+if(bgMusic.paused){
+bgMusic.play().catch(()=>{});
+}
+
+},{once:true});
+
+    }
+    
     </script>
 </body>
 </html>
