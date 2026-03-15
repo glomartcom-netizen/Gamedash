@@ -1316,7 +1316,13 @@ color:black;
 background:#06b6d4;
 color:black;
 box-shadow:0 0 10px #06b6d4;
-    }   
+    }  
+
+ #depositAmount{
+background:#0f172a;
+color:white;
+border:1px solid #06b6d4;
+ }   
         
 .scene,
 .wheel-container,
@@ -1451,7 +1457,32 @@ text-align:center;
 Deposit
 </button>
 
-</div>    
+</div>  
+
+ <div style="margin-top:25px">
+
+<h3>💸 Withdraw DMX</h3>
+
+<input
+id="withdrawAmount"
+type="number"
+placeholder="Enter Withdraw Amount"
+min="10"
+style="
+padding:10px;
+border-radius:8px;
+border:none;
+width:200px;
+text-align:center;
+">
+
+<br><br>
+
+<button class="btn-bonus" onclick="withdrawDMX()">
+Withdraw
+</button>
+
+ </div>   
 
 
 <!-- PLAYER BALANCE -->
@@ -2055,7 +2086,8 @@ if(sound) playSound(sound);
 // ===============================
 // JACKPOT SYSTEM
 // ===============================
-let jackpotPool = 5000;
+
+let jackpotPool = Number(localStorage.getItem("jackpotPool")) || 5000;
 
 function updateJackpot(){
 
@@ -2065,12 +2097,17 @@ if(!el) return;
 
 el.innerText = jackpotPool;
 
+/* save jackpot */
+
+localStorage.setItem("jackpotPool",jackpotPool);
+
 }
 
 
 // ===============================
 // WINNER BOARD
 // ===============================
+
 function addWinner(address,reward){
 
 const board = document.getElementById("winnerBoard");
@@ -2082,11 +2119,18 @@ const shortAddr = address.substring(0,6)+"...";
 const text = `${shortAddr} won ${reward} DMX 🔥 | `;
 
 const span = document.createElement("span");
-span.textContent=text;
+
+span.textContent = text;
+
+/* spacing */
+
+span.style.marginRight = "20px";
 
 board.prepend(span);
 
-if(board.children.length>20){
+/* limit winners */
+
+if(board.children.length > 20){
 board.removeChild(board.lastChild);
 }
 
@@ -2096,17 +2140,19 @@ board.removeChild(board.lastChild);
 // ===============================
 // REWARD LIMIT SYSTEM
 // ===============================
+
 function getRewardLimit(){
 
-if(gameMode==="promo") return 100;
+if(gameMode === "promo") return 100;
 
-if(gameMode==="member") return 250;
+if(gameMode === "member") return 250;
 
-if(gameMode==="paid") return 25000;
+if(gameMode === "paid") return 25000;
 
 return 100;
 
 }
+
 
 function applyRewardLimit(reward){
 
@@ -2122,6 +2168,8 @@ return reward;
 
 }
 
+    
+
  function depositDMX(){
 
 let amount = Number(document.getElementById("depositAmount").value)
@@ -2131,21 +2179,39 @@ alert("Enter valid deposit amount")
 return
 }
 
-/* balance increase */
-
 claimBalance += amount
 
-/* save balance */
-
 localStorage.setItem("claimBalance",claimBalance)
-
-/* update display */
 
 updateBalance()
 
 alert("Deposit successful: "+amount+" DMX")
 
-    }   
+}
+
+function withdrawDMX(){
+
+let amount = Number(document.getElementById("withdrawAmount").value)
+
+if(!amount || amount <= 0){
+alert("Enter valid withdraw amount")
+return
+}
+
+if(amount > claimBalance){
+alert("Not enough balance")
+return
+}
+
+claimBalance -= amount
+
+localStorage.setItem("claimBalance",claimBalance)
+
+updateBalance()
+
+alert("Withdraw request sent")
+
+}
 
 
 // ===============================
@@ -2155,6 +2221,8 @@ function claimGameReward(amount){
 
 amount = applyRewardLimit(amount);
 
+/* jackpot check */
+
 if(amount > jackpotPool){
 
 alert("Jackpot pool empty");
@@ -2162,17 +2230,34 @@ return;
 
 }
 
+/* deduct jackpot */
+
 jackpotPool -= amount;
 
 updateJackpot();
 
+/* add reward to balance */
+
+claimBalance += amount;
+
+localStorage.setItem("claimBalance",claimBalance);
+
+updateBalance();
+
+/* win effect */
+
 jackpotEffect();
+
+/* winner board update */
+
+if(typeof addWinner === "function"){
+addWinner(userAddress,amount);
+}
 
 console.log("Reward:",amount,"DMX");
 
 }
-
-
+    
 // ===============================
 // PAID GAME SYSTEM
 // ===============================
@@ -2205,15 +2290,25 @@ alert("Not enough balance")
 return
 }
 
+/* prevent double game */
+
+if(gameRunning){
+alert("Game already running")
+return
+}
+
+gameRunning = true
+
 /* deduct bet */
 
 claimBalance -= entry
 localStorage.setItem("claimBalance",claimBalance)
 updateBalance()
 
-if(gameRunning) return
+/* jackpot increase (optional casino effect) */
 
-gameRunning = true
+jackpotPool += Math.floor(entry * 0.05)
+updateJackpot()
 
 let r = Math.random()
 let multiplier = 0
@@ -2264,22 +2359,26 @@ gameRunning = false
 
 
 // ===============================
-// GAME COOLDOWN
+// GAME COOLDOWN (FREE MODE ONLY)
 // ===============================
 async function checkGameCooldown(){
+
+if(gameMode !== "promo"){
+return true;
+}
 
 let last = Number(localStorage.getItem("lastPlay")) || 0;
 
 let now = Date.now();
 
-if(now-last < GAME_COOLDOWN){
+if(now - last < GAME_COOLDOWN){
 
-let remaining = GAME_COOLDOWN - (now-last);
+let remaining = GAME_COOLDOWN - (now - last);
 
-let hours = Math.floor(remaining/3600000);
-let minutes = Math.floor((remaining%3600000)/60000);
+let hours = Math.floor(remaining / 3600000);
+let minutes = Math.floor((remaining % 3600000) / 60000);
 
-alert("Daily limit reached\nTry again in "+hours+"h "+minutes+"m");
+alert("Free game limit reached\nTry again in "+hours+"h "+minutes+"m");
 
 return false;
 
@@ -2299,11 +2398,33 @@ function jackpotEffect(){
 
 playSound(winSound);
 
+/* screen flash */
+
 document.body.classList.add("win-flash");
 
 setTimeout(()=>{
 document.body.classList.remove("win-flash");
 },1500);
+
+
+/* spark particles */
+
+for(let i=0;i<20;i++){
+
+let spark = document.createElement("div");
+
+spark.className = "spark";
+
+spark.style.left = Math.random()*100+"vw";
+spark.style.top = Math.random()*100+"vh";
+
+document.body.appendChild(spark);
+
+setTimeout(()=>{
+spark.remove();
+},1000);
+
+}
 
 }
 
@@ -2355,6 +2476,62 @@ let el = document.getElementById("balanceValue");
 if(!el) return;
 
 el.innerText = claimBalance;
+
+}
+
+
+/* =========================
+   ANTI BALANCE TAMPERING
+========================= */
+
+setInterval(()=>{
+
+let saved = Number(localStorage.getItem("claimBalance")) || 0;
+
+if(claimBalance !== saved){
+
+console.warn("Balance tampering detected");
+
+claimBalance = saved;
+
+updateBalance();
+
+}
+
+},2000);
+
+
+/* =========================
+   MULTI TAB PROTECTION
+========================= */
+
+window.addEventListener("storage",function(e){
+
+if(e.key === "claimBalance"){
+
+alert("Game opened in another tab");
+
+location.reload();
+
+}
+
+});
+
+
+/* =========================
+   SAFE GAME START
+========================= */
+
+function safeGameStart(){
+
+if(gameRunning){
+alert("Game already running");
+return false;
+}
+
+gameRunning = true;
+
+return true;
 
 }
 
