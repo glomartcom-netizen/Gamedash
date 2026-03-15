@@ -1929,10 +1929,17 @@ function addWinner(address, reward) {
 }
 
 function jackpotEffect() {
-    playSound(winSound);
-    document.body.classList.add("win-flash");
-    setTimeout(() => document.body.classList.remove("win-flash"), 1500);
+
+playSound(winSound);
+
+document.body.classList.add("win-flash");
+
+setTimeout(function(){
+document.body.classList.remove("win-flash");
+},1500);
+
 }
+
 
 // ===============================
 // GAME INITIALIZATION
@@ -1940,10 +1947,14 @@ function jackpotEffect() {
 
 window.onload = function(){
 
-// jackpot update
+// start jackpot display immediately
+updateJackpot()
+
+// jackpot auto refresh
 clearInterval(jackpotTimer)
 
 jackpotTimer = setInterval(updateJackpot,5000)
+
 
 // button click sound
 document.body.addEventListener("click",function(e){
@@ -1954,16 +1965,68 @@ playSound(clickSound)
 
 })
 
-// background music start
+
+// background music start after first interaction
 document.body.addEventListener("click",function(){
 
 if(bgMusic.paused){
-bgMusic.play().catch(()=>{})
+
+bgMusic.play().catch(function(){})
+
 }
 
 },{once:true})
 
 }
+
+// ===============================
+// GLOBAL JACKPOT SYSTEM
+// ===============================
+
+let jackpotPool = 5000;
+
+// update jackpot UI
+function updateJackpot(){
+
+const el = document.getElementById("jackpotValue");
+
+if(!el) return;
+
+el.innerText = jackpotPool;
+
+}
+
+
+// reward claim
+function claimGameReward(amount){
+
+// convert to number
+amount = Number(amount)
+
+if(!amount || amount <= 0){
+console.log("Invalid reward")
+return
+}
+
+// jackpot protection
+if(amount > jackpotPool){
+
+alert("Jackpot pool empty")
+
+return
+
+}
+
+// deduct from pool
+jackpotPool -= amount
+
+// update UI
+updateJackpot()
+
+// win effect
+jackpotEffect()
+
+    }    
   
 
         // ===============================
