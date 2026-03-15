@@ -1384,6 +1384,10 @@ transform:scale(0.9);
 
     <button onclick="toggleMusic()">🔊 Sound</button>
 
+<!-- ===== GAME CONTROL PANEL ===== -->
+
+<div style="margin-top:20px;text-align:center">
+
 <h2>🎮 DMX Game Zone</h2>
 
 <p style="color:#94a3b8">
@@ -1392,48 +1396,35 @@ Play games and win DMX rewards
 
 <!-- MODE INDICATOR -->
 
-<div id="modeIndicator" style="margin-top:10px;font-weight:bold;font-size:18px;color:#22c55e">
+<div id="modeIndicator"
+style="margin-top:10px;font-weight:bold;font-size:18px;color:#22c55e">
 🟢 Promo Mode
 </div>
 
-<div style="margin-top:20px">
 
-<button class="btn-bonus mode-btn" onclick="setMode('promo',event)">
+<!-- CONTROL BUTTONS -->
+
+<div style="margin-top:15px">
+
+<button class="btn-bonus mode-btn"
+onclick="setMode('promo',event)">
 Promo Play
 </button>
 
-<button class="btn-bonus mode-btn" onclick="setMode('member',event)">
+<button class="btn-bonus mode-btn"
+onclick="setMode('member',event)">
 Member Play
 </button>
 
-<button class="btn-bonus mode-btn" onclick="setMode('paid',event)">
+<button class="btn-bonus mode-btn"
+onclick="setMode('paid',event)">
 Paid Play
 </button>
 
-</div>
-
-
-<!-- PAID GAME PANEL -->
-
-<div id="paidGamePanel" style="margin-top:20px;display:none">
-
-<h3>🎰 Select Bet Amount</h3>
-
-<button class="btn-bonus" onclick="startPaidGame(10)">10 DMX</button>
-<button class="btn-bonus" onclick="startPaidGame(50)">50 DMX</button>
-<button class="btn-bonus" onclick="startPaidGame(100)">100 DMX</button>
-<button class="btn-bonus" onclick="startPaidGame(500)">500 DMX</button>
-<button class="btn-bonus" onclick="startPaidGame(1000)">1000 DMX</button>
-<button class="btn-bonus" onclick="startPaidGame(5000)">5000 DMX</button>
-
-<br><br>
-
-<button class="btn-bonus" onclick="openGameInfo()">
+<button class="btn-bonus"
+onclick="openGameInfo()">
 📜 Game Rules
 </button>
-
-</div>
-
 
 <!-- GAME RULES POPUP -->
 
@@ -1454,50 +1445,45 @@ box-shadow:0 0 25px rgba(0,0,0,0.6);
 z-index:9999;
 ">
 
-<h2 style="margin-top:0">🎮 Game Information</h2>
+<h2 style="margin-top:0">🎮 DMX Game Rules</h2>
 
-<h3>🆓 Free Daily Game</h3>
+<h3>🆓 Promo Games</h3>
 <p>
-• Each wallet can play 1 free game every 24 hours.<br>
-• Possible rewards: 5 – 100 DMX.<br>
-• Rewards appear in your Claimable Balance.<br>
+Free games available for all players.<br>
+Each wallet can play limited promo games every 24 hours.<br>
+Rewards range from 5 DMX to 100 DMX.
 </p>
 
-<h3>👤 Member Reward Games</h3>
+<h3>👤 Member Games</h3>
 <p>
-• Available for registered players.<br>
-• Member games may reward up to 250 DMX.<br>
-• Daily participation limits may apply.
+Registered members may access higher reward games.<br>
+Member rewards may reach up to 250 DMX.
 </p>
 
 <h3>💰 Paid Games</h3>
 <p>
-• Minimum Entry: 10 DMX<br>
-• Maximum Entry: 5000 DMX<br>
-• Maximum Win: 25000 DMX<br><br>
-
-Examples:<br>
-• 10 DMX Entry → Win up to 50 DMX<br>
-• 100 DMX Entry → Win up to 500 DMX<br>
-• 1000 DMX Entry → Win up to 5000 DMX<br>
-• 5000 DMX Entry → Win up to 25000 DMX
+Players can place bets and win larger rewards.<br>
+Minimum Bet: 10 DMX<br>
+Maximum Bet: 5000 DMX<br>
+Maximum Reward: up to 25000 DMX.
 </p>
 
 <h3>🏆 Jackpot Pool</h3>
 <p>
-• Jackpot pool increases as players play games.<br>
-• Large wins may trigger jackpot rewards.
+Every game contributes to the jackpot pool.<br>
+Lucky players may trigger jackpot rewards.
 </p>
 
-<h3>🎁 Bonus Tasks</h3>
+<h3>🚀 Referral & Community</h3>
 <p>
-• Join Telegram for updates.<br>
-• Share platform with friends.
+Invite friends using referral links.<br>
+Active players and referrals may unlock higher play limits and bonus rewards.
 </p>
 
-<h3>⚠ Notice</h3>
+<h3>⚠ Fair Play Notice</h3>
 <p>
-Game rewards are generated using random probability algorithms.
+All games use automated probability algorithms.<br>
+Results are generated randomly by the system.
 </p>
 
 <button class="btn-bonus" onclick="closeGameInfo()" style="margin-top:15px">
@@ -1505,7 +1491,56 @@ Close
 </button>
 
 </div>
+    
 
+</div>
+
+
+<!-- PLAYER BALANCE -->
+
+<div style="margin-top:20px;font-size:18px">
+
+💰 Balance:
+<span id="balanceValue"
+style="color:#22c55e;font-weight:bold">
+0
+</span> DMX
+
+</div>
+
+
+<!-- BET PANEL (PAID MODE ONLY) -->
+
+<div id="paidGamePanel"
+style="margin-top:20px;display:none">
+
+<h3>🎰 Enter Bet Amount</h3>
+
+<input
+id="betAmount"
+type="number"
+min="10"
+max="5000"
+placeholder="Enter Bet (10 - 5000 DMX)"
+style="
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:10px;
+width:200px;
+text-align:center;
+">
+
+<br><br>
+
+<button class="btn-bonus"
+onclick="startPaidGame()">
+🎮 Play Game
+</button>
+
+</div>
+
+</div>
 
 <div style="margin-top:20px">
 
@@ -2084,70 +2119,89 @@ console.log("Reward:",amount,"DMX");
 // ===============================
 // PAID GAME SYSTEM
 // ===============================
-function startPaidGame(entry){
+function startPaidGame(){
 
-entry = Number(entry);
+let entry = Number(document.getElementById("betAmount").value)
 
-const MIN_BET = 10;
-const MAX_BET = 5000;
+const MIN_BET = 10
+const MAX_BET = 5000
+
+if(!entry){
+alert("Enter bet amount")
+return
+}
 
 if(entry < MIN_BET){
-alert("Minimum bet is 10 DMX");
-return;
+alert("Minimum bet is 10 DMX")
+return
 }
 
 if(entry > MAX_BET){
-alert("Maximum bet is 5000 DMX");
-return;
+alert("Maximum bet is 5000 DMX")
+return
 }
 
-if(gameRunning) return;
+/* balance check */
 
-gameRunning=true;
+if(entry > claimBalance){
+alert("Not enough balance")
+return
+}
 
-let r=Math.random();
-let multiplier=0;
+/* deduct bet */
+
+claimBalance -= entry
+localStorage.setItem("claimBalance",claimBalance)
+updateBalance()
+
+if(gameRunning) return
+
+gameRunning = true
+
+let r = Math.random()
+let multiplier = 0
 
 if(r < 0.55){
-multiplier = 0;
+multiplier = 0
 }
 else if(r < 0.75){
-multiplier = 1;
+multiplier = 1
 }
 else if(r < 0.87){
-multiplier = 2;
+multiplier = 2
 }
 else if(r < 0.95){
-multiplier = 3;
+multiplier = 3
 }
 else if(r < 0.99){
-multiplier = 4;
+multiplier = 4
 }
 else{
-multiplier = 5;
+multiplier = 5
 }
 
-let reward = entry * multiplier;
+let reward = entry * multiplier
 
 setTimeout(()=>{
 
-if(multiplier===0){
+if(multiplier === 0){
 
-alert("❌ You lost");
+alert("❌ You lost")
 
-}else{
+}
+else{
 
-alert("🎉 You won "+reward+" DMX");
+alert("🎉 You won "+reward+" DMX")
 
-claimGameReward(reward);
+claimGameReward(reward)
 
-addWinner(userAddress,reward);
+addWinner(userAddress,reward)
 
 }
 
-gameRunning=false;
+gameRunning = false
 
-},1200);
+},1200)
 
 }
 
