@@ -1384,6 +1384,8 @@ transform:scale(0.9);
 
     <button onclick="toggleMusic()">🔊 Sound</button>
 
+
+
 <!-- ===== GAME CONTROL PANEL ===== -->
 
 <div style="margin-top:20px;text-align:center">
@@ -1401,30 +1403,29 @@ style="margin-top:10px;font-weight:bold;font-size:18px;color:#22c55e">
 🟢 Promo Mode
 </div>
 
-
 <!-- CONTROL BUTTONS -->
 
 <div style="margin-top:15px">
 
-<button class="btn-bonus mode-btn"
-onclick="setMode('promo',event)">
+<button class="btn-bonus mode-btn" onclick="setMode('promo',event)">
 Promo Play
 </button>
 
-<button class="btn-bonus mode-btn"
-onclick="setMode('member',event)">
+<button class="btn-bonus mode-btn" onclick="setMode('member',event)">
 Member Play
 </button>
 
-<button class="btn-bonus mode-btn"
-onclick="setMode('paid',event)">
+<button class="btn-bonus mode-btn" onclick="setMode('paid',event)">
 Paid Play
 </button>
 
-<button class="btn-bonus"
-onclick="openGameInfo()">
+<button class="btn-bonus" onclick="openGameInfo()">
 📜 Game Rules
 </button>
+
+</div>
+
+</div>
 
 <!-- GAME RULES POPUP -->
 
@@ -1491,9 +1492,6 @@ Close
 </button>
 
 </div>
-    
-
-</div>
 
 
 <!-- PLAYER BALANCE -->
@@ -1501,8 +1499,7 @@ Close
 <div style="margin-top:20px;font-size:18px">
 
 💰 Balance:
-<span id="balanceValue"
-style="color:#22c55e;font-weight:bold">
+<span id="balanceValue" style="color:#22c55e;font-weight:bold">
 0
 </span> DMX
 
@@ -1511,8 +1508,7 @@ style="color:#22c55e;font-weight:bold">
 
 <!-- BET PANEL (PAID MODE ONLY) -->
 
-<div id="paidGamePanel"
-style="margin-top:20px;display:none">
+<div id="paidGamePanel" style="margin-top:20px;display:none">
 
 <h3>🎰 Enter Bet Amount</h3>
 
@@ -1533,14 +1529,12 @@ text-align:center;
 
 <br><br>
 
-<button class="btn-bonus"
-onclick="startPaidGame()">
+<button class="btn-bonus" onclick="startPaidGame()">
 🎮 Play Game
 </button>
 
 </div>
 
-</div>
 
 <div style="margin-top:20px">
 
