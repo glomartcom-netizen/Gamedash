@@ -1307,9 +1307,71 @@ margin-top:30px;
 
     <button onclick="toggleMusic()">🔊 Sound</button>
 
-<p>
-🎮 DMX Game Zone
+<h2>🎮 DMX Game Zone</h2>
+
+<p style="color:#94a3b8">
+Play games and win DMX rewards
 </p>
+
+
+<div style="margin-top:20px">
+
+<button class="btn-bonus" onclick="setMode('promo')">
+Promo Play
+</button>
+
+<button class="btn-bonus" onclick="setMode('member')">
+Member Play
+</button>
+
+<button class="btn-bonus" onclick="setMode('paid')">
+Paid Play
+</button>
+
+</div>
+
+
+<div style="margin-top:20px">
+
+<marquee id="winnerBoard" style="color:#06b6d4;font-weight:bold">
+
+🔥 Live Winners will appear here 🔥
+
+</marquee>
+
+</div>
+
+
+<div style="margin-top:20px;font-size:18px">
+
+🏆 Jackpot Pool:
+
+<span id="jackpotValue" style="color:#22c55e;font-weight:bold">
+
+0
+
+</span> DMX
+
+</div>
+
+
+<div style="margin-top:30px">
+
+<a href="https://t.me/YOURGROUP" target="_blank">
+
+📢 Join Telegram Community
+
+</a>
+
+<br><br>
+
+<a href="https://yourwebsite.com" target="_blank">
+
+🌐 Visit Official Website
+
+</a>
+
+</div>
 
 
 <div class="game-container">
@@ -1974,11 +2036,13 @@ address + " won " + reward + " DMX 🔥 | "
 
 function updateJackpot(){
 
-let el = document.getElementById("jackpotValue");
+let el = document.getElementById("jackpotValue")
 
-if(!el) return;
+if(!el) return
 
-el.innerText = Math.floor(Math.random()*5000);
+let current = Number(el.innerText)
+
+el.innerText = current + Math.floor(Math.random()*5)
 
 }
 
