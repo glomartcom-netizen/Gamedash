@@ -1384,8 +1384,6 @@ transform:scale(0.9);
 
     <button onclick="toggleMusic()">🔊 Sound</button>
 
-
-
 <!-- ===== GAME CONTROL PANEL ===== -->
 
 <div style="margin-top:20px;text-align:center">
@@ -1403,29 +1401,80 @@ style="margin-top:10px;font-weight:bold;font-size:18px;color:#22c55e">
 🟢 Promo Mode
 </div>
 
+
 <!-- CONTROL BUTTONS -->
 
 <div style="margin-top:15px">
 
-<button class="btn-bonus mode-btn" onclick="setMode('promo',event)">
+<button class="btn-bonus mode-btn"
+onclick="setMode('promo',event)">
 Promo Play
 </button>
 
-<button class="btn-bonus mode-btn" onclick="setMode('member',event)">
+<button class="btn-bonus mode-btn"
+onclick="setMode('member',event)">
 Member Play
 </button>
 
-<button class="btn-bonus mode-btn" onclick="setMode('paid',event)">
+<button class="btn-bonus mode-btn"
+onclick="setMode('paid',event)">
 Paid Play
 </button>
 
-<button class="btn-bonus" onclick="openGameInfo()">
+<button class="btn-bonus"
+onclick="openGameInfo()">
 📜 Game Rules
 </button>
 
 </div>
 
+
+<!-- PLAYER BALANCE -->
+
+<div style="margin-top:20px;font-size:18px">
+
+💰 Balance:
+<span id="balanceValue"
+style="color:#22c55e;font-weight:bold">
+0
+</span> DMX
+
 </div>
+
+
+<!-- BET PANEL (PAID MODE ONLY) -->
+
+<div id="paidGamePanel"
+style="margin-top:20px;display:none">
+
+<h3>🎰 Enter Bet Amount</h3>
+
+<input
+id="betAmount"
+type="number"
+min="10"
+max="5000"
+placeholder="Enter Bet (10 - 5000 DMX)"
+style="
+padding:10px;
+border-radius:8px;
+border:none;
+margin-top:10px;
+width:200px;
+text-align:center;
+">
+
+<br><br>
+
+<button class="btn-bonus"
+onclick="startPaidGame()">
+🎮 Play Game
+</button>
+
+</div>
+
+</div>
+
 
 <!-- GAME RULES POPUP -->
 
@@ -1494,47 +1543,7 @@ Close
 </div>
 
 
-<!-- PLAYER BALANCE -->
-
-<div style="margin-top:20px;font-size:18px">
-
-💰 Balance:
-<span id="balanceValue" style="color:#22c55e;font-weight:bold">
-0
-</span> DMX
-
-</div>
-
-
-<!-- BET PANEL (PAID MODE ONLY) -->
-
-<div id="paidGamePanel" style="margin-top:20px;display:none">
-
-<h3>🎰 Enter Bet Amount</h3>
-
-<input
-id="betAmount"
-type="number"
-min="10"
-max="5000"
-placeholder="Enter Bet (10 - 5000 DMX)"
-style="
-padding:10px;
-border-radius:8px;
-border:none;
-margin-top:10px;
-width:200px;
-text-align:center;
-">
-
-<br><br>
-
-<button class="btn-bonus" onclick="startPaidGame()">
-🎮 Play Game
-</button>
-
-</div>
-
+<!-- LIVE WINNERS -->
 
 <div style="margin-top:20px">
 
@@ -1544,6 +1553,8 @@ text-align:center;
 
 </div>
 
+
+<!-- JACKPOT -->
 
 <div style="margin-top:20px;font-size:18px">
 
@@ -1555,6 +1566,8 @@ text-align:center;
 
 </div>
 
+
+<!-- COMMUNITY LINKS -->
 
 <div style="margin-top:30px">
 
