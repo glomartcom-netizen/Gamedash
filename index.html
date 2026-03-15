@@ -2029,16 +2029,22 @@ let gameMode = "promo"
 // reward claim (dashboard handle செய்யும்)
 function claimGameReward(amount){
 
-amount = Number(amount)
+amount = applyRewardLimit(amount)
 
-if(!amount || amount <= 0){
-console.log("Invalid reward")
+if(amount > jackpotPool){
+
+alert("Jackpot pool empty")
 return
+
 }
 
-console.log("Reward:",amount,"DMX")
+jackpotPool -= amount
+
+updateJackpot()
 
 jackpotEffect()
+
+console.log("Reward:",amount,"DMX")
 
 }
 
@@ -2199,12 +2205,48 @@ bgMusic.play().catch(function(){})
 
 }
 
-function showPaidRules(){
-document.getElementById("paidRulesBox").style.display="block"
+function openGameInfo(){
+document.getElementById("gameInfoPopup").style.display="block";
 }
 
-function closePaidRules(){
-document.getElementById("paidRulesBox").style.display="none"
+function closeGameInfo(){
+document.getElementById("gameInfoPopup").style.display="none";
+}
+
+ // ===============================
+// GAME MODE REWARD CONTROL
+// ===============================
+
+function getRewardLimit(){
+
+if(gameMode === "promo"){
+return 100
+}
+
+if(gameMode === "member"){
+return 250
+}
+
+if(gameMode === "paid"){
+return 25000
+}
+
+return 100
+
+    }   
+
+function applyRewardLimit(reward){
+
+reward = Number(reward)
+
+let limit = getRewardLimit()
+
+if(reward > limit){
+reward = limit
+}
+
+return reward
+
     }    
     
 // ===============================
