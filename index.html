@@ -1858,86 +1858,142 @@ closeAllGames();
 document.querySelector("#crashGamePanel").style.display="block";
 }
 
-// ===============================  
-// GAME VARIABLES  
-// ===============================  
-  
-let gameRunning = false;  
+// ===============================
+// GAME VARIABLES
+// ===============================
+
+let gameRunning = false;
+
 let userAddress = localStorage.getItem("walletAddress");
+
+let contract = window.contract || null;
+
+
+// ===============================
+// CLAIM REWARD
+// ===============================
 
 async function claimGameReward(amount){
 
-if(!contract) return;
+if(!contract){
 
-await contract.claimGameReward(
-ethers.utils.parseEther(amount.toString())
-)
+console.log("Contract not connected");
 
-    } 
-
-async function checkGameCooldown(){
-
-let last = localStorage.getItem("lastPlay")
-
-let now = Date.now()
-
-if(now - last < 86400000){
-
-alert("Daily game already used")
-
-return false
+return;
 
 }
 
-localStorage.setItem("lastPlay",now)
+await contract.claimGameReward(
+ethers.utils.parseEther(amount.toString())
+);
 
-return true
+}
 
-    }  
 
- let gameMode = "promo"
+// ===============================
+// COOLDOWN SYSTEM
+// ===============================
+
+async function checkGameCooldown(){
+
+let last = localStorage.getItem("lastPlay") || 0;
+
+let now = Date.now();
+
+if(now - last < 86400000){
+
+alert("Daily game already used");
+
+return false;
+
+}
+
+localStorage.setItem("lastPlay",now);
+
+return true;
+
+}
+
+
+// ===============================
+// GAME MODE SYSTEM
+// ===============================
+
+let gameMode = "promo";
 
 function setMode(mode){
 
-gameMode = mode
+gameMode = mode;
 
-alert("Mode changed to "+mode)
+alert("Mode changed to "+mode);
 
-    }  
+}
+
+
+// ===============================
+// PAID GAME
+// ===============================
 
 async function playPaidGame(entry){
 
+if(!contract){
+
+alert("Contract not connected");
+
+return;
+
+}
+
 await contract.playPaidGame(
 ethers.utils.parseEther(entry.toString())
-)
+);
 
-    }    
+}
+
+
+// ===============================
+// WINNER BOARD
+// ===============================
 
 function addWinner(address,reward){
 
-let board = document.getElementById("winnerBoard")
+let board = document.getElementById("winnerBoard");
+
+if(!board) return;
 
 board.innerHTML =
 address + " won " + reward + " DMX 🔥 | "
-+ board.innerHTML
++ board.innerHTML;
 
-    }  
+}
+
+
+// ===============================
+// JACKPOT DISPLAY
+// ===============================
 
 function updateJackpot(){
 
-document.getElementById("jackpotValue").innerText =
-Math.floor(Math.random()*5000)
+let el = document.getElementById("jackpotValue");
 
-    }  
+if(!el) return;
+
+el.innerText = Math.floor(Math.random()*5000);
+
+}
+
+
+// ===============================
+// SECURITY
+// ===============================
 
 if(!userAddress){
 
-alert("Open from dashboard only")
+alert("Open from dashboard only");
 
-window.location.href="dashboard.html"
+window.location.href="dashboard.html";
 
-    }    
-
+}
     
 
         // Initial wheel rotation angle
