@@ -1307,10 +1307,8 @@ margin-top:30px;
 
     <button onclick="toggleMusic()">🔊 Sound</button>
 
-<h2>🎮 DMX GAME ZONE</h2>
-
 <p>
-Wallet: <span id="walletStatus">Connected (Demo)</span>
+🎮 DMX Game Zone
 </p>
 
 
@@ -1321,8 +1319,6 @@ Wallet: <span id="walletStatus">Connected (Demo)</span>
 <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
 
 <div class="game-btn" onclick="openDiceGame()">🎲 Dice Roll</div>
-
-<div class="game-btn" onclick="openTreasure()">💎 Treasure</div>
 
 <div class="game-btn" onclick="openCardGame()">🃏 Card Flip</div>
 
@@ -1429,43 +1425,6 @@ CASHOUT (Claim your reward)
 
 </div>
 
-
-
-<div class="treasure-zone">
-
-<div class="chest-container">
-
-<div class="chest-wrapper" onclick="pickTreasureAnimation(1)">
-<div class="chest-3d" id="chest1">
-<div class="chest-lid"></div>
-<div class="chest-body"></div>
-<div class="chest-loot"></div>
-</div>
-</div>
-
-<div class="chest-wrapper" onclick="pickTreasureAnimation(2)">
-<div class="chest-3d" id="chest2">
-<div class="chest-lid"></div>
-<div class="chest-body"></div>
-<div class="chest-loot"></div>
-</div>
-</div>
-
-<div class="chest-wrapper" onclick="pickTreasureAnimation(3)">
-<div class="chest-3d" id="chest3">
-<div class="chest-lid"></div>
-<div class="chest-body"></div>
-<div class="chest-loot"></div>
-</div>
-</div>
-
-</div>
-
-<p style="color:#94a3b8;font-size:14px;margin-top:15px;">
-Pick any chest and test your luck!
-</p>
-
-</div>
 
 <div class="card-scene">
 
@@ -1864,11 +1823,6 @@ closeAllGames();
 document.querySelector(".scene").style.display="block";
 }
 
-function openTreasure(){
-closeAllGames();
-document.querySelector(".treasure-zone").style.display="block";
-}
-
 function openCardGame(){
 closeAllGames();
 document.querySelector(".card-scene").style.display="block";
@@ -1904,38 +1858,87 @@ closeAllGames();
 document.querySelector("#crashGamePanel").style.display="block";
 }
 
+// ===============================  
+// GAME VARIABLES  
+// ===============================  
+  
+let gameRunning = false;  
+let userAddress = localStorage.getItem("walletAddress");
 
-// ===============================
-// GAME VARIABLES
-// ===============================
-
-let gameRunning = false;
-let userAddress = "0x123...Demo"; // Demo wallet address
-
-
-// ===============================
-// HELPER FUNCTIONS (Demo Mode)
-// ===============================
-
-
-
-// Check cooldown before playing game
-async function checkGameCooldown(){
-return true;
-}
-
-
-// Reward distribution (Demo mode)
 async function claimGameReward(amount){
 
-console.log("Reward:", amount, "DMX");
+if(!contract) return;
 
-alert("Reward credited: " + amount + " DMX (Demo)");
+await contract.claimGameReward(
+ethers.utils.parseEther(amount.toString())
+)
 
-gameRunning = false;
+    } 
+
+async function checkGameCooldown(){
+
+let last = localStorage.getItem("lastPlay")
+
+let now = Date.now()
+
+if(now - last < 86400000){
+
+alert("Daily game already used")
+
+return false
 
 }
-        
+
+localStorage.setItem("lastPlay",now)
+
+return true
+
+    }  
+
+ let gameMode = "promo"
+
+function setMode(mode){
+
+gameMode = mode
+
+alert("Mode changed to "+mode)
+
+    }  
+
+async function playPaidGame(entry){
+
+await contract.playPaidGame(
+ethers.utils.parseEther(entry.toString())
+)
+
+    }    
+
+function addWinner(address,reward){
+
+let board = document.getElementById("winnerBoard")
+
+board.innerHTML =
+address + " won " + reward + " DMX 🔥 | "
++ board.innerHTML
+
+    }  
+
+function updateJackpot(){
+
+document.getElementById("jackpotValue").innerText =
+Math.floor(Math.random()*5000)
+
+    }  
+
+if(!userAddress){
+
+alert("Open from dashboard only")
+
+window.location.href="dashboard.html"
+
+    }    
+
+    
 
         // Initial wheel rotation angle
 let currentWheelRotation = 0;
@@ -2238,74 +2241,7 @@ async function rollDice() {
 
 }
 
-
-        async function pickTreasureAnimation(choice) {
-
-    if (gameRunning) return;
-
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
-
-    if (!(await checkGameCooldown(userAddress))) return;
-
-    gameRunning = true;
-
-
-    // Reset all treasure chests
-    for (let i = 1; i <= 3; i++) {
-        document.getElementById(`chest${i}`).classList.remove("chest-open");
-    }
-
-
-    const selectedChest = document.getElementById(`chest${choice}`);
-
-
-    // 1. Play opening sound
-    playSound(treasureSound);
-
-
-    // 2. Open chest animation
-    selectedChest.classList.add("chest-open");
-
-
-    setTimeout(async () => {
-
-        const rewards = [5, 10, 20, 50];
-
-        const reward = rewards[Math.floor(Math.random() * rewards.length)];
-
-
-        playSound(winSound);
-
-
-        // 3. Small body shake effect
-        document.body.style.transform = "scale(1.02)";
-
-        setTimeout(() => document.body.style.transform = "scale(1)", 150);
-
-
-        setTimeout(() => {
-
-            alert(
-            "💎 Treasure Opened!\n\n" +
-            "Congratulations! The chest you selected contained " +
-            reward + " DMX."
-            );
-
-            claimGameReward(reward);
-
-            addWinner(userAddress, reward);
-
-            gameRunning = false;
-
-        }, 300);
-
-    }, 800);
-
-}
-
+    
     
 
 let tileReward = 0;
