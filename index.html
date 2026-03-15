@@ -1103,24 +1103,21 @@ animation:coinPop 0.8s ease-out;
 
 /* GAME BUTTON GRID */
 
-.game-container {
+.game-container{
 
-    max-width: 500px;
+max-width:500px;
+width:100%;
 
-    width: 100%;
+display:grid;
 
-    display: grid;
+grid-template-columns:repeat(2,1fr);
 
-    grid-template-columns: 1fr 1fr;
+gap:15px;
 
-    gap: 15px;
-
-    margin: auto;
-
-    margin-top: 20px;
+margin:auto;
+margin-top:20px;
 
 }
-
 .game-btn {
 
     background: #0f172a;
@@ -1143,15 +1140,11 @@ animation:coinPop 0.8s ease-out;
 
 }
 
-.game-btn:hover {
-
-    background: #06b6d4;
-
-    color: black;
-
-    transform: translateY(-3px);
-
-    box-shadow: 0 0 10px #06b6d4;
+.game-btn:hover{
+background:#06b6d4;
+color:black;
+transform:translateY(-3px);
+box-shadow:0 0 15px #06b6d4;
 }
 
 .btn-bonus {
@@ -1305,6 +1298,51 @@ color:black;
 display:none;
 margin-top:30px;
 }
+
+/* MOBILE GAME UI FIX */
+
+@media (max-width:600px){
+
+body{
+padding:10px;
+}
+
+h2{
+font-size:22px;
+}
+
+.game-container{
+grid-template-columns:1fr;
+gap:10px;
+}
+
+.game-btn{
+padding:18px;
+font-size:16px;
+}
+
+.btn-bonus{
+width:100%;
+margin-top:10px;
+}
+
+.scene,
+.wheel-container,
+.box-scene,
+.card-scene,
+.target-scene,
+.slot-machine-container,
+.guess-container,
+.color-game-container{
+width:100%;
+margin:auto;
+}
+
+.dice{
+transform:scale(0.9);
+}
+
+        }        
         
     </style>
 </head>
