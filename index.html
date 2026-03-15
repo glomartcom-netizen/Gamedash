@@ -1440,34 +1440,85 @@ Paid Play
 
 <!-- PAID GAME RULES POPUP -->
 
-<div id="paidRulesBox" style="
+<div id="gameInfoPopup" style="
 display:none;
 position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
 background:#111;
-padding:20px;
-border-radius:10px;
-width:300px;
 color:white;
+padding:25px;
+width:350px;
+max-height:80vh;
+overflow:auto;
+border-radius:12px;
+box-shadow:0 0 25px rgba(0,0,0,0.6);
 z-index:9999;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
 ">
 
-<h3>🎰 Paid Game Rules</h3>
+<h2 style="margin-top:0">🎮 Game Information</h2>
 
-<ul style="text-align:left;font-size:14px">
+<h3>🆓 Free Daily Game</h3>
+<p>
+• Each wallet can play 1 free game every 24 hours.<br>
+• Possible rewards: 5 – 100 DMX.<br>
+• Rewards appear in your Claimable Balance.<br>
+• Free games are intended for promotional participation.
+</p>
 
-<li>Minimum Bet: 10 DMX</li>
-<li>Maximum Bet: 5000 DMX</li>
-<li>Maximum Win: 25000 DMX</li>
-<li>Winning multiplier up to 5x</li>
-<li>Each game result is random</li>
+<h3>👤 Member Reward Games</h3>
+<p>
+• Available for registered players and active users.<br>
+• Member games may reward up to 250 DMX.<br>
+• Daily participation limits may apply.<br>
+• Rewards depend on participation and activity.
+</p>
 
-</ul>
+<h3>💰 Paid Games</h3>
+<p>
+• Minimum Entry: 10 DMX<br>
+• Maximum Entry: 5000 DMX<br>
+• Maximum Win: 25000 DMX<br><br>
 
-<button class="btn-bonus" onclick="closePaidRules()">
+Examples:<br>
+• 10 DMX Entry → Win up to 50 DMX<br>
+• 100 DMX Entry → Win up to 500 DMX<br>
+• 1000 DMX Entry → Win up to 5000 DMX<br>
+• 5000 DMX Entry → Win up to 25000 DMX<br>
+
+Winning multiplier may reach up to 5× depending on game outcome.
+</p>
+
+<h3>🏆 Jackpot Pool</h3>
+<p>
+• Jackpot pool increases as players participate in games.<br>
+• Large wins may trigger jackpot rewards.<br>
+• Jackpot rewards are distributed automatically by the system.
+</p>
+
+<h3>🎁 Bonus Tasks</h3>
+<p>
+• Join our Telegram community to stay updated.<br>
+• Share the platform with friends.<br>
+• Special promotions and bonus opportunities may appear during events.
+</p>
+
+<h3>👥 Referral Rewards</h3>
+<p>
+• Invite friends using your referral link.<br>
+• Grow your network and unlock additional opportunities.<br>
+• Active referrals may increase bonus rewards.
+</p>
+
+<h3>⚠ Notice</h3>
+<p>
+• Game rewards are generated using random probability algorithms.<br>
+• Platform rules may be updated when necessary.<br>
+• Always play responsibly.
+</p>
+
+<button class="btn-bonus" onclick="closeGameInfo()" style="margin-top:15px">
 Close
 </button>
 
