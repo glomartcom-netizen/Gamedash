@@ -1787,38 +1787,104 @@ async function updateJackpot() {
     } catch (e) { console.log("Jackpot load error"); }
 }
 
-async function claimGameReward(amount) {
-    if (!contract) return alert("Wallet not connected");
-    try {
-        const tx = await contract.claimGameReward(ethers.utils.parseEther(amount.toString()));
-        await tx.wait();
-        jackpotEffect();
-    } catch (e) {
-        console.log("Claim failed", e);
-        playSound(loseSound);
-    }
+async function claimGameReward(amount){
+
+if(gameRunning === false){
+console.log("Invalid reward trigger");
+return;
 }
 
-async function playPaidGame(entry) {
-    if (!contract) return alert("Wallet not connected");
-    if (entry < 10) return alert("Minimum 10 DMX required");
-    try {
-        const tx = await contract.playPaidGame(ethers.utils.parseEther(entry.toString()));
-        await tx.wait();
-        playSound(clickSound);
-    } catch (e) { console.log("Paid game error", e); }
+if(!contract) return alert("Wallet not connected");
+
+try{
+
+const tx = await contract.claimGameReward(
+ethers.utils.parseEther(amount.toString())
+)
+
+await tx.wait()
+
+jackpotEffect()
+
+}catch(e){
+
+console.log("Claim failed",e)
+
+playSound(loseSound)
+
 }
 
-// FIX: Cooldown Number Conversion Bug
-async function checkGameCooldown() {
-    let last = Number(localStorage.getItem("lastPlay")) || 0;
-    let now = Date.now();
-    if (now - last < GAME_COOLDOWN) {
-        alert("Daily play limit reached");
-        return false;
-    }
-    localStorage.setItem("lastPlay", now);
-    return true;
+}
+
+async function playPaidGame(entry){
+
+if(!contract){
+alert("Wallet not connected");
+return;
+}
+
+if(!entry || entry < 10){
+alert("Minimum 10 DMX required");
+return;
+}
+
+if(gameRunning){
+alert("Game already running");
+return;
+}
+
+try{
+
+gameRunning = true
+
+const tx = await contract.playPaidGame(
+ethers.utils.parseEther(entry.toString())
+)
+
+await tx.wait()
+
+playSound(clickSound)
+
+console.log("Paid game transaction successful")
+
+}catch(e){
+
+console.log("Paid game error:",e)
+
+alert("Transaction failed")
+
+}finally{
+
+gameRunning = false
+
+}
+
+}
+    
+async function checkGameCooldown(){
+
+let last = Number(localStorage.getItem("lastPlay")) || 0
+let now = Date.now()
+
+let diff = now - last
+
+if(diff < GAME_COOLDOWN){
+
+let remaining = GAME_COOLDOWN - diff
+
+let hours = Math.floor(remaining / 3600000)
+let minutes = Math.floor((remaining % 3600000) / 60000)
+
+alert("Daily game already used\nTry again in " + hours + "h " + minutes + "m")
+
+return false
+
+}
+
+localStorage.setItem("lastPlay", now)
+
+return true
+
 }
 
 // ===============================
