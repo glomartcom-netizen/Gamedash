@@ -1257,6 +1257,26 @@ body {
 display:none;
 margin-top:30px;
         }
+./* GAME OPEN ANIMATION */
+
+.game-open{
+animation:gameOpen 0.4s ease;
+}
+
+@keyframes gameOpen{
+
+0%{
+transform:scale(0.9);
+opacity:0;
+}
+
+100%{
+transform:scale(1);
+opacity:1;
+}
+
+}
+        
         
 .wheel-label{
 position:absolute;
@@ -2090,59 +2110,78 @@ jackpotEffect()
     }    
   
 
-        // ===============================
+// ===============================
 // GAME NAVIGATION FUNCTIONS
-// Scroll to selected game section
+// ===============================
+
+function showGame(selector,sound){
+
+closeAllGames()
+
+const el = document.querySelector(selector)
+
+if(!el) return
+
+el.style.display="block"
+
+el.classList.add("game-open")
+
+if(sound) playSound(sound)
+
+setTimeout(function(){
+
+el.scrollIntoView({
+behavior:"smooth",
+block:"center"
+})
+
+},100)
+
+}
+
+
+// ===============================
+// GAME OPEN FUNCTIONS
 // ===============================
 
 function openSpinWheel(){
-closeAllGames();
-document.querySelector(".wheel-container").style.display="block";
+showGame(".wheel-container",spinSound)
 }
 
 function openLuckyBox(){
-closeAllGames();
-document.querySelector(".box-scene").style.display="block";
+showGame(".box-scene",boxSound)
 }
 
 function openDiceGame(){
-closeAllGames();
-document.querySelector(".scene").style.display="block";
+showGame(".scene",diceSound)
 }
 
 function openCardGame(){
-closeAllGames();
-document.querySelector(".card-scene").style.display="block";
+showGame(".card-scene",cardSound)
 }
 
 function openTargetGame(){
-closeAllGames();
-document.querySelector(".target-scene").style.display="block";
+showGame(".target-scene",targetSound)
 }
 
 function startSlot(){
-closeAllGames();
-document.querySelector(".slot-machine-container").style.display="block";
+showGame(".slot-machine-container",slotSound)
 }
 
 function openGuessGame(){
-closeAllGames();
-document.querySelector(".guess-container").style.display="block";
+showGame(".guess-container",guessSound)
 }
 
 function openColorGame(){
-closeAllGames();
-document.querySelector(".color-game-container").style.display="block";
+showGame(".color-game-container",colorSound)
 }
 
 function openMagicTiles(){
-closeAllGames();
-document.querySelector("#magicTilesPanel").style.display="block";
+showGame("#magicTilesPanel",tilesSound)
 }
 
 function openCrashGame(){
-closeAllGames();
-document.querySelector("#crashGamePanel").style.display="block";
+showGame("#crashGamePanel",crashSound)
 }
 
     
