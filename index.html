@@ -1670,199 +1670,227 @@ TAKE PROFIT (Collect Profit)
 
 <script>
 
- // ===== CORE FIX SYSTEM =====
 
-// Prevent missing function errors
-function closeAllGames(){
-
-document.querySelectorAll(
-".scene,.wheel-container,.box-scene,.treasure-zone,.card-scene,.target-scene,.slot-machine-container,.guess-container,.color-game-container,#magicTilesPanel,#crashGamePanel"
-).forEach(el=>{
-el.style.display="none";
-});
-
-}
-
-// Leaderboard placeholder
-function addWinner(address,reward){
-console.log("Winner:",address,"won",reward,"DMX");
-}
-
-// Extra sound effects
-const diceSound = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
-const treasureSound = new Audio("https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg");
-const cardSound = new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg");
-const boxSound = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-    
 // ===============================
-// GLOBAL SOUND SYSTEM
+// 1. GLOBAL SOUND SYSTEM (10 Game Sounds)
 // ===============================
-
-// Background music
 const bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3");
 bgMusic.loop = true;
-bgMusic.volume = 0.25;
+bgMusic.volume = 0.20;
 
-
-// Game sounds
-const spinSound  = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3");
+const clickSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f9f2f8a4a.mp3");
 const winSound   = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a2b8b8b6b.mp3");
 const loseSound  = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e2e2c2f.mp3");
-const clickSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f9f2f8a4a.mp3");
 
+// Specific Action Sounds
+const spinSound     = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3");
+const boxSound      = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+const diceSound     = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+const cardSound     = new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg");
+const targetSound   = new Audio("https://actions.google.com/sounds/v1/impacts/small_thud.ogg");
+const slotSound     = new Audio("https://actions.google.com/sounds/v1/science_fiction/digital_beeps.ogg");
+const guessSound    = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+const colorSound    = new Audio("https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg");
+const tilesSound    = new Audio("https://actions.google.com/sounds/v1/multimedia/pizzicato_1.ogg");
+const crashSound    = new Audio("https://actions.google.com/sounds/v1/science_fiction/whoosh.ogg");
 
-// ===============================
-// PLAY SOUND HELPER
-// ===============================
-
-function playSound(sound){
-
-    if(!sound) return;
-
+function playSound(sound) {
+    if (!sound) return;
     sound.currentTime = 0;
-    sound.play().catch(()=>{});
-
+    sound.play().catch(() => console.log("Audio waiting for interaction."));
 }
 
+function toggleMusic() {
+    bgMusic.paused ? bgMusic.play() : bgMusic.pause();
+}
 
 // ===============================
-// AUTO START MUSIC
+// 2. CORE GAME STATE & SECURITY
+// ===============================
+let gameRunning = false;
+let gameMode = "promo"; 
+let userAddress = localStorage.getItem("walletAddress");
+let contract = window.contract || null;
+let jackpotTimer; 
+const GAME_COOLDOWN = 24 * 60 * 60 * 1000; 
+
+// FIX: Prevent Wallet Redirect Loop
+if (!userAddress) {
+    alert("Please open game from dashboard");
+    setTimeout(() => { window.location.href = "dashboard.html"; }, 500);
+}
+
+// FIX: Game Mode with UI Highlighting & Browser Compatibility
+function setMode(mode, e) {
+    gameMode = mode;
+    document.querySelectorAll(".mode-btn").forEach(btn => btn.classList.remove("active-mode"));
+    
+    if (e && e.target) {
+        e.target.classList.add("active-mode");
+    }
+    alert("Game mode set to: " + mode);
+}
+
+// ===============================
+// 3. NAVIGATION & DISPLAY ENGINE
+// ===============================
+function closeAllGames() {
+    const gameSelectors = [
+        ".scene", ".wheel-container", ".box-scene", ".treasure-zone", 
+        ".card-scene", ".target-scene", ".slot-machine-container", 
+        ".guess-container", ".color-game-container", "#magicTilesPanel", "#crashGamePanel"
+    ];
+    gameSelectors.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (el) el.style.display = "none";
+    });
+}
+
+function openGame(selector, specificSound) {
+    closeAllGames();
+    const el = document.querySelector(selector);
+    if (el) {
+        el.style.display = "block";
+        if (specificSound) playSound(specificSound);
+    }
+}
+
+const openSpinWheel  = () => openGame(".wheel-container", spinSound);
+const openLuckyBox   = () => openGame(".box-scene", boxSound);
+const openDiceGame   = () => openGame(".scene", diceSound);
+const openCardGame   = () => openGame(".card-scene", cardSound);
+const openTargetGame = () => openGame(".target-scene", targetSound);
+const startSlot      = () => openGame(".slot-machine-container", slotSound);
+const openGuessGame  = () => openGame(".guess-container", guessSound);
+const openColorGame  = () => openGame(".color-game-container", colorSound);
+const openMagicTiles = () => openGame("#magicTilesPanel", tilesSound);
+const openCrashGame  = () => openGame("#crashGamePanel", crashSound);
+
+// ===============================
+// 4. BLOCKCHAIN INTERACTIONS
 // ===============================
 
-window.onload = function(){
+// FIX: Real Jackpot with Null Protection
+async function updateJackpot() {
+    const el = document.getElementById("jackpotValue");
+    if (!el) return;
 
-    bgMusic.play().catch(()=>{
-        console.log("User interaction required for sound");
+    if (!contract) {
+        let cur = parseFloat(el.innerText) || 0;
+        el.innerText = (cur + Math.floor(Math.random() * 5)).toString();
+        return;
+    };
+
+    try {
+        let pool = await contract.gameRewardPool();
+        el.innerText = ethers.utils.formatEther(pool);
+    } catch (e) { console.log("Jackpot load error"); }
+}
+
+async function claimGameReward(amount) {
+    if (!contract) return alert("Wallet not connected");
+    try {
+        const tx = await contract.claimGameReward(ethers.utils.parseEther(amount.toString()));
+        await tx.wait();
+        jackpotEffect();
+    } catch (e) {
+        console.log("Claim failed", e);
+        playSound(loseSound);
+    }
+}
+
+async function playPaidGame(entry) {
+    if (!contract) return alert("Wallet not connected");
+    if (entry < 10) return alert("Minimum 10 DMX required");
+    try {
+        const tx = await contract.playPaidGame(ethers.utils.parseEther(entry.toString()));
+        await tx.wait();
+        playSound(clickSound);
+    } catch (e) { console.log("Paid game error", e); }
+}
+
+// FIX: Cooldown Number Conversion Bug
+async function checkGameCooldown() {
+    let last = Number(localStorage.getItem("lastPlay")) || 0;
+    let now = Date.now();
+    if (now - last < GAME_COOLDOWN) {
+        alert("Daily play limit reached");
+        return false;
+    }
+    localStorage.setItem("lastPlay", now);
+    return true;
+}
+
+// ===============================
+// 5. VISUALS & SOCIAL
+// ===============================
+
+// FIX: Winner Board Overflow Protection (Limit to 20)
+function addWinner(address, reward) {
+    const board = document.getElementById("winnerBoard");
+    if (!board) return;
+    
+    const shortAddr = address.substring(0, 6) + "...";
+    const text = `${shortAddr} won ${reward} DMX 🔥 | `;
+    
+    const span = document.createElement("span");
+    span.textContent = text;
+    board.prepend(span);
+
+    // Remove oldest if list exceeds 20 winners to keep UI clean
+    if(board.children.length > 20){
+        board.removeChild(board.lastChild);
+    }
+}
+
+function jackpotEffect() {
+    playSound(winSound);
+    document.body.classList.add("win-flash");
+    setTimeout(() => document.body.classList.remove("win-flash"), 1500);
+}
+
+// ===============================
+// 6. INITIALIZATION & REFINED EVENTS
+// ===============================
+window.onload = function() {
+    // FIX: Contract Timeout Safety (Max 10 seconds)
+    let tries = 0;
+    const waitContract = setInterval(() => {
+        if (window.contract) {
+            contract = window.contract;
+            clearInterval(waitContract);
+            console.log("Contract connected successfully");
+        }
+        tries++;
+        if (tries > 20) {
+            clearInterval(waitContract);
+            console.log("Contract not found after 10s");
+        }
+    }, 500);
+
+    // FIX: Jackpot Interval duplication protection
+    clearInterval(jackpotTimer);
+    jackpotTimer = setInterval(updateJackpot, 5000);
+
+    const statusEl = document.getElementById("walletStatus");
+    if (statusEl && userAddress) {
+        statusEl.innerText = userAddress.substring(0, 6) + "...";
+    }
+
+    // FIX: Optimized Button Click (Prevents Sound Spam)
+    document.body.addEventListener("click", e => {
+        if(e.target.tagName !== "BUTTON") return;
+        if(clickSound.paused || clickSound.ended){
+            playSound(clickSound);
+        }
     });
 
+    // Background Music Activation
+    document.body.addEventListener("click", () => {
+        if (bgMusic.paused) bgMusic.play().catch(() => {});
+    }, { once: true });
 };
 
-
-// ===============================
-// BUTTON CLICK SOUND
-// ===============================
-
-document.querySelectorAll("button").forEach(btn=>{
-
-    btn.addEventListener("click",()=>{
-        playSound(clickSound);
-    });
-
-});
-
-
-// ===============================
-// TOGGLE MUSIC BUTTON
-// ===============================
-
-function toggleMusic(){
-
-    if(bgMusic.paused){
-
-        bgMusic.play();
-
-    }else{
-
-        bgMusic.pause();
-
-    }
-
-}
-
-
-// ===============================
-// LOSE SOUND EFFECT
-// ===============================
-
-function playLoseSound(){
-
-    playSound(loseSound);
-
-}
-
-
-// ===============================
-// WIN FLASH EFFECT
-// ===============================
-
-function winEffect(){
-
-    document.body.classList.add("win-flash");
-
-    setTimeout(()=>{
-        document.body.classList.remove("win-flash");
-    },1500);
-
-}
-
-
-// ===============================
-// SPARK PARTICLE EFFECT
-// ===============================
-
-function sparkEffect(){
-
-    for(let i=0;i<30;i++){
-
-        let s=document.createElement("div");
-
-        s.className="spark";
-
-        s.style.left=Math.random()*window.innerWidth+"px";
-        s.style.top=Math.random()*window.innerHeight+"px";
-
-        document.body.appendChild(s);
-
-        setTimeout(()=>s.remove(),1000);
-
-    }
-
-}
-
-
-// ===============================
-// FIREWORKS EFFECT
-// ===============================
-
-function fireworks(){
-
-    for(let i=0;i<20;i++){
-
-        let spark=document.createElement("div");
-
-        spark.className="spark";
-
-        spark.style.left=Math.random()*100+"vw";
-        spark.style.top=Math.random()*100+"vh";
-
-        document.body.appendChild(spark);
-
-        setTimeout(()=>spark.remove(),1000);
-
-    }
-
-}
-
-
-// ===============================
-// JACKPOT EFFECT
-// ===============================
-
-function jackpotEffect(){
-
-    playSound(winSound);
-
-    winEffect();
-
-    sparkEffect();
-
-    fireworks();
-
-}
-
-document.body.addEventListener("click",()=>{
-bgMusic.play().catch(()=>{});
-});    
   
 
         // ===============================
@@ -1920,146 +1948,7 @@ closeAllGames();
 document.querySelector("#crashGamePanel").style.display="block";
 }
 
-// ===============================
-// GAME VARIABLES
-// ===============================
-
-let gameRunning = false;
-
-let userAddress = localStorage.getItem("walletAddress");
-
-let contract = window.contract || null;
-
-
-// ===============================
-// CLAIM REWARD
-// ===============================
-
-async function claimGameReward(amount){
-
-if(!contract){
-
-console.log("Contract not connected");
-
-return;
-
-}
-
-await contract.claimGameReward(
-ethers.utils.parseEther(amount.toString())
-);
-
-}
-
-
-// ===============================
-// COOLDOWN SYSTEM
-// ===============================
-
-async function checkGameCooldown(){
-
-let last = localStorage.getItem("lastPlay") || 0;
-
-let now = Date.now();
-
-if(now - last < 86400000){
-
-alert("Daily game already used");
-
-return false;
-
-}
-
-localStorage.setItem("lastPlay",now);
-
-return true;
-
-}
-
-
-// ===============================
-// GAME MODE SYSTEM
-// ===============================
-
-let gameMode = "promo";
-
-function setMode(mode){
-
-gameMode = mode;
-
-alert("Mode changed to "+mode);
-
-}
-
-
-// ===============================
-// PAID GAME
-// ===============================
-
-async function playPaidGame(entry){
-
-if(!contract){
-
-alert("Contract not connected");
-
-return;
-
-}
-
-await contract.playPaidGame(
-ethers.utils.parseEther(entry.toString())
-);
-
-}
-
-
-// ===============================
-// WINNER BOARD
-// ===============================
-
-function addWinner(address,reward){
-
-let board = document.getElementById("winnerBoard");
-
-if(!board) return;
-
-board.innerHTML =
-address + " won " + reward + " DMX 🔥 | "
-+ board.innerHTML;
-
-}
-
-
-// ===============================
-// JACKPOT DISPLAY
-// ===============================
-
-function updateJackpot(){
-
-let el = document.getElementById("jackpotValue")
-
-if(!el) return
-
-let current = Number(el.innerText)
-
-el.innerText = current + Math.floor(Math.random()*5)
-
-}
-
-
-// ===============================
-// SECURITY
-// ===============================
-
-if(!userAddress){
-
-alert("Open from dashboard only");
-
-window.location.href="dashboard.html";
-
-}
     
-
         // Initial wheel rotation angle
 let currentWheelRotation = 0;
 
