@@ -1310,7 +1310,13 @@ margin:40px auto;
 .selected-dice{
 background:#22c55e;
 color:black;
-        }        
+        }  
+
+ .mode-btn.active-mode{
+background:#06b6d4;
+color:black;
+box-shadow:0 0 10px #06b6d4;
+    }   
         
 .scene,
 .wheel-container,
@@ -1383,6 +1389,15 @@ transform:scale(0.9);
 <p style="color:#94a3b8">
 Play games and win DMX rewards
 </p>
+
+<!-- MODE INDICATOR -->
+
+<div id="modeIndicator" style="margin-top:10px;font-weight:bold;font-size:18px;color:#22c55e">
+
+🟢 Promo Mode
+
+</div>
+
 
 <div style="margin-top:20px">
 
@@ -1798,14 +1813,38 @@ if (!userAddress) {
 }
 
 // FIX: Game Mode with UI Highlighting & Browser Compatibility
-function setMode(mode, e) {
-    gameMode = mode;
-    document.querySelectorAll(".mode-btn").forEach(btn => btn.classList.remove("active-mode"));
-    
-    if (e && e.target) {
-        e.target.classList.add("active-mode");
-    }
-    alert("Game mode set to: " + mode);
+function setMode(mode,e){
+
+gameMode = mode
+
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+btn.classList.remove("active-mode")
+})
+
+if(e && e.target){
+e.target.classList.add("active-mode")
+}
+
+const indicator = document.getElementById("modeIndicator")
+
+if(mode==="promo"){
+indicator.innerText="🟢 Promo Mode"
+indicator.style.color="#22c55e"
+document.getElementById("paidEntryPanel").style.display="none"
+}
+
+if(mode==="member"){
+indicator.innerText="🔵 Member Mode"
+indicator.style.color="#3b82f6"
+document.getElementById("paidEntryPanel").style.display="none"
+}
+
+if(mode==="paid"){
+indicator.innerText="🟣 Paid Mode"
+indicator.style.color="#a855f7"
+document.getElementById("paidEntryPanel").style.display="block"
+}
+
 }
 
 // ===============================
