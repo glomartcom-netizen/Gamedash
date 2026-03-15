@@ -1804,12 +1804,7 @@ jackpotEffect()
 
 }
 
-async function playPaidGame(entry){
-
-if(!contract){
-alert("Wallet not connected");
-return;
-}
+function playPaidGame(entry){
 
 if(!entry || entry < 10){
 alert("Minimum 10 DMX required");
@@ -1821,37 +1816,20 @@ alert("Game already running");
 return;
 }
 
-try{
+// save entry for dashboard
+localStorage.setItem("paidGameEntry", entry)
 
-gameRunning = true
-
-const tx = await contract.playPaidGame(
-ethers.utils.parseEther(entry.toString())
-)
-
-await tx.wait()
+console.log("Paid game entry saved:", entry)
 
 playSound(clickSound)
-
-console.log("Paid game transaction successful")
-
-}catch(e){
-
-console.log("Paid game error:",e)
-
-alert("Transaction failed")
-
-}finally{
-
-gameRunning = false
-
-}
 
 }
     
 async function checkGameCooldown(){
 
-let last = Number(localStorage.getItem("lastPlay")) || 0
+let key = "lastPlay_" + gameMode
+
+let last = Number(localStorage.getItem(key)) || 0
 let now = Date.now()
 
 let diff = now - last
@@ -1863,13 +1841,16 @@ let remaining = GAME_COOLDOWN - diff
 let hours = Math.floor(remaining / 3600000)
 let minutes = Math.floor((remaining % 3600000) / 60000)
 
-alert("Daily game already used\nTry again in " + hours + "h " + minutes + "m")
+alert(
+"Daily game already used\n" +
+"Try again in " + hours + "h " + minutes + "m"
+)
 
 return false
 
 }
 
-localStorage.setItem("lastPlay", now)
+localStorage.setItem(key, now)
 
 return true
 
@@ -1904,47 +1885,35 @@ function jackpotEffect() {
 }
 
 // ===============================
-// 6. INITIALIZATION & REFINED EVENTS
+// GAME INITIALIZATION
 // ===============================
-window.onload = function() {
-    // FIX: Contract Timeout Safety (Max 10 seconds)
-    let tries = 0;
-    const waitContract = setInterval(() => {
-        if (window.contract) {
-            contract = window.contract;
-            clearInterval(waitContract);
-            console.log("Contract connected successfully");
-        }
-        tries++;
-        if (tries > 20) {
-            clearInterval(waitContract);
-            console.log("Contract not found after 10s");
-        }
-    }, 500);
 
-    // FIX: Jackpot Interval duplication protection
-    clearInterval(jackpotTimer);
-    jackpotTimer = setInterval(updateJackpot, 5000);
+window.onload = function(){
 
-    const statusEl = document.getElementById("walletStatus");
-    if (statusEl && userAddress) {
-        statusEl.innerText = userAddress.substring(0, 6) + "...";
-    }
+// jackpot update
+clearInterval(jackpotTimer)
 
-    // FIX: Optimized Button Click (Prevents Sound Spam)
-    document.body.addEventListener("click", e => {
-        if(e.target.tagName !== "BUTTON") return;
-        if(clickSound.paused || clickSound.ended){
-            playSound(clickSound);
-        }
-    });
+jackpotTimer = setInterval(updateJackpot,5000)
 
-    // Background Music Activation
-    document.body.addEventListener("click", () => {
-        if (bgMusic.paused) bgMusic.play().catch(() => {});
-    }, { once: true });
-};
+// button click sound
+document.body.addEventListener("click",function(e){
 
+if(e.target.tagName !== "BUTTON") return
+
+playSound(clickSound)
+
+})
+
+// background music start
+document.body.addEventListener("click",function(){
+
+if(bgMusic.paused){
+bgMusic.play().catch(()=>{})
+}
+
+},{once:true})
+
+}
   
 
         // ===============================
@@ -2010,13 +1979,8 @@ async function spinWheelGame() {
 
 if (gameRunning) return;
 
-if (!userAddress) { 
-alert("Connect wallet first"); 
-return; 
-}
-
-if (!(await checkGameCooldown(userAddress))) return;
-
+if (!(await checkGameCooldown())) return;
+    
 gameRunning = true;
 
 playSound(spinSound); // play spin sound
@@ -2122,13 +2086,8 @@ if (gameRunning) return;
 
 gameRunning = true;
 
-    if (!userAddress) {
-        alert("Connect wallet first");
-        return;
-    }
-
-    if (!(await checkGameCooldown(userAddress))) return;
-
+if (!(await checkGameCooldown())) return;
+    
     gameRunning = true;
 
     const box = document.getElementById("boxElement");
@@ -2206,13 +2165,7 @@ async function rollDice() {
 
     if (gameRunning) return;
 
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
-
-    // Cooldown check (demo mode returns true)
-    if (!(await checkGameCooldown(userAddress))) return;
+    if (!(await checkGameCooldown())) return;
 
     gameRunning = true;
 
