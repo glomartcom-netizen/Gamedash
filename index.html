@@ -1787,32 +1787,23 @@ async function updateJackpot() {
     } catch (e) { console.log("Jackpot load error"); }
 }
 
-async function claimGameReward(amount){
+function claimGameReward(amount){
 
 if(gameRunning === false){
 console.log("Invalid reward trigger");
 return;
 }
 
-if(!contract) return alert("Wallet not connected");
+// save reward locally
+let reward = Number(localStorage.getItem("pendingReward")) || 0
 
-try{
+reward += amount
 
-const tx = await contract.claimGameReward(
-ethers.utils.parseEther(amount.toString())
-)
+localStorage.setItem("pendingReward", reward)
 
-await tx.wait()
+console.log("Reward saved:",reward)
 
 jackpotEffect()
-
-}catch(e){
-
-console.log("Claim failed",e)
-
-playSound(loseSound)
-
-}
 
 }
 
