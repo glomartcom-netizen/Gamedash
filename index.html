@@ -1257,7 +1257,7 @@ body {
 display:none;
 margin-top:30px;
         }
-./* GAME OPEN ANIMATION */
+/* GAME OPEN ANIMATION */
 
 .game-open{
 animation:gameOpen 0.4s ease;
@@ -1896,15 +1896,16 @@ function toggleMusic() {
 // ===============================
 let gameRunning = false;
 let gameMode = "promo";
+
 let userAddress = localStorage.getItem("walletAddress");
+
+if (!userAddress) {
+console.warn("Wallet not found. Running in guest mode.");
+userAddress = "GUEST_" + Math.floor(Math.random()*100000);
+}
+
 let jackpotTimer;
 const GAME_COOLDOWN = 24 * 60 * 60 * 1000;
-
-// Prevent Wallet Redirect Loop
-if (!userAddress) {
-alert("Please open game from dashboard");
-setTimeout(() => { window.location.href = "dashboard.html"; }, 500);
-}
 
 
 // ===============================
@@ -1954,7 +1955,6 @@ const gameSelectors = [
 ".scene",
 ".wheel-container",
 ".box-scene",
-".treasure-zone",
 ".card-scene",
 ".target-scene",
 ".slot-machine-container",
@@ -2405,35 +2405,25 @@ gameRunning=false;
 // ===============================
 
 function openLuckyBox(){
-
-closeAllGames()
-
-document.querySelector(".box-scene").style.display="block"
-
-const box=document.getElementById("boxElement")
-
-box.classList.remove("box-open","box-shaking")
-
+showGame(".box-scene",boxSound)
 }
 
 async function openBoxAnimation(){
 
 if(gameRunning) return
-
 if(!(await checkGameCooldown())) return
 
 gameRunning=true
 
 const box=document.getElementById("boxElement")
+if(!box) return
 
-// start shake
 box.classList.add("box-shaking")
 
 playSound(boxSound)
 
 setTimeout(()=>{
 
-// stop shake and open box
 box.classList.remove("box-shaking")
 box.classList.add("box-open")
 
@@ -2447,16 +2437,12 @@ setTimeout(()=>{
 
 playSound(winSound)
 
-// small animation
 document.body.style.transform="translateY(-5px)"
 setTimeout(()=>document.body.style.transform="translateY(0)",100)
 
-
-// reward popup
 const rewardText=document.createElement("div")
 
 rewardText.innerText="+"+reward+" DMX"
-
 rewardText.style.position="absolute"
 rewardText.style.bottom="20px"
 rewardText.style.left="50%"
@@ -2471,28 +2457,10 @@ rewardText.classList.add("reward-pop")
 
 setTimeout(()=>rewardText.remove(),1500)
 
+alert("🎁 Lucky Box Opened!\n\nYou won "+reward+" DMX")
 
-// result alert
-alert(
-"🎁 Lucky Box Opened!\n\n"+
-"You won "+reward+" DMX"
-)
-
-
-// claim reward
 claimGameReward(reward)
 
-
-// deduct jackpot pool
-let pool=document.getElementById("jackpotValue")
-let current=parseFloat(pool.innerText)||0
-
-current=Math.max(0,current-reward)
-
-pool.innerText=current
-
-
-// leaderboard
 addWinner(userAddress,reward)
 
 gameRunning=false
@@ -2681,6 +2649,8 @@ document.getElementById("tilesScore").innerText="Current Profit: 0 DMX"
 document.getElementById("cashoutBtn").style.display="none"
 
 const grid=document.getElementById("tilesGrid")
+
+if(!grid) return
 
 grid.innerHTML=""
 
