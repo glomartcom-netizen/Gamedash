@@ -1285,6 +1285,11 @@ align-items:center;
 justify-content:center;
 margin:40px auto;
 }
+
+.selected-dice{
+background:#22c55e;
+color:black;
+        }        
         
 .scene,
 .wheel-container,
@@ -1313,62 +1318,50 @@ margin-top:30px;
 Play games and win DMX rewards
 </p>
 
-
 <div style="margin-top:20px">
 
-<button class="btn-bonus" onclick="setMode('promo')">
+<button class="btn-bonus mode-btn" onclick="setMode('promo',event)">
 Promo Play
 </button>
 
-<button class="btn-bonus" onclick="setMode('member')">
+<button class="btn-bonus mode-btn" onclick="setMode('member',event)">
 Member Play
 </button>
 
-<button class="btn-bonus" onclick="setMode('paid')">
+<button class="btn-bonus mode-btn" onclick="setMode('paid',event)">
 Paid Play
 </button>
 
 </div>
 
-
 <div style="margin-top:20px">
 
 <marquee id="winnerBoard" style="color:#06b6d4;font-weight:bold">
-
 🔥 Live Winners will appear here 🔥
-
 </marquee>
 
 </div>
-
 
 <div style="margin-top:20px;font-size:18px">
 
 🏆 Jackpot Pool:
 
 <span id="jackpotValue" style="color:#22c55e;font-weight:bold">
-
-0
-
+5000
 </span> DMX
 
 </div>
 
-
 <div style="margin-top:30px">
 
 <a href="https://t.me/YOURGROUP" target="_blank">
-
 📢 Join Telegram Community
-
 </a>
 
 <br><br>
 
 <a href="https://yourwebsite.com" target="_blank">
-
 🌐 Visit Official Website
-
 </a>
 
 </div>
@@ -1414,12 +1407,31 @@ Paid Play
 
 </div>
 
-<button class="btn-bonus" onclick="rollDice()">
+
+<p style="margin-top:15px;color:#94a3b8">
+Choose your number
+</p>
+
+<div style="display:flex;justify-content:center;gap:10px;margin-top:10px">
+
+<button class="btn-bonus" onclick="chooseDice(2)">2</button>
+
+<button class="btn-bonus" onclick="chooseDice(3)">3</button>
+
+<button class="btn-bonus" onclick="chooseDice(4)">4</button>
+
+<button class="btn-bonus" onclick="chooseDice(5)">5</button>
+
+<button class="btn-bonus" onclick="chooseDice(6)">6</button>
+
+</div>
+
+
+<button class="btn-bonus" style="margin-top:20px" onclick="rollDice()">
 🎲 ROLL DICE
 </button>
 
 </div>
-
 
 <!-- WHEEL GAME -->
 
@@ -1972,345 +1984,288 @@ document.querySelector("#crashGamePanel").style.display="block";
 }
 
     
-        // Initial wheel rotation angle
+// Initial wheel rotation angle
 let currentWheelRotation = 0;
 
-async function spinWheelGame() {
+async function spinWheelGame(){
 
-if (gameRunning) return;
+if(gameRunning) return;
 
-if (!(await checkGameCooldown())) return;
-    
+if(!(await checkGameCooldown())) return;
+
 gameRunning = true;
 
-playSound(spinSound); // play spin sound
+playSound(spinSound);
 
 const wheelElement = document.getElementById("wheelElement");
 
-const rewards = [5, 10, 20, 30, 50, 100];
-
-
-// Select random reward
-const rewardIndex = Math.floor(Math.random() * rewards.length);
-
-const reward = rewards[rewardIndex];
-
-
-// Angle ranges for each reward segment on the wheel
-// Must match the conic-gradient design of the wheel
-// Note: pointer is at the top (0deg) while wheel rotates clockwise
+const rewards = [5,10,20,30,50,100];
 
 const rewardAngles = [
-{ min:0,   max:60 },
-{ min:60,  max:120 },
-{ min:120, max:180 },
-{ min:180, max:240 },
-{ min:240, max:300 },
-{ min:300, max:360 }
+{min:0,max:60},
+{min:60,max:120},
+{min:120,max:180},
+{min:180,max:240},
+{min:240,max:300},
+{min:300,max:360}
 ];
 
+// pick random angle first
+const stopAngle = Math.floor(Math.random()*360);
 
-// Pick a random stop angle inside the selected reward segment
-const targetAngleDef = rewardAngles[rewardIndex];
-
-const randomStopAngle =
-Math.random() * (targetAngleDef.max - targetAngleDef.min) + targetAngleDef.min;
-
-
-// Minimum 5 full spins + final angle
 const totalSpins = 5 * 360;
 
-
-// Adjust because pointer is fixed at top
 const finalRotation =
-currentWheelRotation + totalSpins + (360 - randomStopAngle);
+currentWheelRotation + totalSpins + (360 - stopAngle);
 
-
-// Save current rotation state
 currentWheelRotation = finalRotation;
 
-
-// Apply wheel rotation animation
 wheelElement.style.transform = `rotate(${finalRotation}deg)`;
 
+// calculate reward based on angle
+let reward = 0;
 
-// Show result after spin animation ends (4 seconds)
-setTimeout(() => {
+for(let i=0;i<rewardAngles.length;i++){
+
+if(stopAngle >= rewardAngles[i].min && stopAngle < rewardAngles[i].max){
+
+reward = rewards[i];
+
+break;
+
+}
+
+}
+
+setTimeout(()=>{
 
 playSound(winSound);
 
-// Small body shake effect
-document.body.style.transform = "scale(1.02)";
+document.body.style.transform="scale(1.02)";
 
-setTimeout(() =>
-document.body.style.transform = "scale(1)", 150);
+setTimeout(()=>document.body.style.transform="scale(1)",150);
+
+reward = applyRewardLimit(reward);
 
 alert(
-"🎡 Wheel Stopped!\n\n" +
-"You won " + reward + " DMX"
+"🎡 Wheel Stopped!\n\n"+
+"You won "+reward+" DMX"
 );
 
-// Reward claim
 claimGameReward(reward);
 
-// Update leaderboard
-addWinner(userAddress, reward);
+addWinner(userAddress,reward);
 
-// Reset game state
-gameRunning = false;
+gameRunning=false;
 
-}, 4100);
+},4100);
 
 }
 
 
 // ===============================
-// GAME 2 — LUCKY BOX (3D)
+// GAME — LUCKY BOX
 // ===============================
 
 function openLuckyBox(){
 
-closeAllGames();
+closeAllGames()
 
-document.querySelector(".box-scene").style.display="block";
+document.querySelector(".box-scene").style.display="block"
 
-const box=document.getElementById("boxElement");
+const box=document.getElementById("boxElement")
 
-box.classList.remove("box-open","box-shaking");
+box.classList.remove("box-open","box-shaking")
 
 }
 
-async function openBoxAnimation() {
+async function openBoxAnimation(){
 
-if (gameRunning) return;
+if(gameRunning) return
 
-gameRunning = true;
+if(!(await checkGameCooldown())) return
 
-if (!(await checkGameCooldown())) return;
-    
-    gameRunning = true;
+gameRunning=true
 
-    const box = document.getElementById("boxElement");
+const box=document.getElementById("boxElement")
 
-    // 1️⃣ Start box shaking animation
-    box.classList.add("box-shaking");
+// start shake
+box.classList.add("box-shaking")
 
-    playSound(boxSound); // box shaking sound
+playSound(boxSound)
 
-    setTimeout(async () => {
+setTimeout(()=>{
 
-        // 2️⃣ Stop shaking and open the box
-        box.classList.remove("box-shaking");
-        box.classList.add("box-open");
+// stop shake and open box
+box.classList.remove("box-shaking")
+box.classList.add("box-open")
 
-        const rewards = [5, 10, 20, 30, 50];
+const rewards=[5,10,20,30,50]
 
-const reward = rewards[Math.floor(Math.random() * rewards.length)];
+let reward=rewards[Math.floor(Math.random()*rewards.length)]
 
-setTimeout(async () => {
+reward=applyRewardLimit(reward)
 
-playSound(winSound);
+setTimeout(()=>{
 
-// Win animation
-document.body.style.transform = "translateY(-5px)";
+playSound(winSound)
 
-setTimeout(() => {
-document.body.style.transform = "translateY(0)";
-}, 100);
+// small animation
+document.body.style.transform="translateY(-5px)"
+setTimeout(()=>document.body.style.transform="translateY(0)",100)
 
 
-/* REWARD POP FROM BOX */
-const rewardText = document.createElement("div");
+// reward popup
+const rewardText=document.createElement("div")
 
-rewardText.innerText = "+" + reward + " DMX";
+rewardText.innerText="+"+reward+" DMX"
 
-rewardText.style.position = "absolute";
-rewardText.style.bottom = "20px";
-rewardText.style.left = "50%";
-rewardText.style.transform = "translateX(-50%)";
-rewardText.style.color = "gold";
-rewardText.style.fontSize = "22px";
-rewardText.style.fontWeight = "bold";
+rewardText.style.position="absolute"
+rewardText.style.bottom="20px"
+rewardText.style.left="50%"
+rewardText.style.transform="translateX(-50%)"
+rewardText.style.color="gold"
+rewardText.style.fontSize="22px"
+rewardText.style.fontWeight="bold"
 
-box.appendChild(rewardText);
+box.appendChild(rewardText)
 
-rewardText.classList.add("reward-pop");
+rewardText.classList.add("reward-pop")
 
-setTimeout(()=>rewardText.remove(),1500);
+setTimeout(()=>rewardText.remove(),1500)
 
 
-/* RESULT MESSAGE */
+// result alert
 alert(
-"🎁 Lucky Box Opened!\n\n" +
-"You won " + reward + " DMX"
-);
+"🎁 Lucky Box Opened!\n\n"+
+"You won "+reward+" DMX"
+)
 
 
 // claim reward
-await claimGameReward(reward);
-
-// update leaderboard
-addWinner(userAddress, reward);
-
-gameRunning = false;
-
-},800);
-
-},1500);
-
-}
+claimGameReward(reward)
 
 
-async function rollDice() {
+// deduct jackpot pool
+let pool=document.getElementById("jackpotValue")
+let current=parseFloat(pool.innerText)||0
 
-    if (gameRunning) return;
+current=Math.max(0,current-reward)
 
-    if (!(await checkGameCooldown())) return;
-
-    gameRunning = true;
-
-    playSound(diceSound); // dice rolling sound
-
-    const diceElement = document.getElementById("diceElement");
+pool.innerText=current
 
 
-    // 1. Start shaking animation
-    diceElement.classList.add("dice-rolling");
+// leaderboard
+addWinner(userAddress,reward)
 
+gameRunning=false
 
-    // Decide the final dice number (or get from backend)
-    const finalDice = Math.floor(Math.random() * 6) + 1;
+},800)
 
-
-    setTimeout(() => {
-
-        // 2. Stop shaking animation
-        diceElement.classList.remove("dice-rolling");
-
-
-        // 3. Rotate the dice to show the final number
-        // Rotation angles required for each face
-        const angles = {
-
-            1: { x: 0,   y: 0 },
-            2: { x: 0,   y: -90 },
-            3: { x: 0,   y: -180 },
-            4: { x: 0,   y: 90 },
-            5: { x: -90, y: 0 },
-            6: { x: 90,  y: 0 }
-
-        };
-
-        const resultAngle = angles[finalDice];
-
-
-        // Add extra rotations (e.g. +720deg) for better animation
-        diceElement.style.transform =
-        `translateZ(-50px) rotateX(${resultAngle.x + 720}deg) rotateY(${resultAngle.y + 720}deg)`;
-
-
-        // 4. Show result after animation completes
-        setTimeout(() => {
-
-            let reward = 0;
-
-            if (finalDice >= 5) {
-
-                reward = 50;
-
-            }
-            else if (finalDice >= 3) {
-
-                reward = 20;
-
-            }
-            else {
-
-                reward = 5;
-
-            }
-
-
-            playSound(winSound);
-
-
-            // Small body shake effect
-            document.body.style.transform = "translateX(5px)";
-            setTimeout(()=> document.body.style.transform = "translateX(0)", 100);
-
-
-            alert("🎲 Dice Result: " + finalDice + "\n\nReward: " + reward + " DMX");
-
-
-            claimGameReward(reward);
-
-            addWinner(userAddress, reward);
-
-
-            gameRunning = false; // Reset game state
-
-
-        }, 1100); // CSS transition time (1s) + buffer
-
-
-    }, 2000); // Rolling time (2 seconds)
-
-}
-
-    
-    
-
-let tileReward = 0;
-let bombLocation = 0;
-let activeTilesGame = true;
-
-
-function openMagicTiles() {
-
-    closeAllGames();
-
-    document.getElementById("magicTilesPanel").style.display = "block";
-
-    resetTilesGame();
+},1500)
 
 }
 
 
-function resetTilesGame() {
+// ===============================
+// DICE CHOOSE + ROLL GAME
+// ===============================
 
-    activeTilesGame = true;
+let selectedDice = null;
 
-    tileReward = 0;
+// Player chooses number
+function chooseDice(num){
 
-    bombLocation = Math.floor(Math.random() * 9);
+selectedDice = num;
 
-    document.getElementById("tilesScore").innerText = "Current Profit: 0 DMX";
+alert("You selected number: " + num);
 
-    document.getElementById("cashoutBtn").style.display = "none";
-
-
-    const grid = document.getElementById("tilesGrid");
-
-    grid.innerHTML = "";
-
-    grid.classList.remove("grid-shake");
+}
 
 
-    for (let i = 0; i < 9; i++) {
+// Roll dice
+async function rollDice(){
 
-        const tile = document.createElement("div");
+if(gameRunning) return;
 
-        tile.className = "tile";
+if(selectedDice === null){
+alert("Choose a number first");
+return;
+}
 
-        tile.id = `tile-${i}`;
+if (!(await checkGameCooldown())) return;
 
-        tile.innerHTML = "❓";
+gameRunning = true;
 
-        tile.onclick = () => clickTile(i);
+playSound(diceSound);
 
-        grid.appendChild(tile);
+const diceElement = document.getElementById("diceElement");
 
-    }
+// start rolling animation
+diceElement.classList.add("dice-rolling");
+
+// random dice result
+const finalDice = Math.floor(Math.random()*6)+1;
+
+setTimeout(()=>{
+
+diceElement.classList.remove("dice-rolling");
+
+// rotation angles
+const angles={
+1:{x:0,y:0},
+2:{x:0,y:-90},
+3:{x:0,y:-180},
+4:{x:0,y:90},
+5:{x:-90,y:0},
+6:{x:90,y:0}
+};
+
+const resultAngle = angles[finalDice];
+
+// rotate dice
+diceElement.style.transform=
+`translateZ(-50px) rotateX(${resultAngle.x+720}deg) rotateY(${resultAngle.y+720}deg)`;
+
+setTimeout(()=>{
+
+let reward = 0;
+
+// win condition
+if(finalDice === selectedDice){
+
+reward = 120;
+
+reward = applyRewardLimit(reward);
+
+playSound(winSound);
+
+alert(
+"🎲 Dice Result: "+finalDice+
+"\n\nYou guessed correctly!\nReward: "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+else{
+
+playSound(loseSound);
+
+alert(
+"🎲 Dice Result: "+finalDice+
+"\n\nWrong guess! Try again."
+);
+
+}
+
+gameRunning=false;
+
+},1000);
+
+},2000);
 
 }
 
@@ -2318,586 +2273,461 @@ function resetTilesGame() {
 
 async function clickTile(index) {
 
-    if (!activeTilesGame || gameRunning) return;
+if (gameRunning) return
 
+if (!(await checkGameCooldown())) return
 
-    const tile = document.getElementById(`tile-${index}`);
+if (!activeTilesGame) return
 
+gameRunning = true
 
-    if (tile.classList.contains("revealed-gold")) return;
+const tile = document.getElementById(`tile-${index}`)
 
+if (tile.classList.contains("revealed-gold")) {
+gameRunning=false
+return
+}
 
-    if (index === bombLocation) {
+if (index === bombLocation) {
 
-        // Bomb exploded (Game Over)
+// bomb
+activeTilesGame = false
 
-        activeTilesGame = false;
+tile.classList.add("revealed-bomb")
 
-        tile.classList.add("revealed-bomb");
+tile.innerHTML = "💣"
 
-        tile.innerHTML = "💣";
+document.getElementById("tilesGrid").classList.add("grid-shake")
 
-        document.getElementById("tilesGrid").classList.add("grid-shake");
+playSound(diceSound)
 
-        playSound(diceSound); // bomb sound
+setTimeout(()=>{
 
+alert("💥 BOOM! The bomb exploded. You lost all DMX.")
 
-        setTimeout(() => {
+gameRunning=false
 
-            alert("💥 BOOM! The bomb exploded. You lost all DMX.");
+resetTilesGame()
 
-            resetTilesGame();
+},1000)
 
-        }, 1000);
+}
+else{
 
-    } 
-    else {
+tile.classList.add("revealed-gold")
 
-        // Gold found (Success)
+tile.innerHTML="💰"
 
-        tile.classList.add("revealed-gold");
+tileReward +=10
 
-        tile.innerHTML = "💰";
+document.getElementById("tilesScore").innerText=
+`Current Profit: ${tileReward} DMX`
 
-        tileReward += 10;
+document.getElementById("cashoutBtn").style.display="block"
 
-        document.getElementById("tilesScore").innerText =
-        `Current Profit: ${tileReward} DMX`;
+playSound(winSound)
 
-        document.getElementById("cashoutBtn").style.display = "block";
+gameRunning=false
 
-        playSound(winSound);
-
-    }
+}
 
 }
 
 
+async function tilesCashout(){
 
-async function tilesCashout() {
+if(tileReward<=0 || !activeTilesGame) return
 
-    if (tileReward <= 0 || !activeTilesGame) return;
+gameRunning=true
 
+activeTilesGame=false
 
-    gameRunning = true;
+alert(`🎉 Congratulations! You won ${tileReward} DMX.`)
 
-    activeTilesGame = false;
+claimGameReward(tileReward)
 
+addWinner(userAddress,tileReward)
 
-    alert(`🎉 Congratulations! You won ${tileReward} DMX.`);
+gameRunning=false
 
-    await claimGameReward(tileReward);
-
-    addWinner(userAddress, tileReward);
-
-
-    gameRunning = false;
-
-    resetTilesGame();
+resetTilesGame()
 
 }
     
 
-let crashValue = 1.0;
-let crashInterval;
-let isCrashed = false;
+async function startCrash(){
 
+if(gameRunning) return
 
-function openCrashGame() {
+if (!(await checkGameCooldown())) return
 
-    closeAllGames();
+gameRunning = true
 
-    document.getElementById("crashGamePanel").style.display = "block";
+document.getElementById("launchBtn").style.display="none"
+document.getElementById("takeProfitBtn").style.display="block"
 
-    resetCrash();
+let limit = Math.random()*5+1
 
-}
+crashInterval = setInterval(()=>{
 
+crashValue +=0.05
 
-function resetCrash() {
+document.getElementById("crashMultiplier").innerText=
+crashValue.toFixed(2)+"x"
 
-    isCrashed = false;
+let pos=(crashValue-1)*20
 
-    crashValue = 1.0;
+document.getElementById("rocket").style.bottom=(10+pos)+"px"
+document.getElementById("rocket").style.left=(10+pos)+"px"
 
-    document.getElementById("crashMultiplier").innerText = "1.00x";
+if(crashValue>=limit){
 
-    document.getElementById("crashMultiplier").style.color = "#22c55e";
-
-    document.getElementById("rocket").style.bottom = "10px";
-
-    document.getElementById("rocket").style.left = "10px";
-
-    document.getElementById("launchBtn").style.display = "block";
-
-    document.getElementById("takeProfitBtn").style.display = "none";
+rocketExplode()
 
 }
 
-
-function startCrash() {
-
-    if(gameRunning) return;
-
-    gameRunning = true;
-
-    document.getElementById("launchBtn").style.display = "none";
-
-    document.getElementById("takeProfitBtn").style.display = "block";
-
-
-    // Crash limit randomly between 1x and 6x
-    let limit = Math.random() * 5 + 1;
-
-
-    crashInterval = setInterval(() => {
-
-        crashValue += 0.05;
-
-        document.getElementById("crashMultiplier").innerText =
-        crashValue.toFixed(2) + "x";
-
-
-        // Rocket flying animation
-        let pos = (crashValue - 1) * 20;
-
-        document.getElementById("rocket").style.bottom = (10 + pos) + "px";
-
-        document.getElementById("rocket").style.left = (10 + pos) + "px";
-
-
-        if (crashValue >= limit) {
-
-            rocketExplode();
-
-        }
-
-    }, 100);
+},100)
 
 }
-
 
 function rocketExplode(){
 
-clearInterval(crashInterval);
+clearInterval(crashInterval)
 
-isCrashed=true;
-gameRunning=false;
+isCrashed=true
+gameRunning=false
 
-document.getElementById("crashMultiplier").innerText="CRASHED!";
-document.getElementById("crashMultiplier").style.color="red";
+document.getElementById("crashMultiplier").innerText="CRASHED!"
+document.getElementById("crashMultiplier").style.color="red"
 
-document.getElementById("rocket").innerText="💥";
+document.getElementById("rocket").innerText="💥"
 
-document.getElementById("takeProfitBtn").style.display="none";
+document.getElementById("takeProfitBtn").style.display="none"
 
 setTimeout(()=>{
 
-document.getElementById("rocket").innerText="🚀";
+document.getElementById("rocket").innerText="🚀"
 
-resetCrash();
+resetCrash()
 
-},2000);
+},2000)
 
 }
 
 
-async function takeProfit() {
+async function takeProfit(){
 
-    if (isCrashed) return;
+if(isCrashed) return
 
-    clearInterval(crashInterval);
+clearInterval(crashInterval)
 
-    let winAmount = Math.floor(crashValue * 10);
+let winAmount=Math.floor(crashValue*10)
 
-    alert(`💰 Victory! You won ${winAmount} DMX.`);
+alert(`💰 Victory! You won ${winAmount} DMX.`)
 
-    await claimGameReward(winAmount);
+claimGameReward(winAmount)
 
-    gameRunning = false;
+addWinner(userAddress,winAmount)
 
-    resetCrash();
+gameRunning=false
 
-}    
+resetCrash()
 
+}
 
 // ===============================
 // GAME 5 — CARD FLIP (3D)
 // ===============================
 
+async function flipCardAnimation(){
 
-// 1. Reset the card when the game opens
-function openCardGame(){
+if(gameRunning) return
 
-closeAllGames();
+if (!(await checkGameCooldown())) return
 
-const cardElement = document.getElementById("cardElement");
+gameRunning=true
 
-cardElement.classList.remove("is-flipped");
+playSound(cardSound)
 
-document.getElementById("cardValueDisplay").innerText="0 DMX";
+const cardElement=document.getElementById("cardElement")
+const valueDisplay=document.getElementById("cardValueDisplay")
 
-document.querySelector(".card-scene").style.display="block";
+const rewards=[5,10,20,50]
 
-}
+const reward=rewards[Math.floor(Math.random()*rewards.length)]
 
-// 2. Function to flip the card and show result when clicked
-async function flipCardAnimation() {
+valueDisplay.innerText=reward+" DMX"
 
-    if (gameRunning) return;
+cardElement.classList.add("is-flipped")
 
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
+setTimeout(()=>{
 
-    if (!(await checkGameCooldown(userAddress))) return;
+playSound(winSound)
 
+document.body.style.transform="scale(1.01)"
 
-    gameRunning = true;
+setTimeout(()=>document.body.style.transform="scale(1)",150)
 
-    playSound(cardSound); // card flip sound
+alert("🃏 Card Flipped!\n\nYou won "+reward+" DMX")
 
+claimGameReward(reward)
 
-    const cardElement = document.getElementById("cardElement");
+addWinner(userAddress,reward)
 
-    const valueDisplay = document.getElementById("cardValueDisplay");
+gameRunning=false
 
-
-    // Determine reward
-    const rewards = [5, 10, 20, 50];
-
-    const reward = rewards[Math.floor(Math.random() * rewards.length)];
-
-
-    // Set reward value on the front side of the card before flipping
-    valueDisplay.innerText = reward + " DMX";
-
-
-    // 1. Flip the card by adding CSS class
-    cardElement.classList.add("is-flipped");
-
-
-    // 2. Show result after animation finishes
-    setTimeout(() => {
-
-        playSound(winSound);
-
-
-        // Small body scale effect on win
-        document.body.style.transform = "scale(1.01)";
-
-        setTimeout(()=> document.body.style.transform = "scale(1)", 150);
-
-
-        alert("🃏 Card Flipped!\n\nYou won " + reward + " DMX");
-
-
-        claimGameReward(reward);
-
-        addWinner(userAddress, reward);
-
-
-        // Reset game state so it can be played again
-        gameRunning = false;
-
-    }, 900); // 0.8s transition + small buffer
+},900)
 
 }
 
 
-// Old flipCard function can be removed
-// because HTML now calls flipCardAnimation()
+async function shootTargetAnimation(){
 
+if(gameRunning) return
 
-async function shootTargetAnimation() {
+if (!(await checkGameCooldown())) return
 
-    if (gameRunning) return;
+gameRunning=true
 
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
+const projectile=document.getElementById("projectile")
+const board=document.getElementById("targetBoard")
+const status=document.getElementById("targetStatus")
 
-    if (!(await checkGameCooldown(userAddress))) return;
+projectile.classList.remove("is-shooting")
+board.classList.remove("board-hit")
 
-    gameRunning = true;
+projectile.style.opacity="1"
 
-    const projectile = document.getElementById("projectile");
-    const board = document.getElementById("targetBoard");
-    const status = document.getElementById("targetStatus");
+void projectile.offsetWidth
 
+status.innerText="Shooting..."
 
-    // 1. Reset initial state
-    projectile.classList.remove("is-shooting");
-    board.classList.remove("board-hit");
+projectile.classList.add("is-shooting")
 
-    void projectile.offsetWidth; // reset animation
+playSound(diceSound)
 
+setTimeout(()=>{
 
-    status.innerText = "Shooting...";
+board.classList.add("board-hit")
 
+const chance=Math.random()
 
-    // 2. Start shooting animation
-    projectile.classList.add("is-shooting");
+if(chance>0.4){
 
-    playSound(diceSound); // shooting sound
+const rewards=[20,30,50]
 
+const reward=rewards[Math.floor(Math.random()*rewards.length)]
 
-    setTimeout(() => {
+status.innerText="🎯 Perfect Shot!"
 
-        // 3. When the projectile hits the board
-        board.classList.add("board-hit");
+playSound(winSound)
 
-        const chance = Math.random();
+setTimeout(()=>{
 
-        if (chance > 0.4) {
+alert(
+"🎯 Perfect Shot!\n\n"+
+"You hit the target and won "+reward+" DMX"
+)
 
-            // HIT (WIN)
+claimGameReward(reward)
 
-            const rewards = [20, 30, 50];
+addWinner(userAddress,reward)
 
-            const reward = rewards[Math.floor(Math.random() * rewards.length)];
+gameRunning=false
 
-            status.innerText = "🎯 Perfect Shot!";
+},500)
 
-            playSound(winSound);
+}
+else{
 
+playSound(loseSound)
 
-            setTimeout(() => {
+status.innerText="❌ Missed Target!"
 
-                alert(
-                "🎯 Perfect Shot!\n\n" +
-                "You hit the target and won " + reward + " DMX"
-                );
+setTimeout(()=>{
 
-                claimGameReward(reward);
+alert(
+"❌ Missed Target\n\n"+
+"The arrow missed the target. Try again!"
+)
 
-                addWinner(userAddress, reward);
+gameRunning=false
 
-                gameRunning = false;
+},500)
 
-            }, 500);
+}
 
-        } 
-        else {
-
-            // MISS (LOSE)
-
-            playSound(loseSound);
-status.innerText = "❌ Missed Target!";
-
-            projectile.style.opacity = "0"; // hide projectile
-
-
-            setTimeout(() => {
-
-                alert(
-                "❌ Missed Target\n\n" +
-                "The arrow missed the target. Try again!"
-                );
-
-                gameRunning = false;
-
-            }, 500);
-
-        }
-
-    }, 400); // animation duration
+},400)
 
 }
 
 
-        async function spinSlot() {
+        async function spinSlot(){
 
-    if (gameRunning) return;
+if(gameRunning) return
 
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
+if (!(await checkGameCooldown())) return
 
-    if (!(await checkGameCooldown(userAddress))) return;
+gameRunning=true
 
-    gameRunning = true;
+playSound(spinSound)
 
-    playSound(spinSound);
+const symbols=["7️⃣","🍒","⭐","💎","🔔"]
 
+const reels=[
+document.getElementById("reel1"),
+document.getElementById("reel2"),
+document.getElementById("reel3")
+]
 
-    const symbols = ["7️⃣", "🍒", "⭐", "💎", "🔔"];
+document.querySelector('.slot-window').classList.remove('slot-jackpot')
 
-    const reels = [
-        document.getElementById("reel1"),
-        document.getElementById("reel2"),
-        document.getElementById("reel3")
-    ];
+const resultA=symbols[Math.floor(Math.random()*symbols.length)]
+const resultB=symbols[Math.floor(Math.random()*symbols.length)]
+const resultC=symbols[Math.floor(Math.random()*symbols.length)]
 
+reels.forEach((reel,index)=>{
 
-    // Remove jackpot highlight class
-    document.querySelector('.slot-window').classList.remove('slot-jackpot');
+const randomExtraSpins=(index+3)*5
 
+const symbolIndex=symbols.indexOf([resultA,resultB,resultC][index])
 
-    // Decide results in advance
-    const resultA = symbols[Math.floor(Math.random() * symbols.length)];
-    const resultB = symbols[Math.floor(Math.random() * symbols.length)];
-    const resultC = symbols[Math.floor(Math.random() * symbols.length)];
+const moveY=-(symbolIndex*80+(randomExtraSpins*80))
 
+reel.style.transition=`transform ${2+index}s cubic-bezier(0.45,0.05,0.55,0.95)`
 
-    reels.forEach((reel, index) => {
+reel.style.transform=`translateY(${moveY}px)`
 
-        // Random extra spins for each reel
-        const randomExtraSpins = (index + 3) * 5; // each reel stops at different speed
+})
 
-        const symbolIndex = symbols.indexOf([resultA, resultB, resultC][index]);
+setTimeout(()=>{
 
-        // Calculate spin distance (80px = symbol height)
-        const moveY = -(symbolIndex * 80 + (randomExtraSpins * 80));
+checkSlotResult(resultA,resultB,resultC)
 
-        reel.style.transition = `transform ${2 + index}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
+setTimeout(()=>{
 
-        reel.style.transform = `translateY(${moveY}px)`;
+const results=[resultA,resultB,resultC]
 
-    });
+reels.forEach((reel,index)=>{
 
+const symbolIndex=symbols.indexOf(results[index])
 
-// Check result after the last reel stops
-setTimeout(() => {
+const finalPos=-(symbolIndex*80)
 
-checkSlotResult(resultA, resultB, resultC);
+reel.style.transition="none"
+reel.style.transform=`translateY(${finalPos}px)`
 
-// Reset reels for next spin
-setTimeout(() => {
+})
 
-const results = [resultA, resultB, resultC];
+},100)
 
-reels.forEach((reel, index) => {
-
-const symbolIndex = symbols.indexOf(results[index]);
-
-const finalPos = -(symbolIndex * 80);
-
-reel.style.transition = "none";
-reel.style.transform = `translateY(${finalPos}px)`;
-
-});
-
-},100);
-
-},4500);
-    }
-
-
-
-async function checkSlotResult(a, b, c) {
-
-    let reward = 0;
-
-    const windowEl = document.querySelector('.slot-window');
-
-
-    if (a === b && b === c) {
-
-        reward = 100;
-
-        windowEl.classList.add('slot-jackpot');
-
-        playSound(winSound);
-
-        alert("🎉 JACKPOT! 777\nYou won 100 DMX");
-
-    } 
-    else if (a === b || b === c || a === c) {
-
-        reward = 20;
-
-        playSound(winSound);
-
-        alert("👍 Small win\nYou won 20 DMX");
-
-    } 
-    else {
-
-        playSound(loseSound);
-alert("❌ No match. Try again tomorrow");
-
-        gameRunning = false;
-
-        return;
-
-    }
-
-
-    await claimGameReward(reward);
-
-    addWinner(userAddress, reward);
+},4500)
 
 }
 
-        async function guessNumberAnimation(num) {
 
-    if (gameRunning) return;
+async function checkSlotResult(a,b,c){
 
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
+let reward=0
 
-    if (!(await checkGameCooldown(userAddress))) return;
+const windowEl=document.querySelector('.slot-window')
 
-    gameRunning = true;
+if(a===b && b===c){
 
-    const display = document.getElementById("guessStatusDisplay");
+reward=100
 
-    display.classList.remove("guess-success", "guess-fail");
+windowEl.classList.add('slot-jackpot')
 
+playSound(winSound)
 
-    // Show the number selected by the user
-    display.innerText = num;
+alert("🎉 JACKPOT!\nYou won 100 DMX")
 
-    playSound(spinSound); // click sound
+}
+else if(a===b || b===c || a===c){
 
+reward=20
 
-    // 1. "Checking..." effect
-    setTimeout(async () => {
+playSound(winSound)
 
-        const random = Math.floor(Math.random() * 5) + 1;
+alert("👍 Small win\nYou won 20 DMX")
 
-        if (num === random) {
+}
+else{
 
-            // WIN
-            display.classList.add("guess-success");
+playSound(loseSound)
 
-            display.innerText = "OK";
+alert("❌ No match. Try again tomorrow")
 
-            playSound(winSound);
+gameRunning=false
 
+return
 
-            setTimeout(async () => {
+}
 
-                alert(
-                "🎉 Correct Guess!\n\n" +
-                "Locker opened!\n" +
-                "Winning Number: " + random +
-                "\n\nReward: 50 DMX"
-                );
+claimGameReward(reward)
 
-                await claimGameReward(50);
+addWinner(userAddress,reward)
 
-                addWinner(userAddress, 50);
+gameRunning=false
 
-                gameRunning = false;
+}
+    
 
-                display.innerText = "0"; // Reset display
+        async function guessNumberAnimation(num){
 
-            }, 1000);
+if(gameRunning) return
 
-        } 
-        else {
+if (!(await checkGameCooldown())) return
 
-display.classList.add("guess-fail");
-display.innerText = "ERR";
+gameRunning=true
 
-playSound(loseSound);
+const display=document.getElementById("guessStatusDisplay")
+
+display.classList.remove("guess-success","guess-fail")
+
+display.innerText=num
+
+playSound(spinSound)
+
+setTimeout(()=>{
+
+const random=Math.floor(Math.random()*5)+1
+
+if(num===random){
+
+display.classList.add("guess-success")
+
+display.innerText="OK"
+
+playSound(winSound)
+
+setTimeout(()=>{
+
+alert(
+"🎉 Correct Guess!\n\n"+
+"Locker opened!\n"+
+"Winning Number: "+random+
+"\n\nReward: 50 DMX"
+)
+
+claimGameReward(50)
+
+addWinner(userAddress,50)
+
+gameRunning=false
+
+display.innerText="0"
+
+},1000)
+
+}
+else{
+
+display.classList.add("guess-fail")
+
+display.innerText="ERR"
+
+playSound(loseSound)
 
 setTimeout(()=>{
 
@@ -2905,124 +2735,109 @@ alert(
 "❌ Wrong Guess\n\n"+
 "Incorrect code!\n"+
 "Correct Number: "+random
-);
+)
 
-gameRunning=false;
-display.innerText="0";
+gameRunning=false
 
-},1000);
+display.innerText="0"
 
-}
-
-    }, 800);
+},1000)
 
 }
 
+},800)
 
-        async function pickColor(userColor) {
-
-    if (gameRunning) return;
-
-    if (!userAddress) { 
-        alert("Connect wallet first"); 
-        return; 
-    }
-
-    if (!(await checkGameCooldown(userAddress))) return;
-
-    gameRunning = true;
+}
 
 
-    // 1. Show which color the user selected in the UI
-    const pods = ['green', 'red', 'orange'];
+        async function pickColor(userColor){
 
-    pods.forEach(p =>
-        document.getElementById(`pod-${p}`).classList.remove('pod-selected')
-    );
+if(gameRunning) return
 
-    document.getElementById(`pod-${userColor}`).classList.add('pod-selected');
+if (!(await checkGameCooldown())) return
 
+gameRunning=true
 
-    // 2. Show the result orb animation
-    const orb = document.getElementById("resultOrb");
+const pods=["green","red","orange"]
 
-    orb.classList.remove('orb-active');
+pods.forEach(p=>
+document.getElementById(`pod-${p}`).classList.remove("pod-selected")
+)
 
-    void orb.offsetWidth; // force reflow to restart animation
+document.getElementById(`pod-${userColor}`).classList.add("pod-selected")
 
-    orb.classList.add('orb-active');
+const orb=document.getElementById("resultOrb")
 
-    orb.style.background = "#475569"; // reset orb color
+orb.classList.remove("orb-active")
 
+void orb.offsetWidth
 
-    // play spinning sound
-    playSound(spinSound);
+orb.classList.add("orb-active")
 
+orb.style.background="#475569"
 
-    setTimeout(async () => {
+playSound(spinSound)
 
-        const colors = ["green", "red", "orange"];
+setTimeout(()=>{
 
-        const result = colors[Math.floor(Math.random() * 3)];
+const colors=["green","red","orange"]
 
+const result=colors[Math.floor(Math.random()*3)]
 
-        // 3. Change orb color to the result color
-        const colorMap = {
+const colorMap={
+green:"#22c55e",
+red:"#ef4444",
+orange:"#f97316"
+}
 
-            green: "#22c55e",
-            red: "#ef4444",
-            orange: "#f97316"
+orb.style.background=colorMap[result]
 
-        };
+orb.style.boxShadow=`0 0 30px ${colorMap[result]}`
 
-        orb.style.background = colorMap[result];
+setTimeout(()=>{
 
-        orb.style.boxShadow = `0 0 30px ${colorMap[result]}`;
+if(userColor===result){
 
+const reward=30
 
-        setTimeout(async () => {
+playSound(winSound)
 
-            if (userColor === result) {
+alert(
+"🎉 Correct Color!\n\n"+
+"You chose: "+userColor.toUpperCase()+
+"\nResult: "+result.toUpperCase()+
+"\n\nReward: "+reward+" DMX"
+)
 
-                const reward = 30;
+claimGameReward(reward)
 
-                playSound(winSound);
+addWinner(userAddress,reward)
 
-                alert(
-                "🎉 Correct Color!\n\n" +
-                "You chose: " + userColor.toUpperCase() +
-                "\nResult: " + result.toUpperCase() +
-                "\n\nReward: 30 DMX"
-                );
+gameRunning=false
 
-                await claimGameReward(reward);
+}
+else{
 
-                addWinner(userAddress, reward);
+playSound(loseSound)
 
-            } 
-            else{
-
-playSound(loseSound);
-
-document.body.style.transform="translateX(8px)";
-setTimeout(()=>document.body.style.transform="translateX(0)",120);
+document.body.style.transform="translateX(8px)"
+setTimeout(()=>document.body.style.transform="translateX(0)",120)
 
 alert(
 "❌ Wrong Color\n\n"+
 "Your Pick: "+userColor.toUpperCase()+
 "\nResult: "+result.toUpperCase()
-);
+)
 
-gameRunning=false;
-
-}
-
-        }, 500);
-
-    }, 1200); // orb spins for 1.2 seconds
+gameRunning=false
 
 }
 
+},500)
+
+},1200)
+
+}
     </script>
 </body>
 </html>
