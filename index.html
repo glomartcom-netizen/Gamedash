@@ -3426,24 +3426,32 @@ window.addEventListener("storage",function(e){
 // ===============================
 // 15. INITIALIZATION
 // ===============================
-window.onload = function(){
+window.onload=function(){
 
 updateBalance();
+
 updateJackpot();
-startRoundEngine();
+
+startRoundTimer();
 
 if(typeof resetTilesGame === "function"){
 resetTilesGame();
 }
 
-document.body.addEventListener("click",(e)=>{
+document.body.addEventListener("click",function(e){
 
-if(e.target.tagName === "BUTTON"){
-playSound(clickSound);
-}
+if(e.target.tagName === "BUTTON"){    
 
-if(bgMusic.paused){
-bgMusic.play().catch(()=>{});
+    if(typeof clickSound !== "undefined"){    
+        playSound(clickSound);    
+    }    
+
+}    
+
+if(typeof bgMusic !== "undefined" && bgMusic.paused){    
+
+    bgMusic.play().catch(()=>{});    
+
 }
 
 });
