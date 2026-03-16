@@ -3227,11 +3227,28 @@ async function checkGameCooldown(){
 
 return true
 
-    }    
+    }  
+
+  function showGame(selector){
+
+closeAllGames()
+
+const game=document.querySelector(selector)
+
+if(game){
+
+game.style.display="block"
+
+game.classList.add("game-open")
+
+}
+
+    }
+    
 
 function closeAllGames(){
 
-const selectors = [
+const games=[
 
 ".coin-scene",
 ".battle-scene",
@@ -3243,17 +3260,16 @@ const selectors = [
 ".color-game-container",
 "#magicTilesPanel",
 "#crashGamePanel",
-
 "#luckyNumberGame",
 "#luckySevenGame",
 "#oddEvenGame",
 "#horseRaceGame",
 "#carRaceGame"
 
-];
+]
 
-selectors.forEach(s=>{
-const el=document.querySelector(s)
+games.forEach(g=>{
+let el=document.querySelector(g)
 if(el) el.style.display="none"
 })
 
@@ -3402,6 +3418,8 @@ history.removeChild(history.lastChild);
 let roundId = 1001
 let roundTime = 10
 
+let globalResults = {}
+
 function startRoundTimer(){
 
 setInterval(()=>{
@@ -3424,63 +3442,49 @@ document.getElementById("roundId").innerText = roundId
 
 },1000)
 
-    }
+}
 
    function generateResults(){
 
 // COLOR RESULT
+const colors=["green","red","purple"]
+globalResults.color = colors[Math.floor(Math.random()*3)]
 
-const colors=["🔴","🟢","🟣"]
-
-const colorResult=colors[Math.floor(Math.random()*3)]
-
-addColorHistory(colorResult)
-
-
-// CRASH RESULT
-
-const crash=(Math.random()*3+1).toFixed(2)
-
-addCrashHistory(crash)
+addColorHistory(globalResults.color)
 
 
 // LUCKY NUMBER
+globalResults.luckyNumber = Math.floor(Math.random()*5)+1
 
-const luckyNum=Math.floor(Math.random()*10)
-
-addLuckyNumberHistory(luckyNum)
+addLuckyNumberHistory(globalResults.luckyNumber)
 
 
 // LUCKY 7
+globalResults.lucky7 = Math.floor(Math.random()*6)+1
 
-const luckySeven=Math.floor(Math.random()*10)
-
-addLuckySevenHistory(luckySeven)
+addLuckySevenHistory(globalResults.lucky7)
 
 
 // ODD EVEN
+let num=Math.floor(Math.random()*10)+1
 
-const num=Math.floor(Math.random()*10)
+globalResults.oddEven = num%2===0 ? "even":"odd"
 
-const oddEven = num%2===0 ? "EVEN":"ODD"
-
-addOddEvenHistory(oddEven)
-
-
-// HORSE RACE
-
-const horse=Math.floor(Math.random()*4)+1
-
-addHorseHistory(horse)
+addOddEvenHistory(globalResults.oddEven)
 
 
-// CAR RACE
+// HORSE
+globalResults.horse = Math.floor(Math.random()*4)+1
 
-const car=Math.floor(Math.random()*4)+1
+addHorseHistory(globalResults.horse)
 
-addCarHistory(car)
 
-    }
+// CAR
+globalResults.car = Math.floor(Math.random()*4)+1
+
+addCarHistory(globalResults.car)
+
+}
     
 
 // ===============================
