@@ -118,7 +118,12 @@ border-radius:10px;
 font-size:14px;
 color:#cbd5f5;
 
- }   
+ }  
+
+.selected-coin{
+background:#22c55e;
+color:black;
+    }    
 
 /* BATTLE STYLES */
     
@@ -3978,6 +3983,16 @@ gameRunning=false;
     }
 
     
+let selectedCoin = null;
+
+function chooseCoin(choice){
+
+selectedCoin = choice;
+
+alert("You selected: " + choice.toUpperCase());
+
+}
+
 async function flipCoin(){
 
 if(gameRunning) return;
@@ -4003,19 +4018,13 @@ const rand = Math.random();
 let result;
 
 if(rand < 0.45){
-
 result = "heads";
-
 }
 else if(rand < 0.90){
-
 result = "tails";
-
 }
 else{
-
-result = "edge"; // rare result
-
+result = "edge";
 }
 
 let rotate = result === "heads" ? 1800 : 1980;
@@ -4026,17 +4035,7 @@ setTimeout(()=>{
 
 if(result === selectedCoin){
 
-let reward;
-
-if(result === "edge"){
-
-reward = currentBet * 4;
-
-}else{
-
-reward = currentBet * 2;
-
-}
+let reward = result === "edge" ? currentBet * 4 : currentBet * 2;
 
 playSound(winSound);
 
