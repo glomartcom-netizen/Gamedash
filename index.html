@@ -433,11 +433,18 @@ transition:2s linear;
 /* LUCKY BOX 3D STYLES */
 
 .box-scene {
-  width: 120px;
-  height: 100px;
-  margin: 50px auto;
-  perspective: 800px;
-  cursor: pointer;
+
+width:100%;
+max-width:420px;
+
+margin:30px auto;
+
+perspective:800px;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
 }
 
 .box-container {
@@ -823,16 +830,18 @@ slotShake 0.2s infinite;
 /* TARGET SHOT 3D STYLES */
 
 .target-scene {
-    width: 200px;
-    height: 200px;
-    margin: 30px auto;
-    position: relative;
 
-    perspective: 1000px;
+width:100%;
+max-width:420px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+margin:30px auto;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+position:relative;
+
 }
 
 .target-board {
