@@ -1686,17 +1686,36 @@ Choose Heads or Tails
 
 <div style="display:flex;justify-content:center;gap:10px;margin-top:10px">
 
-<button class="btn-bonus" onclick="chooseCoin('heads')">HEADS</button>
+<button class="btn-bonus" onclick="chooseCoin('heads')">
+HEADS (2x)
+</button>
 
-<button class="btn-bonus" onclick="chooseCoin('edge')">EDGE</button>
+<button class="btn-bonus" onclick="chooseCoin('edge')">
+EDGE (4x)
+</button>
 
-<button class="btn-bonus" onclick="chooseCoin('tails')">TAILS</button>
-
+<button class="btn-bonus" onclick="chooseCoin('tails')">
+TAILS (2x)
+</button>
 </div>
 
 <button class="btn-bonus" style="margin-top:20px" onclick="flipCoin()">
 🪙 FLIP COIN
 </button>
+
+  <div class="coin-rules">
+
+<b>Game Rules</b>
+
+<p>
+🪙 Heads → Win <b>2x</b><br>
+🪙 Tails → Win <b>2x</b><br>
+🟣 Edge (Rare) → Win <b>4x</b><br><br>
+
+❌ Wrong guess → Lose your bet
+</p>
+
+  </div>  
 
 </div>
 
@@ -1710,17 +1729,36 @@ Choose your weapon
 
 <div class="battle-options">
 
-<button class="battle-btn" onclick="chooseBattle('sword')">⚔ Sword</button>
+<button class="battle-btn" onclick="chooseBattle('sword')">
+⚔ Sword (2x)
+</button>
 
-<button class="battle-btn" onclick="chooseBattle('shield')">🛡 Shield</button>
+<button class="battle-btn" onclick="chooseBattle('shield')">
+🛡 Shield (2x)
+</button>
 
-<button class="battle-btn" onclick="chooseBattle('fire')">🔥 Fire</button>
-
+<button class="battle-btn" onclick="chooseBattle('fire')">
+🔥 Fire (4x Rare)
+</button>
 </div>
 
 <button class="btn-bonus" style="margin-top:20px" onclick="startBattle()">
 ⚔ Start Battle
 </button>
+
+  <div class="battle-rules">
+
+<b>Battle Rules</b>
+
+<p>
+⚔ Sword → Win <b>2x</b><br>
+🛡 Shield → Win <b>2x</b><br>
+🔥 Fire (Rare) → Win <b>4x</b><br><br>
+
+❌ Wrong choice → Lose your bet
+</p>
+
+  </div>  
 
 </div>    
 
