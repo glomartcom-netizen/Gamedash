@@ -2968,50 +2968,37 @@ function updateJackpot(){
 // ===============================
 function processBet(){
 
-    if(!antiExploitCheck()) return false;
+if(!antiExploitCheck()) return false;
 
-    let entry = Number(document.getElementById("betAmount").value);
+let entry = Number(document.getElementById("betAmount").value);
 
-    const MIN_BET = 10;
+const MIN_BET = 10;
 
-    if(gameRunning || localStorage.getItem("gameRunning") === "yes"){
-        alert("Game already running!");
-        return false;
-    }
-
-    if(!entry || entry < MIN_BET){
-        alert("Minimum bet is 10 DMX");
-        return false;
-    }
-
-    if(entry > claimBalance){
-        alert("Not enough balance");
-        return false;
-    }
-
-    // Deduct bet
-    claimBalance -= entry;
-
-    currentBet = entry;
-
-    totalBet += entry;
-
-    localStorage.setItem("totalBet", totalBet);
-
-    localStorage.setItem("gameRunning", "yes");
-
-    gameRunning = true;
-
-    updateBalance();
-
-    // Feed jackpot
-    jackpotPool += Math.floor(entry * 0.05);
-
-    updateJackpot();
-
-    return entry;
+if(entry < MIN_BET){
+alert("Minimum bet is 10 DMX");
+return false;
 }
 
+if(entry > claimBalance){
+alert("Not enough balance");
+return false;
+}
+
+claimBalance -= entry;
+
+currentBet = entry;
+
+totalBet += entry;
+
+updateBalance();
+
+jackpotPool += Math.floor(entry * 0.05);
+
+updateJackpot();
+
+return entry;
+
+    }
 
 // ===============================
 // 8. GAME PLAY BUTTON
