@@ -2344,6 +2344,51 @@ return true
 
     }    
 
+function closeAllGames(){
+
+const selectors = [
+".scene",
+".wheel-container",
+".box-scene",
+".card-scene",
+".target-scene",
+".slot-machine-container",
+".guess-container",
+".color-game-container",
+"#magicTilesPanel",
+"#crashGamePanel"
+];
+
+selectors.forEach(s=>{
+const el=document.querySelector(s)
+if(el) el.style.display="none"
+})
+
+}
+
+function showGame(selector,sound){
+
+closeAllGames()
+
+const el=document.querySelector(selector)
+
+if(!el) return
+
+el.style.display="block"
+
+el.classList.add("game-open")
+
+if(sound) playSound(sound)
+
+setTimeout(()=>{
+el.scrollIntoView({
+behavior:"smooth",
+block:"center"
+})
+},100)
+
+           }    
+
 
 
 // ===============================
