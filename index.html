@@ -2096,7 +2096,6 @@ Win → 20 / 30 / 50 DMX
 <!-- MAGIC TILES -->
 
 <div id="magicTilesPanel" class="game-section">
-<div id="magicTilesPanel" class="game-section">
 
 <h3>💎 Magic Tiles - Find the Gold</h3>
 
@@ -2377,8 +2376,8 @@ Bet 10 DMX
 
 <!-- 🎯 LUCKY NUMBER GAME -->
 
-<div class="lucky-number-game game-section">
-
+<div id="luckyNumberGame" class="lucky-number-game game-section">
+    
 <h3>🎯 Lucky Number</h3>
 
 <p style="color:#94a3b8">
@@ -2421,7 +2420,7 @@ Wrong guess → lose your bet
 
 <!-- 🎲 LUCKY 7 GAME -->
 
-<div class="lucky7-game game-section">
+<div id="luckySevenGame" class="lucky7-game game-section">
 
 <h3>🎲 Lucky 7</h3>
 
@@ -2479,8 +2478,8 @@ Wrong guess → Lose your bet
 
 <!-- ⚖ ODD EVEN GAME -->
 
-<div class="odd-even-game game-section">
-
+<div id="oddEvenGame" class="odd-even-game game-section">
+    
 <h3>⚖ Odd / Even</h3>
 
 <div class="game-history">
@@ -2533,7 +2532,7 @@ Wrong guess → Lose bet
 
 <!-- 🏎 FORMULA CAR RACE -->
 
-<div class="car-race-game game-section">
+<div id="carRaceGame" class="car-race-game game-section">
 
 <h3>🏎 Formula Car Race</h3>
 
@@ -2602,7 +2601,7 @@ Wrong car → Lose bet
 
  <!-- 🐎 HORSE RACE GAME -->
 
-<div class="horse-race-game game-section">
+<div id="horseRaceGame" class="horse-race-game game-section">
 
 <h3>🐎 Horse Race</h3>
 
@@ -3611,8 +3610,8 @@ alert(
 
 }
 
-updateHorseHistory(winner);
-
+addHorseHistory(winner);
+    
 gameRunning=false;
 
 },2000);
@@ -3620,6 +3619,7 @@ gameRunning=false;
 },500);
 
     }
+    
 
 let oddEvenChoice=null;
 
@@ -3941,7 +3941,7 @@ alert(
 
 }
 
-updateCarHistory(winner);
+addCarHistory(winner);
 
 gameRunning=false;
 
