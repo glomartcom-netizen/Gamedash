@@ -3569,61 +3569,85 @@ function openCarRace(){
 showGame("#carRaceGame")
     }    
 
-let selectedHorse=null;
+// ============================
+// RACE SYSTEM (HORSE + CAR)
+// ============================
 
+// selected options
+let selectedHorse = null;
+let selectedCar = null;
+
+
+// ----------------------------
+// SELECT HORSE
+// ----------------------------
 function selectHorse(num){
 
-selectedHorse=num;
+selectedHorse = num;
 
-alert("You selected Horse "+num);
+alert("You selected Horse " + num);
 
 }
 
+
+// ----------------------------
+// SELECT CAR
+// ----------------------------
+function selectCar(num){
+
+selectedCar = num;
+
+alert("You selected Car " + num);
+
+}
+
+
+// ----------------------------
+// HORSE RACE
+// ----------------------------
 async function startHorseRace(){
 
 if(gameRunning) return;
 
-let bet=processBet();
+let bet = processBet();
 if(!bet) return;
 
-if(!(await checkGameCooldown())) return;
-
-gameRunning=true;
+gameRunning = true;
 
 playSound(spinSound);
 
-const horses=[1,2,3,4];
+const horses = [1,2,3,4];
 
-horses.forEach(i=>{
-document.getElementById("horse"+i).style.left="30px";
-});
+const winner = Math.floor(Math.random()*4)+1;
 
-setTimeout(()=>{
 
-const winner=Math.floor(Math.random()*4)+1;
-
+// move horses
 horses.forEach(i=>{
 
-const distance=Math.random()*70+10;
+if(i === winner){
+
+document.getElementById("horse"+i).style.left="90%";
+
+}else{
+
+let distance = Math.random()*60 + 10;
 
 document.getElementById("horse"+i).style.left=distance+"%";
 
+}
+
 });
+
 
 setTimeout(()=>{
 
-if(selectedHorse===winner){
+if(selectedHorse === winner){
 
-let reward=bet*4;
-
-reward=applyRewardLimit(reward);
+let reward = bet*4;
 
 playSound(winSound);
 
-alert(
-"🏆 Horse "+winner+" wins!\n\n"+
-"Reward: "+reward+" DMX"
-);
+alert("🏆 Horse "+winner+" wins!\nReward: "+reward+" DMX");
 
 claimGameReward(reward);
 
@@ -3634,20 +3658,114 @@ else{
 
 playSound(loseSound);
 
-alert(
-"❌ Horse "+winner+" wins!\n\n"+
-"You lost your bet"
-);
+alert("❌ Horse "+winner+" wins!\nYou lost.");
 
 }
 
-addHorseHistory(winner);
-    
+// reset race
+setTimeout(()=>{
+
+resetRace();
+
 gameRunning=false;
 
 },2000);
 
-},500);
+},2000);
+
+}
+
+
+
+// ----------------------------
+// CAR RACE
+// ----------------------------
+async function startCarRace(){
+
+if(gameRunning) return;
+
+let bet = processBet();
+if(!bet) return;
+
+gameRunning = true;
+
+playSound(spinSound);
+
+const cars=[1,2,3,4];
+
+const winner=Math.floor(Math.random()*4)+1;
+
+
+// move cars
+cars.forEach(i=>{
+
+if(i===winner){
+
+document.getElementById("car"+i).style.left="90%";
+
+}else{
+
+let distance=Math.random()*60+10;
+
+document.getElementById("car"+i).style.left=distance+"%";
+
+}
+
+});
+
+
+setTimeout(()=>{
+
+if(selectedCar===winner){
+
+let reward=bet*4;
+
+playSound(winSound);
+
+alert("🏁 Car "+winner+" wins!\nReward: "+reward+" DMX");
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+else{
+
+playSound(loseSound);
+
+alert("❌ Car "+winner+" wins!\nYou lost.");
+
+}
+
+// reset race
+setTimeout(()=>{
+
+resetRace();
+
+gameRunning=false;
+
+},2000);
+
+},2000);
+
+}
+
+
+
+// ----------------------------
+// RESET FUNCTION
+// ----------------------------
+function resetRace(){
+
+for(let i=1;i<=4;i++){
+
+let horse=document.getElementById("horse"+i);
+if(horse) horse.style.left="30px";
+
+let car=document.getElementById("car"+i);
+if(car) car.style.left="30px";
+
+}
 
     }
     
@@ -3899,88 +4017,6 @@ gameRunning=false;
     }
     
     
-
-let selectedCar=null;
-
-function selectCar(num){
-
-selectedCar=num;
-
-alert("You selected Car "+num);
-
-}
-
-async function startCarRace(){
-
-if(gameRunning) return;
-
-let bet=processBet();
-if(!bet) return;
-
-if(!(await checkGameCooldown())) return;
-
-gameRunning=true;
-
-playSound(spinSound);
-
-const cars=[1,2,3,4];
-
-cars.forEach(i=>{
-document.getElementById("car"+i).style.left="30px";
-});
-
-setTimeout(()=>{
-
-const winner=Math.floor(Math.random()*4)+1;
-
-cars.forEach(i=>{
-
-const distance=Math.random()*70+10;
-
-document.getElementById("car"+i).style.left=distance+"%";
-
-});
-
-setTimeout(()=>{
-
-if(selectedCar===winner){
-
-let reward=bet*4;
-
-reward=applyRewardLimit(reward);
-
-playSound(winSound);
-
-alert(
-"🏆 Car "+winner+" wins!\n\n"+
-"Reward: "+reward+" DMX"
-);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-else{
-
-playSound(loseSound);
-
-alert(
-"❌ Car "+winner+" wins!\n\n"+
-"You lost your bet"
-);
-
-}
-
-addCarHistory(winner);
-
-gameRunning=false;
-
-},2000);
-
-},500);
-
-    }
 
     
 let selectedCoin = null;
