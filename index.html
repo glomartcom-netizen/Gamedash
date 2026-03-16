@@ -1557,6 +1557,25 @@ border-radius:6px;
 font-size:13px;
 
 }
+
+ .round-panel{
+
+display:flex;
+justify-content:space-between;
+
+background:#0f172a;
+
+padding:10px;
+
+border-radius:8px;
+
+margin-bottom:15px;
+
+border:1px solid #06b6d4;
+
+font-weight:bold;
+
+    }   
         
 .scene,
 .wheel-container,
@@ -3235,9 +3254,207 @@ block:"center"
 })
 },100)
 
-           }    
+}    
+
+function addColorHistory(result){
+
+const history=document.getElementById("colorHistory");
+
+const item=document.createElement("span");
+
+item.innerText=result;
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }
+
+function addCrashHistory(multiplier){
+
+const history=document.getElementById("crashHistory");
+
+const item=document.createElement("span");
+
+item.innerText=multiplier+"x";
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }
 
 
+ function addLuckyNumberHistory(num){
+
+const history=document.getElementById("luckyNumberHistory");
+
+const item=document.createElement("span");
+
+item.innerText=num;
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }
+    
+
+  function addLuckySevenHistory(num){
+
+const history=document.getElementById("luckySevenHistory");
+
+const item=document.createElement("span");
+
+item.innerText="🎲"+num;
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }  
+
+
+function addOddEvenHistory(result){
+
+const history=document.getElementById("oddEvenHistory");
+
+const item=document.createElement("span");
+
+item.innerText=result;
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }
+
+function addHorseHistory(horse){
+
+const history=document.getElementById("horseHistory");
+
+const item=document.createElement("span");
+
+item.innerText="🐎"+horse;
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }
+
+
+function addCarHistory(car){
+
+const history=document.getElementById("carHistory");
+
+const item=document.createElement("span");
+
+item.innerText="🏎"+car;
+
+history.prepend(item);
+
+if(history.children.length>12){
+history.removeChild(history.lastChild);
+}
+
+    }
+    
+let roundId = 1001
+let roundTime = 10
+
+function startRoundTimer(){
+
+setInterval(()=>{
+
+roundTime--
+
+document.getElementById("roundTimer").innerText = roundTime
+
+if(roundTime <= 0){
+
+generateResults()
+
+roundId++
+
+roundTime = 10
+
+document.getElementById("roundId").innerText = roundId
+
+}
+
+},1000)
+
+    }
+
+   function generateResults(){
+
+// COLOR RESULT
+
+const colors=["🔴","🟢","🟣"]
+
+const colorResult=colors[Math.floor(Math.random()*3)]
+
+addColorHistory(colorResult)
+
+
+// CRASH RESULT
+
+const crash=(Math.random()*3+1).toFixed(2)
+
+addCrashHistory(crash)
+
+
+// LUCKY NUMBER
+
+const luckyNum=Math.floor(Math.random()*10)
+
+addLuckyNumberHistory(luckyNum)
+
+
+// LUCKY 7
+
+const luckySeven=Math.floor(Math.random()*10)
+
+addLuckySevenHistory(luckySeven)
+
+
+// ODD EVEN
+
+const num=Math.floor(Math.random()*10)
+
+const oddEven = num%2===0 ? "EVEN":"ODD"
+
+addOddEvenHistory(oddEven)
+
+
+// HORSE RACE
+
+const horse=Math.floor(Math.random()*4)+1
+
+addHorseHistory(horse)
+
+
+// CAR RACE
+
+const car=Math.floor(Math.random()*4)+1
+
+addCarHistory(car)
+
+    }
+    
 
 // ===============================
 // GAME OPEN FUNCTIONS
