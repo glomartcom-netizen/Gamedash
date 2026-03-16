@@ -3072,6 +3072,17 @@ music.pause()
 }
 
 }
+
+function playSound(name){
+
+if(!name) return
+
+if(typeof name === "string"){
+SoundEngine.play(name)
+}
+
+    }
+    
     
 
 // ===============================
