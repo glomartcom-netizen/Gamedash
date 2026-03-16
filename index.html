@@ -362,6 +362,23 @@ margin:8px 0;
 border-radius:6px;
 }
 
+.horse-btn{
+
+padding:12px 16px;
+background:#0f172a;
+border:1px solid #06b6d4;
+color:white;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.horse-btn:hover{
+background:#06b6d4;
+color:black;
+    }    
+
 .horse-lane span{
 position:absolute;
 left:5px;
@@ -1625,7 +1642,15 @@ bottom:0;
 width:4px;
 background:white;
 box-shadow:0 0 10px white;
-    }    
+    }  
+
+.selected-btn{
+
+background:#06b6d4 !important;
+color:black !important;
+box-shadow:0 0 10px #06b6d4;
+
+}    
         
 .scene,
 .coin-scene,
@@ -3597,7 +3622,13 @@ function selectHorse(num){
 
 selectedHorse = num;
 
-alert("You selected Horse " + num);
+// remove previous highlight
+document.querySelectorAll(".horse-btn").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected button
+document.querySelectorAll(".horse-btn")[num-1].classList.add("selected-btn");
 
 }
 
@@ -3609,7 +3640,13 @@ function selectCar(num){
 
 selectedCar = num;
 
-alert("You selected Car " + num);
+// remove previous highlight
+document.querySelectorAll(".car-btn").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected button
+document.querySelectorAll(".car-btn")[num-1].classList.add("selected-btn");
 
 }
 
