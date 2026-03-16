@@ -137,6 +137,47 @@ border:3px solid #b45309;
 transform:rotateY(180deg);
 }
 
+.coin-edge{
+background:#9333ea;
+color:white;
+} 
+
+/* BATTLE STYLES */
+    
+.battle-scene{
+display:none;
+margin-top:30px;
+text-align:center;
+}
+
+.battle-options{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-top:20px;
+}
+
+.battle-btn{
+
+background:#0f172a;
+border:2px solid #06b6d4;
+padding:15px;
+border-radius:10px;
+cursor:pointer;
+font-size:18px;
+color:white;
+transition:0.3s;
+
+}
+
+.battle-btn:hover{
+
+background:#06b6d4;
+color:black;
+transform:scale(1.1);
+
+}    
+
         
 /* CARD FLIP 3D STYLES */
 
@@ -1566,6 +1607,8 @@ Close
 
 <div class="game-btn" onclick="openCoinGame()">🪙 Coin Flip</div>
 
+ <div class="game-btn" onclick="openBattleGame()">⚔ Battle Arena</div>   
+
 <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
 
 <div class="game-btn" onclick="openDiceGame()">🎲 Dice Roll</div>
@@ -1644,6 +1687,9 @@ Choose Heads or Tails
 <div style="display:flex;justify-content:center;gap:10px;margin-top:10px">
 
 <button class="btn-bonus" onclick="chooseCoin('heads')">HEADS</button>
+
+<button class="btn-bonus" onclick="chooseCoin('edge')">EDGE</button>
+
 <button class="btn-bonus" onclick="chooseCoin('tails')">TAILS</button>
 
 </div>
@@ -1653,6 +1699,30 @@ Choose Heads or Tails
 </button>
 
 </div>
+
+<div class="battle-scene">
+
+<h3>⚔ Battle Arena</h3>
+
+<p style="color:#94a3b8">
+Choose your weapon
+</p>
+
+<div class="battle-options">
+
+<button class="battle-btn" onclick="chooseBattle('sword')">⚔ Sword</button>
+
+<button class="battle-btn" onclick="chooseBattle('shield')">🛡 Shield</button>
+
+<button class="battle-btn" onclick="chooseBattle('fire')">🔥 Fire</button>
+
+</div>
+
+<button class="btn-bonus" style="margin-top:20px" onclick="startBattle()">
+⚔ Start Battle
+</button>
+
+</div>    
 
 
 <!-- LUCKY BOX -->
@@ -2376,6 +2446,10 @@ function openCoinGame(){
 showGame(".coin-scene",clickSound)
 }
 
+function openBattleGame(){
+showGame(".battle-scene",clickSound)
+    }    
+
 function openLuckyBox(){
 showGame(".box-scene",boxSound)
 }
@@ -2413,16 +2487,6 @@ showGame("#crashGamePanel",crashSound)
 }
 
     
-let selectedCoin = null;
-
-function chooseCoin(side){
-
-selectedCoin = side;
-
-alert("You selected: "+side.toUpperCase());
-
-}
-
 async function flipCoin(){
 
 if(gameRunning) return;
@@ -2433,7 +2497,7 @@ return;
 }
 
 if(selectedCoin === null){
-alert("Choose Heads or Tails");
+alert("Choose Heads, Tails or Edge");
 return;
 }
 
@@ -2443,7 +2507,25 @@ playSound(spinSound);
 
 const coin = document.getElementById("coinElement");
 
-const result = Math.random() < 0.5 ? "heads" : "tails";
+const rand = Math.random();
+
+let result;
+
+if(rand < 0.45){
+
+result = "heads";
+
+}
+else if(rand < 0.90){
+
+result = "tails";
+
+}
+else{
+
+result = "edge"; // rare result
+
+}
 
 let rotate = result === "heads" ? 1800 : 1980;
 
@@ -2453,12 +2535,22 @@ setTimeout(()=>{
 
 if(result === selectedCoin){
 
-let reward = currentBet * 2;
+let reward;
+
+if(result === "edge"){
+
+reward = currentBet * 4;
+
+}else{
+
+reward = currentBet * 2;
+
+}
 
 playSound(winSound);
 
 alert(
-"🪙 Coin Result: "+result.toUpperCase()+
+"🪙 Result: "+result.toUpperCase()+
 "\n\nYou won "+reward+" DMX"
 );
 
@@ -2471,9 +2563,108 @@ addWinner(userAddress,reward);
 playSound(loseSound);
 
 alert(
-"🪙 Coin Result: "+result.toUpperCase()+
+"🪙 Result: "+result.toUpperCase()+
 "\n\nYou lost!"
 );
+
+}
+
+gameRunning = false;
+
+},1200);
+
+}
+    
+
+ let selectedBattle = null;
+
+function chooseBattle(choice){
+
+selectedBattle = choice;
+
+alert("You selected: "+choice.toUpperCase());
+
+}
+
+async function startBattle(){
+
+if(gameRunning) return;
+
+if(currentBet <= 0){
+alert("Start Game first");
+return;
+}
+
+if(selectedBattle === null){
+alert("Choose your weapon first");
+return;
+}
+
+gameRunning = true;
+
+playSound(spinSound);
+
+const outcomes = ["lose","win","rare"];
+
+let rand = Math.random();
+
+let result;
+
+if(rand < 0.60){
+
+result = "lose";
+
+}else if(rand < 0.90){
+
+result = "win";
+
+}else{
+
+result = "rare";
+
+}
+
+setTimeout(()=>{
+
+if(result === "lose"){
+
+playSound(loseSound);
+
+alert("❌ You lost the battle!");
+
+}
+
+else if(result === "win"){
+
+let reward = currentBet * 2;
+
+playSound(winSound);
+
+alert(
+"⚔ Battle Won!\n\n"+
+"You earned "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+
+else{
+
+let reward = currentBet * 4;
+
+playSound(winSound);
+
+alert(
+"🔥 LEGENDARY WIN!\n\n"+
+"You earned "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
 
 }
 
@@ -2481,7 +2672,7 @@ gameRunning=false;
 
 },1200);
 
-}
+    }   
 
 
 // ===============================
