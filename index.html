@@ -1920,6 +1920,7 @@ function toggleMusic() {
 // ===============================
 let gameRunning = false;
 let userAddress = localStorage.getItem("walletAddress") || ("GUEST_" + Math.floor(Math.random()*100000));
+let currentBet = 0;    
 
 // New Player Bonus
 let claimBalance = Number(localStorage.getItem("claimBalance")) || 0;
@@ -2058,6 +2059,8 @@ function processBet(){
 
     // Deduct bet
     claimBalance -= entry;
+
+    currentBet = entry;
 
     totalBet += entry;
 
@@ -2369,8 +2372,8 @@ block:"center"
 // GAME OPEN FUNCTIONS
 // ===============================
 
-function openSpinWheel(){
-showGame(".wheel-container",spinSound)
+function openCoinGame(){
+showGame(".coin-scene",clickSound)
 }
 
 function openLuckyBox(){
@@ -2410,81 +2413,73 @@ showGame("#crashGamePanel",crashSound)
 }
 
     
-// Initial wheel rotation angle
-let currentWheelRotation = 0;
+let selectedCoin = null;
 
-async function spinWheelGame(){
+function chooseCoin(side){
+
+selectedCoin = side;
+
+alert("You selected: "+side.toUpperCase());
+
+}
+
+async function flipCoin(){
 
 if(gameRunning) return;
 
-if(!(await checkGameCooldown())) return;
+if(currentBet <= 0){
+alert("Start Game first");
+return;
+}
+
+if(selectedCoin === null){
+alert("Choose Heads or Tails");
+return;
+}
 
 gameRunning = true;
 
 playSound(spinSound);
 
-const wheelElement = document.getElementById("wheelElement");
+const coin = document.getElementById("coinElement");
 
-const rewards = [5,10,20,30,50,100];
+const result = Math.random() < 0.5 ? "heads" : "tails";
 
-const rewardAngles = [
-{min:0,max:60},
-{min:60,max:120},
-{min:120,max:180},
-{min:180,max:240},
-{min:240,max:300},
-{min:300,max:360}
-];
+let rotate = result === "heads" ? 1800 : 1980;
 
-// pick random angle first
-const stopAngle = Math.floor(Math.random()*360);
-
-const totalSpins = 5 * 360;
-
-const finalRotation =
-currentWheelRotation + totalSpins + (360 - stopAngle);
-
-currentWheelRotation = finalRotation;
-
-wheelElement.style.transform = `rotate(${finalRotation}deg)`;
-
-// calculate reward based on angle
-let reward = 0;
-
-for(let i=0;i<rewardAngles.length;i++){
-
-if(stopAngle >= rewardAngles[i].min && stopAngle < rewardAngles[i].max){
-
-reward = rewards[i];
-
-break;
-
-}
-
-}
+coin.style.transform = `rotateY(${rotate}deg)`;
 
 setTimeout(()=>{
 
+if(result === selectedCoin){
+
+let reward = currentBet * 2;
+
 playSound(winSound);
 
-document.body.style.transform="scale(1.02)";
-
-setTimeout(()=>document.body.style.transform="scale(1)",150);
-
-reward = applyRewardLimit(reward);
-
 alert(
-"🎡 Wheel Stopped!\n\n"+
-"You won "+reward+" DMX"
+"🪙 Coin Result: "+result.toUpperCase()+
+"\n\nYou won "+reward+" DMX"
 );
 
 claimGameReward(reward);
 
 addWinner(userAddress,reward);
 
+}else{
+
+playSound(loseSound);
+
+alert(
+"🪙 Coin Result: "+result.toUpperCase()+
+"\n\nYou lost!"
+);
+
+}
+
 gameRunning=false;
 
-},4100);
+},1200);
 
 }
 
