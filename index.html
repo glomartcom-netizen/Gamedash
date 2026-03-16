@@ -3452,6 +3452,9 @@ async function shootTargetAnimation(){
 
 if(gameRunning) return
 
+let bet = processBet()
+if(!bet) return
+
 if (!(await checkGameCooldown())) return
 
 gameRunning=true
@@ -3477,23 +3480,56 @@ setTimeout(()=>{
 
 board.classList.add("board-hit")
 
-const chance=Math.random()
+let chance=Math.random()
 
-if(chance>0.4){
+let reward=0
+let resultText=""
 
-const rewards=[20,30,50]
+if(chance < 0.2){
 
-const reward=rewards[Math.floor(Math.random()*rewards.length)]
+reward = bet * 5
+resultText="🎯 BULLSEYE!"
 
-status.innerText="🎯 Perfect Shot!"
+}
+else if(chance < 0.5){
+
+reward = bet * 3
+resultText="🎯 Inner Ring!"
+
+}
+else if(chance < 0.8){
+
+reward = bet * 2
+resultText="🎯 Outer Ring!"
+
+}
+else{
+
+playSound(loseSound)
+
+status.innerText="❌ Missed Target!"
+
+alert(
+"❌ Missed Target\n\n"+
+"You lost your bet."
+)
+
+gameRunning=false
+return
+
+}
+
+reward = applyRewardLimit(reward)
+
+status.innerText=resultText
 
 playSound(winSound)
 
 setTimeout(()=>{
 
 alert(
-"🎯 Perfect Shot!\n\n"+
-"You hit the target and won "+reward+" DMX"
+resultText+"\n\n"+
+"Reward: "+reward+" DMX"
 )
 
 claimGameReward(reward)
@@ -3504,34 +3540,16 @@ gameRunning=false
 
 },500)
 
-}
-else{
-
-playSound(loseSound)
-
-status.innerText="❌ Missed Target!"
-
-setTimeout(()=>{
-
-alert(
-"❌ Missed Target\n\n"+
-"The arrow missed the target. Try again!"
-)
-
-gameRunning=false
-
-},500)
+},1200)
 
 }
-
-},400)
-
-}
-
 
         async function spinSlot(){
 
 if(gameRunning) return
+
+let bet = processBet()
+if(!bet) return
 
 if (!(await checkGameCooldown())) return
 
@@ -3569,7 +3587,7 @@ reel.style.transform=`translateY(${moveY}px)`
 
 setTimeout(()=>{
 
-checkSlotResult(resultA,resultB,resultC)
+checkSlotResult(resultA,resultB,resultC,bet)
 
 setTimeout(()=>{
 
@@ -3592,8 +3610,7 @@ reel.style.transform=`translateY(${finalPos}px)`
 
 }
 
-
-async function checkSlotResult(a,b,c){
+async function checkSlotResult(a,b,c,bet){
 
 let reward=0
 
@@ -3601,35 +3618,36 @@ const windowEl=document.querySelector('.slot-window')
 
 if(a===b && b===c){
 
-reward=100
+reward = bet * 10
 
 windowEl.classList.add('slot-jackpot')
 
 playSound(winSound)
 
-alert("🎉 JACKPOT!\nYou won 100 DMX")
+alert("🎉 JACKPOT!\n\nReward: "+reward+" DMX")
 
 }
 else if(a===b || b===c || a===c){
 
-reward=20
+reward = bet * 2
 
 playSound(winSound)
 
-alert("👍 Small win\nYou won 20 DMX")
+alert("👍 Small Win\n\nReward: "+reward+" DMX")
 
 }
 else{
 
 playSound(loseSound)
 
-alert("❌ No match. Try again tomorrow")
+alert("❌ No Match\n\nYou lost your bet.")
 
 gameRunning=false
-
 return
 
 }
+
+reward = applyRewardLimit(reward)
 
 claimGameReward(reward)
 
@@ -3644,7 +3662,8 @@ gameRunning=false
 
 if(gameRunning) return
 
-if (!(await checkGameCooldown())) return
+let bet = processBet()
+if(!bet) return
 
 gameRunning=true
 
@@ -3663,23 +3682,24 @@ const random=Math.floor(Math.random()*5)+1
 if(num===random){
 
 display.classList.add("guess-success")
-
 display.innerText="OK"
 
 playSound(winSound)
+
+let reward = bet * 5
+reward = applyRewardLimit(reward)
 
 setTimeout(()=>{
 
 alert(
 "🎉 Correct Guess!\n\n"+
-"Locker opened!\n"+
 "Winning Number: "+random+
-"\n\nReward: 50 DMX"
+"\n\nReward: "+reward+" DMX"
 )
 
-claimGameReward(50)
+claimGameReward(reward)
 
-addWinner(userAddress,50)
+addWinner(userAddress,reward)
 
 gameRunning=false
 
@@ -3691,7 +3711,6 @@ display.innerText="0"
 else{
 
 display.classList.add("guess-fail")
-
 display.innerText="ERR"
 
 playSound(loseSound)
@@ -3700,8 +3719,8 @@ setTimeout(()=>{
 
 alert(
 "❌ Wrong Guess\n\n"+
-"Incorrect code!\n"+
-"Correct Number: "+random
+"Correct Number: "+random+
+"\n\nYou lost your bet."
 )
 
 gameRunning=false
@@ -3712,10 +3731,9 @@ display.innerText="0"
 
 }
 
-},800)
+},2000)
 
 }
-
 
         async function pickColor(userColor){
 
