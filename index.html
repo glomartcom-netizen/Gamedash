@@ -2109,14 +2109,13 @@ function processBet(){
 // ===============================
 function playGame(){
 
-    let bet = processBet();
+let bet = processBet();
 
-    if(!bet) return;
+if(!bet) return;
 
-    resolveGame("Zone Game", null, bet);
+alert("Bet locked! Now choose a game.");
 
 }
-
 
 // ===============================
 // 9. RESULT ENGINE
@@ -2318,6 +2317,32 @@ window.onload=function(){
     });
 
 };
+
+function applyRewardLimit(reward){
+
+if(reward > jackpotPool){
+reward = jackpotPool
+}
+
+return reward
+
+}
+
+
+function claimGameReward(amount){
+
+claimBalance += amount
+
+updateBalance()
+
+}
+
+
+async function checkGameCooldown(){
+
+return true
+
+    }    
 
 
 
