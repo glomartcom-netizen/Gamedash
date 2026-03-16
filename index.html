@@ -1941,249 +1941,384 @@ function toggleMusic() {
     }
     
 
-
 // ===============================
-// 1. CORE GAME STATE & SECURITY (FROZEN & FIXED)
+// 1. CORE GAME STATE & SECURITY
 // ===============================
 let gameRunning = false;
 let userAddress = localStorage.getItem("walletAddress") || ("GUEST_" + Math.floor(Math.random()*100000));
 
-// FIX 3: Safer New Player Bonus Edge Case
+// New Player Bonus
 let claimBalance = Number(localStorage.getItem("claimBalance")) || 0;
-if (!localStorage.getItem("isNewPlayer")) {
-    claimBalance = 100; 
+
+if (localStorage.getItem("isNewPlayer") === null) {
+    claimBalance = 100;
     localStorage.setItem("claimBalance", claimBalance);
-    localStorage.setItem("isNewPlayer", "true"); 
+    localStorage.setItem("isNewPlayer", "true");
 }
 
+// Jackpot
 let jackpotPool = Number(localStorage.getItem("jackpotPool")) || 5000;
-const MAX_WIN_PROTECTION = 100000; 
 
-// UPGRADE: House Edge Tracking
+// Max win protection
+const MAX_WIN_PROTECTION = 100000;
+
+// House edge tracking
 let totalBet = Number(localStorage.getItem("totalBet")) || 0;
 let totalPayout = Number(localStorage.getItem("totalPayout")) || 0;
 
-// ===============================
-// 2. SMART WIN ENGINE (FROZEN)
-// ===============================
-function getWinChance() {
-    if (totalBet < 500) return 0.38; 
-    let profit = totalBet - totalPayout;
-    let profitPercent = (totalBet > 0) ? (profit / totalBet) * 100 : 0;
 
-    if (profitPercent < 10) return 0.25; 
-    if (profitPercent < 20) return 0.35; 
-    return 0.45; 
+// ===============================
+// 2. ANTI REFRESH PROTECTION
+// ===============================
+window.onbeforeunload = function(){
+    if(gameRunning){
+        return "Game running. Refresh may lose bet.";
+    }
+};
+
+
+// ===============================
+// 3. SMART WIN ENGINE
+// ===============================
+function getWinChance(){
+
+    if(totalBet < 500) return 0.38;
+
+    let profit = totalBet - totalPayout;
+
+    let profitPercent = (totalBet > 0)
+        ? (profit / totalBet) * 100
+        : 0;
+
+    if(profitPercent < 10) return 0.25;
+    if(profitPercent < 20) return 0.35;
+
+    return 0.45;
 }
 
+
 // ===============================
-// 3. ANTI-BOT & PROTECTION (FIXED)
+// 4. ANTI BOT PROTECTION
 // ===============================
 let lastClickTime = 0;
 let betCounter = 0;
 
-function antiExploitCheck() {
+function antiExploitCheck(){
+
     let now = Date.now();
-    if (now - lastClickTime < 800) {
+
+    if(now - lastClickTime < 400){
         alert("Too fast! Bot activity detected.");
         return false;
     }
+
     lastClickTime = now;
 
     betCounter++;
-    // Security check for session bets
-    if (betCounter > 25) { 
+
+    if(betCounter > 25){
         alert("Security Lock: Too many bets detected.");
         location.reload();
         return false;
     }
+
     return true;
 }
 
+
 // ===============================
-// 4. UI & BALANCE UPDATE (FROZEN)
+// 5. BALANCE UI SYSTEM
 // ===============================
-function updateBalance() {
+function updateBalance(){
+
     let el = document.getElementById("balanceValue");
-    if (el) el.innerText = claimBalance;
+
+    if(el){
+        el.innerText = claimBalance.toFixed(0);
+    }
+
     localStorage.setItem("claimBalance", claimBalance);
 }
 
-function updateJackpot() {
+
+// ===============================
+// 6. JACKPOT SYSTEM
+// ===============================
+function updateJackpot(){
+
     const el = document.getElementById("jackpotValue");
-    if (el) el.innerText = jackpotPool;
+
+    if(el){
+        el.innerText = jackpotPool;
+    }
+
     localStorage.setItem("jackpotPool", jackpotPool);
 }
 
+
 // ===============================
-// 5. PAID BET ENGINE (FROZEN)
+// 7. BET ENGINE
 // ===============================
-function processBet() {
-    if (!antiExploitCheck()) return false;
+function processBet(){
+
+    if(!antiExploitCheck()) return false;
 
     let entry = Number(document.getElementById("betAmount").value);
+
     const MIN_BET = 10;
 
-    if (gameRunning || localStorage.getItem("gameRunning") === "yes") {
+    if(gameRunning || localStorage.getItem("gameRunning") === "yes"){
         alert("Game already running!");
         return false;
     }
-    if (!entry || entry < MIN_BET) {
+
+    if(!entry || entry < MIN_BET){
         alert("Minimum bet is 10 DMX");
         return false;
     }
-    if (entry > claimBalance) {
-        alert("Not enough balance!");
+
+    if(entry > claimBalance){
+        alert("Not enough balance");
         return false;
     }
 
+    // Deduct bet
     claimBalance -= entry;
-    totalBet += entry; 
+
+    totalBet += entry;
+
     localStorage.setItem("totalBet", totalBet);
+
     localStorage.setItem("gameRunning", "yes");
+
     gameRunning = true;
-    
+
     updateBalance();
-    
+
+    // Feed jackpot
     jackpotPool += Math.floor(entry * 0.05);
+
     updateJackpot();
 
-    return entry; 
+    return entry;
 }
 
-// ===============================
-// 6. SMART RESULT ENGINE (FIXED)
-// ===============================
-function resolveGame(gameName, manualResult = null) {
-    let entry = Number(document.getElementById("betAmount").value);
-    let isWinner = (manualResult !== null) ? manualResult : (Math.random() < getWinChance());
-    let randomDelay = 900 + Math.random() * 600;
 
-    setTimeout(() => {
-        if (isWinner) {
-            let reward = entry * 2; 
-            if (reward > MAX_WIN_PROTECTION) reward = MAX_WIN_PROTECTION;
+// ===============================
+// 8. GAME PLAY BUTTON
+// ===============================
+function playGame(){
 
-            if (reward > jackpotPool) reward = Math.max(0, jackpotPool);
-            
+    let bet = processBet();
+
+    if(!bet) return;
+
+    resolveGame("Zone Game", null, bet);
+
+}
+
+
+// ===============================
+// 9. RESULT ENGINE
+// ===============================
+function resolveGame(gameName, manualResult, entry){
+
+    let isWinner =
+        (manualResult !== null)
+        ? manualResult
+        : (Math.random() < getWinChance());
+
+    let randomDelay = 900 + Math.random()*600;
+
+    setTimeout(()=>{
+
+        if(isWinner){
+
+            let reward = entry * 2;
+
+            reward = Math.min(reward, MAX_WIN_PROTECTION);
+
+            reward = Math.min(reward, jackpotPool);
+
             claimBalance += reward;
+
             totalPayout += reward;
-            
-            // FIX 2: Balance save to LocalStorage
+
             localStorage.setItem("claimBalance", claimBalance);
+
             localStorage.setItem("totalPayout", totalPayout);
 
-            // FIX 1: Correct Jackpot deduction logic
-            jackpotPool -= reward; 
-            
+            jackpotPool =
+                Math.max(0, jackpotPool - Math.floor(reward * 0.5));
+
             alert(`🎉 You won ${reward} DMX on ${gameName}!`);
+
             jackpotEffect();
+
             addWinner(userAddress, reward);
-        } else {
+
+        }else{
+
             alert("❌ Better luck next time!");
+
         }
-        
-        // FIX 4: Bet counter reset after a successful cycle
-        if(betCounter > 20) betCounter = 0;
+
+        if(betCounter >= 20){
+            betCounter = 0;
+        }
 
         localStorage.removeItem("gameRunning");
+
         gameRunning = false;
+
         updateBalance();
+
         updateJackpot();
+
     }, randomDelay);
+
 }
 
-// ===============================
-// 7. NAVIGATION & POPUPS (FROZEN - NO CHANGES)
-// ===============================
-function closeAllGames() {
-    const selectors = [".scene", ".wheel-container", ".box-scene", ".card-scene", ".target-scene", ".slot-machine-container", ".guess-container", ".color-game-container", "#magicTilesPanel", "#crashGamePanel"];
-    selectors.forEach(s => {
-        const el = document.querySelector(s);
-        if (el) el.style.display = "none";
-    });
-}
-
-function showGame(selector, sound) {
-    closeAllGames();
-    const el = document.querySelector(selector);
-    if (!el) return;
-    el.style.display = "block";
-    el.classList.add("game-open");
-    if (sound) playSound(sound);
-    setTimeout(() => { el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 100);
-}
 
 // ===============================
-// 8. WINNER BOARD & EFFECTS (FROZEN - NO CHANGES)
+// 10. WINNER BOARD
 // ===============================
-function addWinner(address, reward) {
+function addWinner(address, reward){
+
     const board = document.getElementById("winnerBoard");
-    if (!board) return;
-    const shortAddr = address.substring(0, 6) + "...";
+
+    if(!board) return;
+
+    const shortAddr = address.substring(0,6) + "...";
+
     const span = document.createElement("span");
-    span.textContent = `${shortAddr} won ${reward} DMX 🔥 | `;
+
+    span.textContent =
+        `${shortAddr} won ${reward} DMX 🔥 | `;
+
     span.style.marginRight = "20px";
+
     board.prepend(span);
-    if (board.children.length > 20) board.removeChild(board.lastChild);
+
+    if(board.children.length > 20){
+        board.removeChild(board.lastChild);
+    }
+
 }
 
-function jackpotEffect() {
-    if (typeof winSound !== 'undefined') playSound(winSound);
+
+// ===============================
+// 11. WIN EFFECT
+// ===============================
+function jackpotEffect(){
+
+    if(typeof winSound !== "undefined"){
+        playSound(winSound);
+    }
+
     document.body.classList.add("win-flash");
-    setTimeout(() => { document.body.classList.remove("win-flash"); }, 1500);
 
-    for(let i=0; i<20; i++) {
+    setTimeout(()=>{
+        document.body.classList.remove("win-flash");
+    },1500);
+
+    for(let i=0;i<20;i++){
+
         let spark = document.createElement("div");
+
         spark.className = "spark";
+
         spark.style.left = Math.random()*100+"vw";
+
         spark.style.top = Math.random()*100+"vh";
+
         document.body.appendChild(spark);
-        setTimeout(() => spark.remove(), 1000);
+
+        setTimeout(()=>{
+            spark.remove();
+        },1000);
     }
 }
 
-// ===============================
-// 9. SECURITY & DEPOSIT (FROZEN)
-// ===============================
-setInterval(() => {
-    let saved = Number(localStorage.getItem("claimBalance")) || 0;
-    if (claimBalance !== saved) {
-        claimBalance = saved;
-        updateBalance();
-    }
-}, 2000);
 
-window.addEventListener("storage", function(e) {
-    if (e.key === "claimBalance") location.reload();
+// ===============================
+// 12. RULES POPUP
+// ===============================
+function openGameInfo(){
+    document.getElementById("gameInfoPopup").style.display="block";
+}
+
+function closeGameInfo(){
+    document.getElementById("gameInfoPopup").style.display="none";
+}
+
+
+// ===============================
+// 13. BALANCE TAMPER PROTECTION
+// ===============================
+setInterval(()=>{
+
+    let saved =
+        Number(localStorage.getItem("claimBalance")) || 0;
+
+    if(claimBalance !== saved){
+
+        claimBalance = saved;
+
+        updateBalance();
+
+    }
+
+},2000);
+
+
+// ===============================
+// 14. MULTI TAB PROTECTION
+// ===============================
+window.addEventListener("storage",function(e){
+
+    if(e.key === "claimBalance"){
+
+        location.reload();
+
+    }
+
 });
 
-function handleGameDeposit(amount) {
-    amount = Number(amount);
-    if(amount <= 0) return;
-    let bonus = amount * 0.025;
-    claimBalance += (amount + bonus);
-    updateBalance();
-    alert(`Added ${amount} DMX + ${bonus} Bonus!`);
-}
 
 // ===============================
-// 10. INITIALIZATION
+// 15. INITIALIZATION
 // ===============================
-window.onload = function() {
+window.onload=function(){
+
     updateBalance();
+
     updateJackpot();
-    if(typeof resetTilesGame === "function") resetTilesGame();
 
-    document.body.addEventListener("click", function(e) {
-        if(e.target.tagName === "BUTTON") {
-            if(typeof clickSound !== "undefined") playSound(clickSound);
+    if(typeof resetTilesGame === "function"){
+        resetTilesGame();
+    }
+
+    document.body.addEventListener("click",function(e){
+
+        if(e.target.tagName === "BUTTON"){
+
+            if(typeof clickSound !== "undefined"){
+                playSound(clickSound);
+            }
+
         }
-        if (typeof bgMusic !== 'undefined' && bgMusic.paused) {
+
+        if(typeof bgMusic !== "undefined" && bgMusic.paused){
+
             bgMusic.play().catch(()=>{});
+
         }
-    }, { once: false });
+
+    });
+
 };
+
 
 
 // ===============================
