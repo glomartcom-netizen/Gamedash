@@ -1554,6 +1554,21 @@ cursor:pointer;
 
 }
 
+@keyframes winnerFlash{
+
+0%{opacity:0; transform:translateY(-10px);}
+100%{opacity:1; transform:translateY(0);}
+
+}
+
+#winnerBoard{
+
+display:flex;
+overflow:hidden;
+white-space:nowrap;
+
+    }    
+
 .lose-popup{
 
 position:fixed;
@@ -1602,7 +1617,115 @@ border-radius:8px;
 
 cursor:pointer;
 
+    }  
+
+.sound-btn{
+
+background:#06b6d4;
+border:none;
+padding:8px 16px;
+border-radius:8px;
+color:white;
+cursor:pointer;
+
+}
+
+.winner-container{
+
+margin-top:15px;
+background:#020617;
+border:1px solid #06b6d4;
+padding:10px;
+border-radius:8px;
+overflow:hidden;
+
+}
+
+.winner-title{
+
+color:#22c55e;
+font-size:14px;
+margin-bottom:5px;
+
+}
+
+.winner-board{
+
+display:flex;
+white-space:nowrap;
+overflow:hidden;
+font-size:13px;
+
+}
+
+.winner-board{
+
+display:flex;
+animation:winnerScroll 15s linear infinite;
+
+}
+
+@keyframes winnerScroll{
+
+0%{transform:translateX(100%)}
+100%{transform:translateX(-100%)}
+
     }    
+
+.game-zone{
+
+margin-top:20px;
+text-align:center;
+
+}  
+
+  /* screen flash */
+
+.win-flash{
+
+animation:winFlash 1.2s ease;
+
+}
+
+@keyframes winFlash{
+
+0%{background:rgba(255,215,0,0.3);}
+100%{background:transparent;}
+
+}
+
+
+/* spark particle */
+
+.spark{
+
+position:fixed;
+width:8px;
+height:8px;
+
+background:gold;
+
+border-radius:50%;
+
+box-shadow:0 0 10px gold;
+
+animation:sparkAnim 0.8s ease-out;
+
+}
+
+@keyframes sparkAnim{
+
+0%{
+transform:scale(0);
+opacity:1;
+}
+
+100%{
+transform:scale(2);
+opacity:0;
+}
+
+}  
         
 .scene,
 .coin-scene,
@@ -1675,11 +1798,29 @@ transform:scale(0.9);
 </head>
 <body>
 
-    <button onclick="toggleMusic()">🔊 Sound</button>
+    <!-- SOUND BUTTON -->
 
-<!-- ===== GAME CONTROL PANEL ===== -->
+<button onclick="toggleMusic()" class="sound-btn">
+🔊 Sound
+</button>
 
-<div style="margin-top:20px;text-align:center">
+
+<!-- LIVE WINNER BOARD -->
+
+<div class="winner-container">
+
+<div class="winner-title">
+🔥 Live Winners
+</div>
+
+<div id="winnerBoard" class="winner-board"></div>
+
+</div>
+
+
+<!-- GAME PANEL -->
+
+<div class="game-zone">
 
 <h2>🎮 DMX Game Zone</h2>
 
@@ -2807,38 +2948,130 @@ Cashout at 2.00x → Win 20 DMX
 <script>
 
 
+
 // ===============================
-// 1. GLOBAL SOUND SYSTEM (10 Game Sounds)
+// DMX PRO SOUND ENGINE
 // ===============================
-const bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3");
-bgMusic.loop = true;
-bgMusic.volume = 0.20;
 
-const clickSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f9f2f8a4a.mp3");
-const winSound   = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a2b8b8b6b.mp3");
-const loseSound  = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e2e2c2f.mp3");
+const SoundEngine = {
 
-// Specific Action Sounds
-const spinSound     = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3");
-const boxSound      = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-const diceSound     = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
-const cardSound     = new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_to_drum_hit.ogg");
-const targetSound   = new Audio("https://actions.google.com/sounds/v1/impacts/small_thud.ogg");
-const slotSound     = new Audio("https://actions.google.com/sounds/v1/science_fiction/digital_beeps.ogg");
-const guessSound    = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
-const colorSound    = new Audio("https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg");
-const tilesSound    = new Audio("https://actions.google.com/sounds/v1/multimedia/pizzicato_1.ogg");
-const crashSound    = new Audio("https://actions.google.com/sounds/v1/science_fiction/whoosh.ogg");
+sounds:{},
 
-function playSound(sound) {
-    if (!sound) return;
-    sound.currentTime = 0;
-    sound.play().catch(() => console.log("Audio waiting for interaction."));
+load(name,url,volume=1){
+
+const audio=new Audio(url)
+audio.volume=volume
+
+this.sounds[name]=audio
+
+},
+
+play(name){
+
+const sound=this.sounds[name]
+
+if(!sound) return
+
+sound.pause()
+sound.currentTime=0
+
+sound.play().catch(()=>{})
+
+},
+
+loop(name){
+
+const sound=this.sounds[name]
+
+if(!sound) return
+
+sound.loop=true
+sound.play().catch(()=>{})
+
+},
+
+stop(name){
+
+const sound=this.sounds[name]
+
+if(!sound) return
+
+sound.pause()
+sound.currentTime=0
+
 }
 
-function toggleMusic() {
-    bgMusic.paused ? bgMusic.play() : bgMusic.pause();
-    }
+}
+
+
+// ===============================
+// LOAD ALL SOUNDS
+// ===============================
+
+// Background music
+SoundEngine.load("bg","https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3",0.2)
+
+// Common
+SoundEngine.load("click","https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f9f2f8a4a.mp3")
+SoundEngine.load("win","https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a2b8b8b6b.mp3")
+SoundEngine.load("lose","https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e2e2c2f.mp3")
+
+// Game sounds
+SoundEngine.load("spin","https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3")
+SoundEngine.load("dice","https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg")
+SoundEngine.load("slot","https://actions.google.com/sounds/v1/science_fiction/digital_beeps.ogg")
+SoundEngine.load("target","https://actions.google.com/sounds/v1/impacts/small_thud.ogg")
+SoundEngine.load("box","https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg")
+SoundEngine.load("tiles","https://actions.google.com/sounds/v1/multimedia/pizzicato_1.ogg")
+SoundEngine.load("crash","https://actions.google.com/sounds/v1/science_fiction/whoosh.ogg")
+SoundEngine.load("race","https://actions.google.com/sounds/v1/vehicles/car_accelerate.ogg")
+
+
+// ===============================
+// AUTO START MUSIC AFTER CLICK
+// ===============================
+
+document.body.addEventListener("click",function(){
+
+SoundEngine.loop("bg")
+
+},{once:true})
+
+
+// ===============================
+// BUTTON CLICK SOUND
+// ===============================
+
+document.body.addEventListener("click",function(e){
+
+if(e.target.tagName==="BUTTON"){
+
+SoundEngine.play("click")
+
+}
+
+})
+
+
+// ===============================
+// MUSIC TOGGLE
+// ===============================
+
+function toggleMusic(){
+
+const music=SoundEngine.sounds["bg"]
+
+if(music.paused){
+
+music.play()
+
+}else{
+
+music.pause()
+
+}
+
+}
     
 
 // ===============================
@@ -2947,13 +3180,16 @@ function updateBalance(){
 // ===============================
 function updateJackpot(){
 
-    const el = document.getElementById("jackpotValue");
+const el = document.getElementById("jackpotValue");
 
-    if(el){
-        el.innerText = jackpotPool;
-    }
+if(el){
 
-    localStorage.setItem("jackpotPool", jackpotPool);
+el.innerText = jackpotPool.toLocaleString() + " DMX";
+
+}
+
+localStorage.setItem("jackpotPool", jackpotPool);
+
 }
 
 
@@ -3012,59 +3248,69 @@ alert("Bet locked! Now choose a game.");
 // ===============================
 function resolveGame(gameName, manualResult, entry){
 
-    let isWinner =
-        (manualResult !== null)
-        ? manualResult
-        : (Math.random() < getWinChance());
+let isWinner =
+(manualResult !== null)
+? manualResult
+: (Math.random() < getWinChance());
 
-    let randomDelay = 900 + Math.random()*600;
+let randomDelay = 900 + Math.random()*600;
 
-    setTimeout(()=>{
+setTimeout(()=>{
 
-        if(isWinner){
+if(isWinner){
 
-            let reward = entry * 2;
+let reward = entry * 2;
 
-            reward = Math.min(reward, MAX_WIN_PROTECTION);
+reward = Math.min(reward, MAX_WIN_PROTECTION);
 
-            reward = Math.min(reward, jackpotPool);
+reward = Math.min(reward, jackpotPool);
 
-            claimBalance += reward;
+claimBalance += reward;
 
-            totalPayout += reward;
+totalPayout += reward;
 
-            localStorage.setItem("claimBalance", claimBalance);
+localStorage.setItem("claimBalance", claimBalance);
 
-            localStorage.setItem("totalPayout", totalPayout);
+localStorage.setItem("totalPayout", totalPayout);
 
-            jackpotPool =
-                Math.max(0, jackpotPool - Math.floor(reward * 0.5));
+// jackpot reduce
+jackpotPool =
+Math.max(0, jackpotPool - Math.floor(reward * 0.5));
 
-            alert(`🎉 You won ${reward} DMX on ${gameName}!`);
+// WIN SOUND
+playSound(winSound);
 
-            jackpotEffect();
+// POPUP WIN
+showBigWin(reward);
 
-            addWinner(userAddress, reward);
+jackpotEffect();
 
-        }else{
+addWinner(userAddress, reward);
 
-            alert("❌ Better luck next time!");
+}
+else{
 
-        }
+// LOSE SOUND
+playSound(loseSound);
 
-        if(betCounter >= 20){
-            betCounter = 0;
-        }
+// POPUP LOSE
+showLose("Better luck next time");
 
-        localStorage.removeItem("gameRunning");
+}
 
-        gameRunning = false;
+if(betCounter >= 20){
+betCounter = 0;
+}
 
-        updateBalance();
+localStorage.removeItem("gameRunning");
 
-        updateJackpot();
+gameRunning = false;
 
-    }, randomDelay);
+updateBalance();
+
+updateJackpot();
+
+}, randomDelay);
 
 }
 
@@ -3074,61 +3320,63 @@ function resolveGame(gameName, manualResult, entry){
 // ===============================
 function addWinner(address, reward){
 
-    const board = document.getElementById("winnerBoard");
+const board = document.getElementById("winnerBoard");
 
-    if(!board) return;
+if(!board) return;
 
-    const shortAddr = address.substring(0,6) + "...";
+const shortAddr = address.substring(0,6) + "...";
 
-    const span = document.createElement("span");
+const span = document.createElement("span");
 
-    span.textContent =
-        `${shortAddr} won ${reward} DMX 🔥 | `;
+span.innerText = `${shortAddr} won ${reward} DMX 🔥`;
 
-    span.style.marginRight = "20px";
+span.style.marginRight = "20px";
+span.style.color = "#22c55e";
+span.style.fontWeight = "bold";
 
-    board.prepend(span);
+board.prepend(span);
 
-    if(board.children.length > 20){
-        board.removeChild(board.lastChild);
-    }
-
+// limit winners
+if(board.children.length > 20){
+board.removeChild(board.lastChild);
 }
 
+}
 
 // ===============================
 // 11. WIN EFFECT
 // ===============================
 function jackpotEffect(){
 
-    if(typeof winSound !== "undefined"){
-        playSound(winSound);
-    }
+playSound(winSound);
 
-    document.body.classList.add("win-flash");
+// screen flash
+document.body.classList.add("win-flash");
 
-    setTimeout(()=>{
-        document.body.classList.remove("win-flash");
-    },1500);
+setTimeout(()=>{
+document.body.classList.remove("win-flash");
+},1200);
 
-    for(let i=0;i<20;i++){
 
-        let spark = document.createElement("div");
+// spark particles
+for(let i=0;i<15;i++){
 
-        spark.className = "spark";
+let spark=document.createElement("div");
 
-        spark.style.left = Math.random()*100+"vw";
+spark.className="spark";
 
-        spark.style.top = Math.random()*100+"vh";
+spark.style.left=Math.random()*100+"vw";
+spark.style.top=Math.random()*100+"vh";
 
-        document.body.appendChild(spark);
+document.body.appendChild(spark);
 
-        setTimeout(()=>{
-            spark.remove();
-        },1000);
-    }
+setTimeout(()=>{
+spark.remove();
+},800);
+
 }
 
+}
 
 // ===============================
 // 12. RULES POPUP
@@ -3178,35 +3426,27 @@ window.addEventListener("storage",function(e){
 // ===============================
 // 15. INITIALIZATION
 // ===============================
-window.onload=function(){
+window.onload = function(){
 
-    updateBalance();
+updateBalance();
+updateJackpot();
+startRoundEngine();
 
-    updateJackpot();
+if(typeof resetTilesGame === "function"){
+resetTilesGame();
+}
 
-    startRoundTimer();
+document.body.addEventListener("click",(e)=>{
 
-    if(typeof resetTilesGame === "function"){
-        resetTilesGame();
-    }
+if(e.target.tagName === "BUTTON"){
+playSound(clickSound);
+}
 
-    document.body.addEventListener("click",function(e){
+if(bgMusic.paused){
+bgMusic.play().catch(()=>{});
+}
 
-        if(e.target.tagName === "BUTTON"){
-
-            if(typeof clickSound !== "undefined"){
-                playSound(clickSound);
-            }
-
-        }
-
-        if(typeof bgMusic !== "undefined" && bgMusic.paused){
-
-            bgMusic.play().catch(()=>{});
-
-        }
-
-    });
+});
 
 };
 
@@ -3433,17 +3673,24 @@ setInterval(()=>{
 
 roundTime--
 
-document.getElementById("roundTimer").innerText = roundTime
+let timerEl = document.getElementById("roundTimer")
+if(timerEl) timerEl.innerText = roundTime
 
 if(roundTime <= 0){
 
+// RESULT GENERATE
 generateResults()
 
+// NEXT ROUND
 roundId++
-
 roundTime = 10
 
-document.getElementById("roundId").innerText = roundId
+// UPDATE UI
+let roundEl = document.getElementById("roundId")
+if(roundEl) roundEl.innerText = roundId
+
+// RESET UNIVERSAL GAMES
+resetUniversalGames()
 
 }
 
@@ -3451,7 +3698,23 @@ document.getElementById("roundId").innerText = roundId
 
 }
 
-   function generateResults(){
+function resetUniversalGames(){
+
+// reset selections
+oddEvenChoice = null
+lucky7Choice = null
+selectedLucky = null
+
+// reset UI numbers
+let oddDisplay = document.getElementById("oddEvenNumber")
+if(oddDisplay) oddDisplay.innerText = "?"
+
+let luckyDisplay = document.getElementById("luckyNumberDisplay")
+if(luckyDisplay) luckyDisplay.innerText = "?"
+
+    }    
+
+function generateResults(){
 
 // COLOR RESULT
 const colors=["green","red","purple"]
@@ -3490,6 +3753,14 @@ addHorseHistory(globalResults.horse)
 globalResults.car = Math.floor(Math.random()*4)+1
 
 addCarHistory(globalResults.car)
+
+
+// CRASH RESULT
+let crashValue = (Math.random()*5+1).toFixed(2)
+
+globalResults.crash = crashValue
+
+addCrashHistory(crashValue)
 
 }
     
