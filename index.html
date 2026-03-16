@@ -3646,9 +3646,11 @@ if(selectedHorse === winner){
 
 let reward = bet*4;
 
+reward = applyRewardLimit(reward);
+
 playSound(winSound);
 
-alert("🏆 Horse "+winner+" wins!\nReward: "+reward+" DMX");
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -3721,9 +3723,11 @@ if(selectedCar===winner){
 
 let reward=bet*4;
 
+reward = applyRewardLimit(reward);    
+
 playSound(winSound);
 
-alert("🏁 Car "+winner+" wins!\nReward: "+reward+" DMX");
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -3761,14 +3765,23 @@ function resetRace(){
 for(let i=1;i<=4;i++){
 
 let horse=document.getElementById("horse"+i);
-if(horse) horse.style.left="30px";
+if(horse){
+horse.style.transition="none";
+horse.style.left="30px";
+}
 
 let car=document.getElementById("car"+i);
-if(car) car.style.left="30px";
+if(car){
+car.style.transition="none";
+car.style.left="30px";
+}
 
 }
 
-    }
+selectedHorse = null;
+selectedCar = null;
+
+}
     
 
 let oddEvenChoice=null;
@@ -3828,11 +3841,7 @@ reward=applyRewardLimit(reward);
 
 playSound(winSound);
 
-alert(
-"🎉 You Win!\n\n"+
-"Number: "+result+
-"\nReward: "+reward+" DMX"
-);
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -3845,17 +3854,29 @@ else{
 
 playSound(loseSound);
 
-showBigWin(reward);
+showLose("Wrong Choice");
 
 updateOddEvenHistory(result);
 
 }
-
 gameRunning=false;
 
 },2000);
 
-    }  
+    }
+ function resetOddEven(){
+
+oddEvenChoice=null;
+
+const btns=document.querySelectorAll(".odd-even-btn");
+
+btns.forEach(btn=>{
+btn.classList.remove("selected");
+});
+
+    }
+
+
 
 
 let lucky7Choice = null;
