@@ -3232,16 +3232,24 @@ return true
 function closeAllGames(){
 
 const selectors = [
-".scene",
-".wheel-container",
+
+".coin-scene",
+".battle-scene",
+".door-scene",
 ".box-scene",
 ".card-scene",
 ".target-scene",
 ".slot-machine-container",
-".guess-container",
 ".color-game-container",
 "#magicTilesPanel",
-"#crashGamePanel"
+"#crashGamePanel",
+
+"#luckyNumberGame",
+"#luckySevenGame",
+"#oddEvenGame",
+"#horseRaceGame",
+"#carRaceGame"
+
 ];
 
 selectors.forEach(s=>{
@@ -3250,6 +3258,7 @@ if(el) el.style.display="none"
 })
 
 }
+    
 
 function showGame(selector,sound){
 
