@@ -1865,79 +1865,6 @@ Close
 </div>
     
 
-<!-- DICE GAME -->
-<!-- 🎲 DICE GAME -->
-
-<div class="scene">
-
-<h3>🎲 Dice Game</h3>
-
-<div class="dice" id="diceElement">
-
-<div class="dice__face dice__face--1">1</div>
-<div class="dice__face dice__face--2">2</div>
-<div class="dice__face dice__face--3">3</div>
-<div class="dice__face dice__face--4">4</div>
-<div class="dice__face dice__face--5">5</div>
-<div class="dice__face dice__face--6">6</div>
-
-</div>
-
-<p style="margin-top:15px;color:#94a3b8">
-Choose your number
-</p>
-
-<div style="display:flex;justify-content:center;gap:10px;margin-top:10px">
-
-<button class="btn-bonus" onclick="chooseDice(1)">1</button>
-<button class="btn-bonus" onclick="chooseDice(2)">2</button>
-<button class="btn-bonus" onclick="chooseDice(3)">3</button>
-<button class="btn-bonus" onclick="chooseDice(4)">4</button>
-<button class="btn-bonus" onclick="chooseDice(5)">5</button>
-<button class="btn-bonus" onclick="chooseDice(6)">6</button>
-
-</div>
-
-<button class="btn-bonus" style="margin-top:20px" onclick="rollDice()">
-🎲 Roll Dice
-</button>
-
-<!-- RULES -->
-
-<div class="game-rules">
-
-<b>Dice Game Rules</b>
-
-<p>
-
-🎲 Choose a number from 1–6  
-
-<br><br>
-
-If dice matches your number → <b>Win 5x reward</b>  
-
-<br>
-
-Example  
-
-<br>
-
-Bet 10 DMX  
-
-<br>
-
-Win → 50 DMX  
-
-<br>
-
-❌ Wrong guess → Lose your bet
-
-</p>
-
-</div>
-
-</div>
-    
 <!-- COIN GAME -->
 
 <div class="coin-scene">
@@ -2406,47 +2333,99 @@ Bet 10 DMX
 </div>
 
 
-<div class="guess-container">
+<!-- 🎯 LUCKY NUMBER GAME -->
 
-<h3>🔐 Guess The Number</h3>
+<div class="lucky-number-game game-section">
 
-<div class="guess-display" id="guessStatusDisplay">0</div>
+<h3>🎯 Lucky Number</h3>
 
-<div class="numpad">
+<p style="color:#94a3b8">
+Choose a number
+</p>
 
-<div class="num-btn" onclick="guessNumberAnimation(1)">1</div>
-<div class="num-btn" onclick="guessNumberAnimation(2)">2</div>
-<div class="num-btn" onclick="guessNumberAnimation(3)">3</div>
-<div class="num-btn" onclick="guessNumberAnimation(4)">4</div>
-<div class="num-btn" onclick="guessNumberAnimation(5)">5</div>
+<div class="number-select">
+
+<button class="num-choice" onclick="selectLuckyNumber(1)">1</button>
+<button class="num-choice" onclick="selectLuckyNumber(2)">2</button>
+<button class="num-choice" onclick="selectLuckyNumber(3)">3</button>
+<button class="num-choice" onclick="selectLuckyNumber(4)">4</button>
+<button class="num-choice" onclick="selectLuckyNumber(5)">5</button>
 
 </div>
 
-<p style="color:#94a3b8;font-size:14px;margin-top:15px;">
-Pick the correct number to unlock the locker!
+<div class="lucky-display" id="luckyDisplay">
+?
+</div>
+
+<button class="btn-bonus" onclick="playLuckyNumber()">
+🎯 Start Round
+</button>
+
+<div class="game-rules">
+
+<b>Lucky Number Rules</b>
+
+<p>
+Pick a number between 1-5<br><br>
+
+Correct guess → <b>5x reward</b><br>
+Wrong guess → lose your bet
 </p>
 
+</div>
 
-<!-- RULES BOX -->
+</div>
+    
 
-<div class="guess-rules">
+<!-- 🎲 LUCKY 7 GAME -->
 
-<b>Game Rules</b>
+<div class="lucky7-game game-section">
+
+<h3>🎲 Lucky 7</h3>
+
+<p style="color:#94a3b8">
+Choose your bet
+</p>
+
+<div class="lucky7-options">
+
+<button class="bet-btn" onclick="selectLucky7('low')">
+LOW (1-3)
+</button>
+
+<button class="bet-btn jackpot" onclick="selectLucky7('seven')">
+7 JACKPOT
+</button>
+
+<button class="bet-btn" onclick="selectLucky7('high')">
+HIGH (5-6)
+</button>
+
+</div>
+
+<div class="dice-box">
+
+<div id="lucky7Dice" class="dice-display">
+?
+</div>
+
+</div>
+
+<button class="btn-bonus" onclick="playLucky7()">
+🎲 Roll Dice
+</button>
+
+<div class="game-rules">
+
+<b>Lucky 7 Rules</b>
 
 <p>
 
-Choose a number between <b>1 – 5</b>
+LOW (1-3) → <b>2x reward</b><br>
+HIGH (5-6) → <b>2x reward</b><br>
+7 JACKPOT → <b>6x reward</b><br><br>
 
-<br><br>
-
-✔ Correct Guess → <b>5x reward</b>  
-❌ Wrong Guess → Lose your bet
-
-<br><br>
-
-Example:
-
-Bet 10 DMX → Win 50 DMX
+Wrong guess → Lose your bet
 
 </p>
 
@@ -2454,7 +2433,200 @@ Bet 10 DMX → Win 50 DMX
 
 </div>
 
+    
 
+<!-- ⚖ ODD EVEN GAME -->
+
+<div class="odd-even-game game-section">
+
+<h3>⚖ Odd / Even</h3>
+
+<div class="game-history">
+<h4>Last Results</h4>
+<div id="oddEvenHistory" class="history-row"></div>
+</div>
+
+<p style="color:#94a3b8">
+Choose your option
+</p>
+
+<div class="odd-even-options">
+
+<button class="bet-btn" onclick="selectOddEven('odd')">
+ODD
+</button>
+
+<button class="bet-btn" onclick="selectOddEven('even')">
+EVEN
+</button>
+
+</div>
+
+<div class="number-display" id="oddEvenNumber">
+?
+</div>
+
+<button class="btn-bonus" onclick="playOddEven()">
+🎯 Start Round
+</button>
+
+<div class="game-rules">
+
+<b>Odd / Even Rules</b>
+
+<p>
+
+ODD → numbers 1,3,5,7,9 <br>
+EVEN → numbers 2,4,6,8 <br><br>
+
+Correct guess → <b>2x reward</b> <br>
+Wrong guess → Lose bet
+
+</p>
+
+</div>
+
+</div>    
+
+
+<!-- 🏎 FORMULA CAR RACE -->
+
+<div class="car-race-game game-section">
+
+<h3>🏎 Formula Car Race</h3>
+
+<div class="game-history">
+<h4>Last Winners</h4>
+<div id="carHistory" class="history-row"></div>
+</div>
+
+<p style="color:#94a3b8">
+Choose your car
+</p>
+
+<div class="car-select">
+
+<button class="car-btn" onclick="selectCar(1)">Car 1</button>
+<button class="car-btn" onclick="selectCar(2)">Car 2</button>
+<button class="car-btn" onclick="selectCar(3)">Car 3</button>
+<button class="car-btn" onclick="selectCar(4)">Car 4</button>
+
+</div>
+
+<div class="race-track">
+
+<div class="car-lane">
+<span>🏎</span>
+<div id="car1" class="car"></div>
+</div>
+
+<div class="car-lane">
+<span>🏎</span>
+<div id="car2" class="car"></div>
+</div>
+
+<div class="car-lane">
+<span>🏎</span>
+<div id="car3" class="car"></div>
+</div>
+
+<div class="car-lane">
+<span>🏎</span>
+<div id="car4" class="car"></div>
+</div>
+
+</div>
+
+<button class="btn-bonus" onclick="startCarRace()">
+🏁 Start Race
+</button>
+
+<div class="game-rules">
+
+<b>Formula Car Race Rules</b>
+
+<p>
+
+Choose one car<br><br>
+
+Winning car → <b>4x reward</b><br>
+Wrong car → Lose bet
+
+</p>
+
+</div>
+
+</div>
+
+ <!-- 🐎 HORSE RACE GAME -->
+
+<div class="horse-race-game game-section">
+
+<h3>🐎 Horse Race</h3>
+
+<div class="game-history">
+<h4>Last Winners</h4>
+<div id="horseHistory" class="history-row"></div>
+</div>
+
+<p style="color:#94a3b8">
+Choose your horse
+</p>
+
+<div class="horse-select">
+
+<button class="horse-btn" onclick="selectHorse(1)">Horse 1</button>
+<button class="horse-btn" onclick="selectHorse(2)">Horse 2</button>
+<button class="horse-btn" onclick="selectHorse(3)">Horse 3</button>
+<button class="horse-btn" onclick="selectHorse(4)">Horse 4</button>
+
+</div>
+
+<div class="race-track">
+
+<div class="horse-lane">
+<span>🐎</span>
+<div id="horse1" class="horse"></div>
+</div>
+
+<div class="horse-lane">
+<span>🐎</span>
+<div id="horse2" class="horse"></div>
+</div>
+
+<div class="horse-lane">
+<span>🐎</span>
+<div id="horse3" class="horse"></div>
+</div>
+
+<div class="horse-lane">
+<span>🐎</span>
+<div id="horse4" class="horse"></div>
+</div>
+
+</div>
+
+<button class="btn-bonus" onclick="startHorseRace()">
+🏁 Start Race
+</button>
+
+<div class="game-rules">
+
+<b>Horse Race Rules</b>
+
+<p>
+
+Choose one horse<br><br>
+
+Winning horse → <b>4x reward</b><br>
+Wrong horse → Lose bet
+
+</p>
+
+</div>
+
+</div>   
+    
 
 <div class="color-game-container">
 
