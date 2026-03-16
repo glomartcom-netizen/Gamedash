@@ -717,7 +717,7 @@ to{box-shadow:0 0 40px lime;}
         
 /* SLOT MACHINE 3D STYLES */
 
-.slot-machine-container {
+.slot-machine-container{
 
 width:100%;
 max-width:420px;
@@ -742,10 +742,15 @@ align-items:center;
 
 }
 
-.slot-window {
+/* SLOT WINDOW */
+
+.slot-window{
 
 display:flex;
-gap:10px;
+justify-content:center;
+align-items:center;
+
+gap:12px;
 
 background:#020617;
 
@@ -763,22 +768,32 @@ position:relative;
 
 }
 
-.reel-container {
+/* REEL BOX */
+
+.reel-container{
 
 width:60px;
 height:80px;
 
 background:#1e293b;
 
-border-radius:5px;
+border-radius:6px;
 
 position:relative;
 
 overflow:hidden;
 
+display:flex;
+align-items:center;
+justify-content:center;
+
+box-shadow:inset 0 0 10px rgba(0,0,0,0.6);
+
 }
 
-.reel {
+/* REEL */
+
+.reel{
 
 display:flex;
 flex-direction:column;
@@ -795,7 +810,9 @@ transform:translateY(0);
 
 }
 
-.win-line {
+/* WIN LINE */
+
+.win-line{
 
 position:absolute;
 
@@ -805,15 +822,40 @@ left:0;
 width:100%;
 height:2px;
 
-background:rgba(255,215,0,0.5);
+background:rgba(255,215,0,0.6);
 
-box-shadow:0 0 10px gold;
+box-shadow:0 0 12px gold;
 
 z-index:5;
 
 pointer-events:none;
 
 }
+
+/* SLOT WIN EFFECT */
+
+@keyframes slotFlash{
+
+0%{box-shadow:0 0 5px gold;}
+100%{box-shadow:0 0 25px #06b6d4;}
+
+}
+
+.slot-win{
+animation:slotFlash 0.4s infinite alternate;
+}
+
+@keyframes slotShake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-2px)}
+50%{transform:translateX(2px)}
+75%{transform:translateX(-2px)}
+100%{transform:translateX(0)}
+}
+
+.slot-machine-container.spinning{
+animation:slotShake 0.2s infinite;
+}    
 
 /* TARGET SHOT 3D STYLES */
 
@@ -4825,12 +4867,12 @@ const results=[resultA,resultB,resultC]
 
 reels.forEach((reel,index)=>{
 
-const symbolIndex=symbols.indexOf(results[index])
+const symbolIndex = symbols.indexOf(results[index])
 
-const finalPos=-(symbolIndex*80)
+const finalPos = -(symbolIndex * 80)
 
-reel.style.transition="none"
-reel.style.transform=`translateY(${finalPos}px)`
+reel.style.transition = "none"
+reel.style.transform = `translateY(${finalPos}px)`
 
 })
 
