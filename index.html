@@ -1564,7 +1564,7 @@ Close
 
 <div class="game-container">
 
-<div class="game-btn" onclick="openSpinWheel()">🎡 Spin Wheel</div>
+<div class="game-btn" onclick="openCoinGame()">🪙 Coin Flip</div>
 
 <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
 
@@ -1628,28 +1628,31 @@ Choose your number
 
 </div>
 
-<!-- WHEEL GAME -->
+<!-- COIN GAME -->
 
-<div class="wheel-container">
+<div class="coin-scene">
 
-<div class="wheel-pointer">▼</div>
+<div class="coin" id="coinElement">
+<div class="coin-face heads">H</div>
+<div class="coin-face tails">T</div>
+</div>
 
-<div class="the-wheel" id="wheelElement">
+<p style="margin-top:15px;color:#94a3b8">
+Choose Heads or Tails
+</p>
 
-<div class="wheel-label" style="transform:rotate(30deg) translateY(-110px)">5</div>
-<div class="wheel-label" style="transform:rotate(90deg) translateY(-110px)">10</div>
-<div class="wheel-label" style="transform:rotate(150deg) translateY(-110px)">20</div>
-<div class="wheel-label" style="transform:rotate(210deg) translateY(-110px)">30</div>
-<div class="wheel-label" style="transform:rotate(270deg) translateY(-110px)">50</div>
-<div class="wheel-label" style="transform:rotate(330deg) translateY(-110px)">100</div>
+<div style="display:flex;justify-content:center;gap:10px;margin-top:10px">
+
+<button class="btn-bonus" onclick="chooseCoin('heads')">HEADS</button>
+<button class="btn-bonus" onclick="chooseCoin('tails')">TAILS</button>
 
 </div>
 
-<button class="btn-bonus" onclick="spinWheelGame()">
-🎡 SPIN WHEEL
+<button class="btn-bonus" style="margin-top:20px" onclick="flipCoin()">
+🪙 FLIP COIN
 </button>
 
-</div> <!-- wheel-container close -->
+</div>
 
 
 <!-- LUCKY BOX -->
