@@ -1389,139 +1389,51 @@ transform:scale(0.9);
 Play games and win DMX rewards
 </p>
 
-<!-- MODE INDICATOR -->
-
-<div id="modeIndicator"
-style="margin-top:10px;font-weight:bold;font-size:18px;color:#22c55e">
-🟢 Promo Mode
-</div>
-
-
-<!-- CONTROL BUTTONS -->
-
-<div style="margin-top:15px">
-
-<button class="btn-bonus mode-btn"
-onclick="setMode('promo',event)">
-Promo Play
-</button>
-
-<button class="btn-bonus mode-btn"
-onclick="setMode('member',event)">
-Member Play
-</button>
-
-<button class="btn-bonus mode-btn"
-onclick="setMode('paid',event)">
-Paid Play
-</button>
-
-<button class="btn-bonus"
-onclick="openGameInfo()">
-📜 Game Rules
-</button>
-
-</div>
-
-<div style="margin-top:25px">
-
-<h3>💳 Deposit DMX</h3>
-
-<input
-id="depositAmount"
-type="number"
-placeholder="Enter Deposit Amount"
-min="10"
-style="
-padding:10px;
-border-radius:8px;
-border:none;
-width:200px;
-text-align:center;
-">
-
-<br><br>
-
-<button class="btn-bonus" onclick="depositDMX()">
-Deposit
-</button>
-
-</div>  
-
- <div style="margin-top:25px">
-
-<h3>💸 Withdraw DMX</h3>
-
-<input
-id="withdrawAmount"
-type="number"
-placeholder="Enter Withdraw Amount"
-min="10"
-style="
-padding:10px;
-border-radius:8px;
-border:none;
-width:200px;
-text-align:center;
-">
-
-<br><br>
-
-<button class="btn-bonus" onclick="withdrawDMX()">
-Withdraw
-</button>
-
- </div>   
-
-
-<!-- PLAYER BALANCE -->
+<!-- BALANCE -->
 
 <div style="margin-top:20px;font-size:18px">
 
 💰 Balance:
-<span id="balanceValue"
-style="color:#22c55e;font-weight:bold">
+<span id="balanceValue" style="color:#22c55e;font-weight:bold">
 0
 </span> DMX
 
 </div>
 
 
-<!-- BET PANEL (PAID MODE ONLY) -->
+<!-- BET PANEL -->
 
-<div id="paidGamePanel"
-style="margin-top:20px;display:none">
+<div style="margin-top:20px">
 
 <h3>🎰 Enter Bet Amount</h3>
 
 <input
 id="betAmount"
 type="number"
+placeholder="Enter Bet Amount"
 min="10"
-max="5000"
-placeholder="Enter Bet (10 - 5000 DMX)"
 style="
 padding:10px;
 border-radius:8px;
 border:none;
-margin-top:10px;
 width:200px;
 text-align:center;
 ">
 
 <br><br>
 
-<button class="btn-bonus"
-onclick="startPaidGame()">
-🎮 Play Game
+<button class="btn-bonus" onclick="startBetGame()">
+🎮 Start Game
+</button>
+
+<button class="btn-bonus" onclick="openGameInfo()">
+📜 Game Rules
 </button>
 
 </div>
 
-</div>
 
-
-<!-- GAME RULES POPUP -->
+<!-- RULES POPUP -->
 
 <div id="gameInfoPopup" style="
 display:none;
@@ -1540,50 +1452,39 @@ box-shadow:0 0 25px rgba(0,0,0,0.6);
 z-index:9999;
 ">
 
-<h2 style="margin-top:0">🎮 DMX Game Rules</h2>
+<h2>🎮 Game Information</h2>
 
-<h3>🆓 Promo Games</h3>
+<h3>🆕 New Player Bonus</h3>
 <p>
-Free games available for all players.<br>
-Each wallet can play limited promo games every 24 hours.<br>
-Rewards range from 5 DMX to 100 DMX.
+• New players receive 100 Game Points.<br>
+• Points are for gameplay only and cannot be withdrawn.
 </p>
 
-<h3>👤 Member Games</h3>
+<h3>👥 Referral Rewards</h3>
 <p>
-Registered members may access higher reward games.<br>
-Member rewards may reach up to 250 DMX.
+• Share your referral link with friends.<br>
+• When your referral deposits and plays games,<br>
+you receive 5% of their game activity as bonus points.
 </p>
 
-<h3>💰 Paid Games</h3>
+<h3>👤 Member Benefits</h3>
 <p>
-Players can place bets and win larger rewards.<br>
-Minimum Bet: 10 DMX<br>
-Maximum Bet: 5000 DMX<br>
-Maximum Reward: up to 25000 DMX.
+• Members who deposit (stake) or direct referral<br>
+receive bonus play points.<br>
+• 2.5% of staking or direct referral amount<br>
+is credited as game points.
 </p>
 
-<h3>🏆 Jackpot Pool</h3>
+<h3>🎮 Game Rules</h3>
 <p>
-Every game contributes to the jackpot pool.<br>
-Lucky players may trigger jackpot rewards.
+• Players can use their balance to play games.<br>
+• Enter your bet amount before playing.<br>
+• Win = up to 2x reward.<br>
+• Lose = bet amount deducted.<br>
+• Minimum bet: 10 DMX.
 </p>
 
-<h3>🚀 Referral & Community</h3>
-<p>
-Invite friends using referral links.<br>
-Active players and referrals may unlock higher play limits and bonus rewards.
-</p>
-
-<h3>⚠ Fair Play Notice</h3>
-<p>
-All games use automated probability algorithms.<br>
-Results are generated randomly by the system.
-</p>
-
-<button class="btn-bonus" onclick="closeGameInfo()" style="margin-top:15px">
-Close
-</button>
+<button onclick="closeGameInfo()">Close</button>
 
 </div>
 
