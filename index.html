@@ -4775,114 +4775,65 @@ gameRunning=false
 
         async function spinSlot(){
 
-if(gameRunning) return
+if(gameRunning) return;
 
-let bet = processBet()
-if(!bet) return
+let bet = processBet();
+if(!bet) return;
 
-if (!(await checkGameCooldown())) return
+gameRunning = true;
 
-gameRunning=true
+playSound(spinSound);
 
-playSound(spinSound)
+const symbols = ["7️⃣","🍒","⭐","💎","🔔"];
 
-const symbols=["7️⃣","🍒","⭐","💎","🔔"]
-
-const reels=[
+const reels = [
 document.getElementById("reel1"),
 document.getElementById("reel2"),
 document.getElementById("reel3")
-]
+];
 
-document.querySelector('.slot-window').classList.remove('slot-jackpot')
+// random results
+const resultA = symbols[Math.floor(Math.random()*symbols.length)];
+const resultB = symbols[Math.floor(Math.random()*symbols.length)];
+const resultC = symbols[Math.floor(Math.random()*symbols.length)];
 
-const resultA=symbols[Math.floor(Math.random()*symbols.length)]
-const resultB=symbols[Math.floor(Math.random()*symbols.length)]
-const resultC=symbols[Math.floor(Math.random()*symbols.length)]
+const results = [resultA,resultB,resultC];
+
+// spin reels
+reels.forEach((reel,index)=>{
+
+const randomSpins = 10 + Math.floor(Math.random()*5);
+const symbolIndex = symbols.indexOf(results[index]);
+
+const moveY = -(symbolIndex*80 + randomSpins*80);
+
+reel.style.transition = "transform 2.5s ease-out";
+reel.style.transform = `translateY(${moveY}px)`;
+
+});
+
+// stop reels and show result
+setTimeout(()=>{
 
 reels.forEach((reel,index)=>{
 
-const randomExtraSpins=(index+3)*5
+const symbolIndex = symbols.indexOf(results[index]);
 
-const symbolIndex=symbols.indexOf([resultA,resultB,resultC][index])
+const finalPos = -(symbolIndex*80);
 
-const moveY=-(symbolIndex*80+(randomExtraSpins*80))
+reel.style.transition = "transform 0.3s ease-out";
+reel.style.transform = `translateY(${finalPos}px)`;
 
-reel.style.transition=`transform ${2+index}s cubic-bezier(0.45,0.05,0.55,0.95)`
-
-reel.style.transform=`translateY(${moveY}px)`
-
-})
+});
 
 setTimeout(()=>{
 
-checkSlotResult(resultA,resultB,resultC,bet)
+checkSlotResult(resultA,resultB,resultC,bet);
+gameRunning = false;
 
-setTimeout(()=>{
+},400);
 
-const results=[resultA,resultB,resultC]
-
-reels.forEach((reel,index)=>{
-
-const symbolIndex = symbols.indexOf(results[index])
-
-const finalPos = -(symbolIndex * 80)
-
-reel.style.transition = "none"
-reel.style.transform = `translateY(${finalPos}px)`
-
-})
-
-},100)
-
-},4500)
-
-}
-
-async function checkSlotResult(a,b,c,bet){
-
-let reward=0
-
-const windowEl=document.querySelector('.slot-window')
-
-if(a===b && b===c){
-
-reward = bet * 10
-
-windowEl.classList.add('slot-jackpot')
-
-playSound(winSound)
-
-alert("🎉 JACKPOT!\n\nReward: "+reward+" DMX")
-
-}
-else if(a===b || b===c || a===c){
-
-reward = bet * 2
-
-playSound(winSound)
-
-alert("👍 Small Win\n\nReward: "+reward+" DMX")
-
-}
-else{
-
-playSound(loseSound)
-
-alert("❌ No Match\n\nYou lost your bet.")
-
-gameRunning=false
-return
-
-}
-
-reward = applyRewardLimit(reward)
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-gameRunning=false
+},2600);
 
 }
     
