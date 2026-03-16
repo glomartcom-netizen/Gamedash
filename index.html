@@ -474,6 +474,20 @@ opacity:1;
     margin-bottom: 30px;
 }
 
+.color-pod.purple{
+background: linear-gradient(145deg,#a855f7,#581c87);
+}
+
+.color-rules{
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+}
+    
 .color-pod {
     width: 80px;
     height: 80px;
@@ -2079,18 +2093,20 @@ Choose the correct code to unlock the locker!
 
 <div class="color-game-container">
 
+<h3>🎨 Color Pick Game</h3>
+
 <div class="color-selection-zone">
 
 <div class="color-pod green" onclick="pickColor('green')" id="pod-green">
-<span>GREEN</span>
+<span>GREEN (2x)</span>
 </div>
 
 <div class="color-pod red" onclick="pickColor('red')" id="pod-red">
-<span>RED</span>
+<span>RED (2x)</span>
 </div>
 
-<div class="color-pod orange" onclick="pickColor('orange')" id="pod-orange">
-<span>ORANGE</span>
+<div class="color-pod purple" onclick="pickColor('purple')" id="pod-purple">
+<span>PURPLE (5x Rare)</span>
 </div>
 
 </div>
@@ -2099,9 +2115,25 @@ Choose the correct code to unlock the locker!
 <div id="resultOrb" class="result-orb"></div>
 </div>
 
-<p style="color:#94a3b8;font-size:14px;">
-Pick your favorite color!
+<p id="colorStatus" style="color:#94a3b8;font-size:14px;">
+Pick your color
 </p>
+
+<!-- RULES -->
+
+<div class="color-rules">
+
+<b>Game Rules</b>
+
+<p>
+🟢 Green → 2x reward<br>
+🔴 Red → 2x reward<br>
+🟣 Purple → 5x reward (Rare)<br><br>
+
+❌ Wrong color → Lose your bet
+</p>
+
+</div>
 
 </div>
 
@@ -3689,51 +3721,70 @@ display.innerText="0"
 
 if(gameRunning) return
 
-if (!(await checkGameCooldown())) return
+let bet = processBet()
+if(!bet) return
 
 gameRunning=true
 
-const pods=["green","red","orange"]
+const pods=["green","red","purple"]
 
-pods.forEach(p=>
+pods.forEach(p=>{
 document.getElementById(`pod-${p}`).classList.remove("pod-selected")
-)
+})
 
 document.getElementById(`pod-${userColor}`).classList.add("pod-selected")
 
 const orb=document.getElementById("resultOrb")
+const status=document.getElementById("colorStatus")
 
 orb.classList.remove("orb-active")
-
 void orb.offsetWidth
-
 orb.classList.add("orb-active")
 
 orb.style.background="#475569"
+
+status.innerText="Choosing color..."
 
 playSound(spinSound)
 
 setTimeout(()=>{
 
-const colors=["green","red","orange"]
+let random=Math.random()
+let result
 
-const result=colors[Math.floor(Math.random()*3)]
+if(random < 0.4){
+result="green"
+}
+else if(random < 0.8){
+result="red"
+}
+else{
+result="purple"
+}
 
 const colorMap={
 green:"#22c55e",
 red:"#ef4444",
-orange:"#f97316"
+purple:"#a855f7"
 }
 
 orb.style.background=colorMap[result]
-
 orb.style.boxShadow=`0 0 30px ${colorMap[result]}`
 
 setTimeout(()=>{
 
 if(userColor===result){
 
-const reward=30
+let reward
+
+if(result==="purple"){
+reward = bet * 5
+}
+else{
+reward = bet * 2
+}
+
+reward = applyRewardLimit(reward)
 
 playSound(winSound)
 
@@ -3745,35 +3796,31 @@ alert(
 )
 
 claimGameReward(reward)
-
 addWinner(userAddress,reward)
 
-gameRunning=false
+status.innerText="You won "+reward+" DMX"
 
 }
 else{
 
 playSound(loseSound)
 
-document.body.style.transform="translateX(8px)"
-setTimeout(()=>document.body.style.transform="translateX(0)",120)
-
 alert(
 "❌ Wrong Color\n\n"+
-"Your Pick: "+userColor.toUpperCase()+
-"\nResult: "+result.toUpperCase()
+"You lost your bet."
 )
+
+status.innerText="Better luck next time"
+
+}
 
 gameRunning=false
 
-}
-
 },500)
 
-},1200)
+},2000)
 
 }
-
     
     </script>
 </body>
