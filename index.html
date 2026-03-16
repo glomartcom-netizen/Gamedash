@@ -630,6 +630,18 @@ to{box-shadow:0 0 40px lime;}
     position: relative;
 }
 
+ .slot-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+
+ }   
+
 .reel {
     display: flex;
     flex-direction: column;
@@ -757,6 +769,18 @@ slotShake 0.2s infinite;
     box-shadow: 0 0 10px orange;
 }
 
+  .target-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+
+  }  
+
 
 /* PROJECTILE (bullet or arrow) */
 
@@ -820,17 +844,29 @@ animation:shootEffect 0.4s ease-out forwards;
 }
 
 .hit-spark{
+
 position:absolute;
 width:20px;
 height:20px;
 background:radial-gradient(circle,gold,transparent);
-animation:spark 0.4s ease-out;
+
+animation:sparkPop 0.5s ease-out;
+
 }
 
-@keyframes spark{
-0%{transform:scale(0);}
-100%{transform:scale(2);opacity:0;}
-}        
+@keyframes sparkPop{
+
+0%{
+transform:scale(0);
+opacity:1;
+}
+
+100%{
+transform:scale(2);
+opacity:0;
+}
+
+}
         
 /* GUESS NUMBER 3D STYLES */
 
@@ -843,6 +879,18 @@ animation:spark 0.4s ease-out;
     max-width: 250px;
     margin: 0 auto;
 }
+
+.guess-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+
+}    
 
 .guess-display {
     background: #020617;
@@ -1996,28 +2044,72 @@ Click to flip the card
 
 <div class="target-scene">
 
+<h3>🎯 Target Shot</h3>
+
 <div class="target-board" id="targetBoard">
+
 <div class="ring ring-outer"></div>
 <div class="ring ring-middle"></div>
 <div class="ring ring-inner"></div>
+
 <div class="bullseye"></div>
+
 </div>
 
 <div class="projectile" id="projectile"></div>
 
-<div id="targetStatus" style="margin-top:15px;font-weight:bold;color:#06b6d4;">
-Get Ready!
+<div id="targetStatus"
+style="margin-top:15px;font-weight:bold;color:#06b6d4;">
+Ready to Shoot
 </div>
 
 <button class="btn-bonus" onclick="shootTargetAnimation()">
-FIRE!
+🎯 FIRE
 </button>
+
+<p style="color:#94a3b8;font-size:14px;margin-top:10px;">
+Shoot the arrow and hit the target!
+</p>
+
+<!-- RULES -->
+
+<div class="target-rules">
+
+<b>Target Game Rules</b>
+
+<p>
+
+🎯 Bullseye → 5x reward<br>
+🎯 Inner Ring → 3x reward<br>
+🎯 Outer Ring → 2x reward<br>
+❌ Miss → Lose your bet
+
+<br><br>
+
+Example
+
+<br>
+
+Bet 10 DMX
+
+<br>
+
+Bullseye → 50 DMX  
+Inner Ring → 30 DMX  
+Outer Ring → 20 DMX
+
+</p>
+
+</div>
 
 </div>
 
 
-
 <div class="slot-machine-container">
+
+<h3>🎰 Slot Machine</h3>
+
+<!-- SLOT WINDOW -->
 
 <div class="slot-window">
 
@@ -2064,28 +2156,88 @@ FIRE!
 
 </div>
 
+<!-- SPIN BUTTON -->
+
 <button class="btn-bonus" onclick="spinSlot()">
 🎰 SPIN SLOT
 </button>
+
+<p style="color:#94a3b8;font-size:14px;margin-top:10px;">
+Spin the slot machine and match the symbols!
+</p>
+
+<!-- RULES -->
+
+<div class="slot-rules">
+
+<b>Slot Machine Rules</b>
+
+<p>
+
+🎰 3 Matching Symbols → <b>10x JACKPOT</b>  
+🎰 2 Matching Symbols → <b>2x Reward</b>  
+❌ No Match → <b>Lose your bet</b>
+
+<br><br>
+
+Example:
+
+Bet 10 DMX  
+2 Match → Win 20 DMX  
+3 Match → Win 100 DMX
+
+</p>
+
+</div>
 
 </div>
 
 
 <div class="guess-container">
 
+<h3>🔐 Guess The Number</h3>
+
 <div class="guess-display" id="guessStatusDisplay">0</div>
 
 <div class="numpad">
+
 <div class="num-btn" onclick="guessNumberAnimation(1)">1</div>
 <div class="num-btn" onclick="guessNumberAnimation(2)">2</div>
 <div class="num-btn" onclick="guessNumberAnimation(3)">3</div>
 <div class="num-btn" onclick="guessNumberAnimation(4)">4</div>
 <div class="num-btn" onclick="guessNumberAnimation(5)">5</div>
+
 </div>
 
 <p style="color:#94a3b8;font-size:14px;margin-top:15px;">
-Choose the correct code to unlock the locker!
+Pick the correct number to unlock the locker!
 </p>
+
+
+<!-- RULES BOX -->
+
+<div class="guess-rules">
+
+<b>Game Rules</b>
+
+<p>
+
+Choose a number between <b>1 – 5</b>
+
+<br><br>
+
+✔ Correct Guess → <b>5x reward</b>  
+❌ Wrong Guess → Lose your bet
+
+<br><br>
+
+Example:
+
+Bet 10 DMX → Win 50 DMX
+
+</p>
+
+</div>
 
 </div>
 
