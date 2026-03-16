@@ -1553,6 +1553,56 @@ cursor:pointer;
 100%{transform:translateY(100vh);}
 
 }
+
+.lose-popup{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:9999;
+
+}
+
+.lose-box{
+
+background:#020617;
+border:2px solid red;
+
+padding:30px;
+
+border-radius:12px;
+
+text-align:center;
+
+}
+
+.lose-box h2{
+color:red;
+}
+
+.lose-box button{
+
+background:red;
+color:white;
+
+border:none;
+
+padding:10px 20px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+    }    
         
 .scene,
 .coin-scene,
@@ -3609,7 +3659,7 @@ else{
 
 playSound(loseSound);
 
-alert("❌ Horse "+winner+" wins!\nYou lost.");
+showLose("Horse "+winner+" wins!");
 
 }
 
@@ -3684,8 +3734,8 @@ else{
 
 playSound(loseSound);
 
-alert("❌ Car "+winner+" wins!\nYou lost.");
-
+showLose("Car "+winner+" wins!");
+    
 }
 
 // reset race
@@ -3727,7 +3777,13 @@ function selectOddEven(choice){
 
 oddEvenChoice=choice;
 
-alert("You selected: "+choice);
+// remove previous highlight
+document.querySelectorAll(".odd-even-options .bet-btn").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected button
+event.target.classList.add("selected-btn");
 
 }
 
@@ -3789,10 +3845,7 @@ else{
 
 playSound(loseSound);
 
-alert(
-"❌ You Lost\n\n"+
-"Number: "+result
-);
+showBigWin(reward);
 
 updateOddEvenHistory(result);
 
@@ -3805,13 +3858,19 @@ gameRunning=false;
     }  
 
 
- let lucky7Choice = null;
+let lucky7Choice = null;
 
 function selectLucky7(choice){
 
 lucky7Choice = choice;
 
-alert("You selected: " + choice);
+// remove previous selection
+document.querySelectorAll(".lucky7-options .bet-btn").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected button
+event.target.classList.add("selected-btn");
 
 }
 
@@ -3866,11 +3925,7 @@ reward = applyRewardLimit(reward);
 
 playSound(winSound);
 
-alert(
-"🎉 Lucky 7 Win!\n\n"+
-"Dice: "+result+
-"\nReward: "+reward+" DMX"
-);
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -3881,10 +3936,7 @@ else{
 
 playSound(loseSound);
 
-alert(
-"❌ You Lost\n\n"+
-"Dice: "+result
-);
+showLose("Dice: "+result);
 
 }
 
@@ -3901,7 +3953,13 @@ function selectLuckyNumber(num){
 
 selectedLucky = num;
 
-alert("You selected number: " + num);
+// remove previous highlight
+document.querySelectorAll(".num-choice").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected number
+event.target.classList.add("selected-btn");
 
 }
 
@@ -3938,11 +3996,7 @@ reward = applyRewardLimit(reward);
 
 playSound(winSound);
 
-alert(
-"🎉 Lucky Number Win!\n\n"+
-"Result: "+result+
-"\nReward: "+reward+" DMX"
-);
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -3953,11 +4007,7 @@ else{
 
 playSound(loseSound);
 
-alert(
-"❌ Wrong Number\n\n"+
-"Result: "+result+
-"\nYou lost your bet"
-);
+showLose("Result: "+result);
 
 }
 
@@ -3976,7 +4026,13 @@ function chooseCoin(choice){
 
 selectedCoin = choice;
 
-alert("You selected: " + choice.toUpperCase());
+// remove previous highlight
+document.querySelectorAll(".coin-scene .btn-bonus").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected button
+event.target.classList.add("selected-btn");
 
 }
 
@@ -4026,10 +4082,7 @@ let reward = result === "edge" ? currentBet * 4 : currentBet * 2;
 
 playSound(winSound);
 
-alert(
-"🪙 Result: "+result.toUpperCase()+
-"\n\nYou won "+reward+" DMX"
-);
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -4039,10 +4092,7 @@ addWinner(userAddress,reward);
 
 playSound(loseSound);
 
-alert(
-"🪙 Result: "+result.toUpperCase()+
-"\n\nYou lost!"
-);
+showLose("Result: "+result.toUpperCase());
 
 }
 
@@ -4059,7 +4109,13 @@ function chooseBattle(choice){
 
 selectedBattle = choice;
 
-alert("You selected: "+choice.toUpperCase());
+// remove previous highlight
+document.querySelectorAll(".battle-btn").forEach(btn=>{
+btn.classList.remove("selected-btn");
+});
+
+// highlight selected button
+event.target.classList.add("selected-btn");
 
 }
 
@@ -4107,7 +4163,7 @@ if(result === "lose"){
 
 playSound(loseSound);
 
-alert("❌ You lost the battle!");
+showLose("Battle lost");
 
 }
 
@@ -4134,10 +4190,7 @@ let reward = currentBet * 4;
 
 playSound(winSound);
 
-alert(
-"🔥 LEGENDARY WIN!\n\n"+
-"You earned "+reward+" DMX"
-);
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -4972,6 +5025,22 @@ function closeBigWin(){
 document.getElementById("bigWinPopup").style.display="none";
 
     }
+
+function showLose(text){
+
+document.getElementById("losePopup").style.display="flex";
+
+document.getElementById("loseText").innerText=text;
+
+playSound(loseSound);
+
+}
+
+function closeLose(){
+
+document.getElementById("losePopup").style.display="none";
+
+                          }    
     
     
     </script>
@@ -4985,6 +5054,21 @@ document.getElementById("bigWinPopup").style.display="none";
 <p id="bigWinAmount">+50 DMX</p>
 
 <button onclick="closeBigWin()">COLLECT</button>
+
+</div>
+
+</div>
+    
+
+    <div id="losePopup" class="lose-popup">
+
+<div class="lose-box">
+
+<h2>❌ YOU LOST</h2>
+
+<p id="loseText">Better luck next round</p>
+
+<button onclick="closeLose()">OK</button>
 
 </div>
 
