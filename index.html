@@ -1846,19 +1846,25 @@ Close
 
 <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
 
-<div class="game-btn" onclick="openDiceGame()">🎲 Dice Roll</div>
-
 <div class="game-btn" onclick="openCardGame()">🃏 Card Flip</div>
 
 <div class="game-btn" onclick="openTargetGame()">🎯 Target Shot</div>
 
 <div class="game-btn" onclick="startSlot()">🎰 Slot Machine</div>
 
-<div class="game-btn" onclick="openGuessGame()">❓ Guess Number</div>
+<div class="game-btn" onclick="openMagicTiles()">💎 Magic Tiles</div>
 
 <div class="game-btn" onclick="openColorGame()">🎨 Color Pick</div>
 
-<div class="game-btn" onclick="openMagicTiles()">💎 Magic Tiles</div>
+<div class="game-btn" onclick="openLuckyNumber()">🎯 Lucky Number</div>
+
+<div class="game-btn" onclick="openLuckySeven()">🎲 Lucky 7</div>
+
+<div class="game-btn" onclick="openOddEven()">⚖ Odd / Even</div>
+
+<div class="game-btn" onclick="openHorseRace()">🐎 Horse Race</div>
+
+<div class="game-btn" onclick="openCarRace()">🏎 Formula Car Race</div>   
 
 <div class="game-btn" onclick="openCrashGame()">🚀 DMX Crash</div>
 
@@ -3253,10 +3259,6 @@ function openLuckyBox(){
 showGame(".box-scene",boxSound)
 }
 
-function openDiceGame(){
-showGame(".scene",diceSound)
-}
-
 function openCardGame(){
 showGame(".card-scene",cardSound)
 }
@@ -3267,10 +3269,6 @@ showGame(".target-scene",targetSound)
 
 function startSlot(){
 showGame(".slot-machine-container",slotSound)
-}
-
-function openGuessGame(){
-showGame(".guess-container",guessSound)
 }
 
 function openColorGame(){
@@ -3284,6 +3282,438 @@ showGame("#magicTilesPanel",tilesSound)
 function openCrashGame(){
 showGame("#crashGamePanel",crashSound)
 }
+
+function openLuckyNumber(){
+showGame("#luckyNumberGame")
+}
+
+function openLuckySeven(){
+showGame("#luckySevenGame")
+}
+
+function openOddEven(){
+showGame("#oddEvenGame")
+}
+
+function openHorseRace(){
+showGame("#horseRaceGame")
+}
+
+function openCarRace(){
+showGame("#carRaceGame")
+    }    
+
+let selectedHorse=null;
+
+function selectHorse(num){
+
+selectedHorse=num;
+
+alert("You selected Horse "+num);
+
+}
+
+async function startHorseRace(){
+
+if(gameRunning) return;
+
+let bet=processBet();
+if(!bet) return;
+
+if(!(await checkGameCooldown())) return;
+
+gameRunning=true;
+
+playSound(spinSound);
+
+const horses=[1,2,3,4];
+
+horses.forEach(i=>{
+document.getElementById("horse"+i).style.left="30px";
+});
+
+setTimeout(()=>{
+
+const winner=Math.floor(Math.random()*4)+1;
+
+horses.forEach(i=>{
+
+const distance=Math.random()*70+10;
+
+document.getElementById("horse"+i).style.left=distance+"%";
+
+});
+
+setTimeout(()=>{
+
+if(selectedHorse===winner){
+
+let reward=bet*4;
+
+reward=applyRewardLimit(reward);
+
+playSound(winSound);
+
+alert(
+"🏆 Horse "+winner+" wins!\n\n"+
+"Reward: "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+else{
+
+playSound(loseSound);
+
+alert(
+"❌ Horse "+winner+" wins!\n\n"+
+"You lost your bet"
+);
+
+}
+
+updateHorseHistory(winner);
+
+gameRunning=false;
+
+},2000);
+
+},500);
+
+    }
+
+let oddEvenChoice=null;
+
+function selectOddEven(choice){
+
+oddEvenChoice=choice;
+
+alert("You selected: "+choice);
+
+}
+
+async function playOddEven(){
+
+if(gameRunning) return;
+
+let bet = processBet();
+if(!bet) return;
+
+if(!(await checkGameCooldown())) return;
+
+gameRunning=true;
+
+const display=document.getElementById("oddEvenNumber");
+
+display.classList.add("spin-number");
+
+playSound(spinSound);
+
+setTimeout(()=>{
+
+display.classList.remove("spin-number");
+
+const result=Math.floor(Math.random()*9)+1;
+
+display.innerText=result;
+
+let reward=0;
+
+if(result%2===0 && oddEvenChoice==="even"){
+reward=bet*2;
+}
+
+if(result%2===1 && oddEvenChoice==="odd"){
+reward=bet*2;
+}
+
+if(reward>0){
+
+reward=applyRewardLimit(reward);
+
+playSound(winSound);
+
+alert(
+"🎉 You Win!\n\n"+
+"Number: "+result+
+"\nReward: "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+updateOddEvenHistory(result);
+
+}
+else{
+
+playSound(loseSound);
+
+alert(
+"❌ You Lost\n\n"+
+"Number: "+result
+);
+
+updateOddEvenHistory(result);
+
+}
+
+gameRunning=false;
+
+},2000);
+
+    }  
+
+
+ let lucky7Choice = null;
+
+function selectLucky7(choice){
+
+lucky7Choice = choice;
+
+alert("You selected: " + choice);
+
+}
+
+async function playLucky7(){
+
+if(gameRunning) return;
+
+let bet = processBet();
+if(!bet) return;
+
+if(!(await checkGameCooldown())) return;
+
+gameRunning=true;
+
+const dice=document.getElementById("lucky7Dice");
+
+dice.classList.add("roll");
+
+playSound(diceSound);
+
+setTimeout(()=>{
+
+dice.classList.remove("roll");
+
+const result = Math.floor(Math.random()*6)+1;
+
+dice.innerText=result;
+
+let reward=0;
+
+if(result<=3 && lucky7Choice==="low"){
+
+reward = bet*2;
+
+}
+
+else if(result>=5 && lucky7Choice==="high"){
+
+reward = bet*2;
+
+}
+
+else if(result===4 && lucky7Choice==="seven"){
+
+reward = bet*6;
+
+}
+
+if(reward>0){
+
+reward = applyRewardLimit(reward);
+
+playSound(winSound);
+
+alert(
+"🎉 Lucky 7 Win!\n\n"+
+"Dice: "+result+
+"\nReward: "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+else{
+
+playSound(loseSound);
+
+alert(
+"❌ You Lost\n\n"+
+"Dice: "+result
+);
+
+}
+
+gameRunning=false;
+
+},2000);
+
+    }  
+
+
+let selectedLucky = null;
+
+function selectLuckyNumber(num){
+
+selectedLucky = num;
+
+alert("You selected number: " + num);
+
+}
+
+async function playLuckyNumber(){
+
+if(gameRunning) return;
+
+let bet = processBet();
+if(!bet) return;
+
+if(!(await checkGameCooldown())) return;
+
+gameRunning = true;
+
+const display = document.getElementById("luckyDisplay");
+
+display.classList.add("spin");
+
+playSound(spinSound);
+
+setTimeout(()=>{
+
+display.classList.remove("spin");
+
+const result = Math.floor(Math.random()*5)+1;
+
+display.innerText = result;
+
+if(result === selectedLucky){
+
+let reward = bet * 5;
+
+reward = applyRewardLimit(reward);
+
+playSound(winSound);
+
+alert(
+"🎉 Lucky Number Win!\n\n"+
+"Result: "+result+
+"\nReward: "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+else{
+
+playSound(loseSound);
+
+alert(
+"❌ Wrong Number\n\n"+
+"Result: "+result+
+"\nYou lost your bet"
+);
+
+}
+
+gameRunning=false;
+
+},2000);
+
+    }
+    
+    
+
+let selectedCar=null;
+
+function selectCar(num){
+
+selectedCar=num;
+
+alert("You selected Car "+num);
+
+}
+
+async function startCarRace(){
+
+if(gameRunning) return;
+
+let bet=processBet();
+if(!bet) return;
+
+if(!(await checkGameCooldown())) return;
+
+gameRunning=true;
+
+playSound(spinSound);
+
+const cars=[1,2,3,4];
+
+cars.forEach(i=>{
+document.getElementById("car"+i).style.left="30px";
+});
+
+setTimeout(()=>{
+
+const winner=Math.floor(Math.random()*4)+1;
+
+cars.forEach(i=>{
+
+const distance=Math.random()*70+10;
+
+document.getElementById("car"+i).style.left=distance+"%";
+
+});
+
+setTimeout(()=>{
+
+if(selectedCar===winner){
+
+let reward=bet*4;
+
+reward=applyRewardLimit(reward);
+
+playSound(winSound);
+
+alert(
+"🏆 Car "+winner+" wins!\n\n"+
+"Reward: "+reward+" DMX"
+);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+else{
+
+playSound(loseSound);
+
+alert(
+"❌ Car "+winner+" wins!\n\n"+
+"You lost your bet"
+);
+
+}
+
+updateCarHistory(winner);
+
+gameRunning=false;
+
+},2000);
+
+},500);
+
+    }
 
     
 async function flipCoin(){
@@ -3629,105 +4059,6 @@ Win → 20 / 30 / 50 DMX
 </div>
 
 
-// ===============================
-// DICE CHOOSE + ROLL GAME
-// ===============================
-
-let selectedDice = null;
-
-// Player chooses number
-function chooseDice(num){
-
-selectedDice = num;
-
-alert("You selected number: " + num);
-
-}
-
-
-// Roll dice
-async function rollDice(){
-
-if(gameRunning) return;
-
-if(selectedDice === null){
-alert("Choose a number first");
-return;
-}
-
-let bet = processBet();
-if(!bet) return;
-
-if (!(await checkGameCooldown())) return;
-
-gameRunning = true;
-
-playSound(diceSound);
-
-const diceElement = document.getElementById("diceElement");
-
-diceElement.classList.add("dice-rolling");
-
-const finalDice = Math.floor(Math.random()*6)+1;
-
-setTimeout(()=>{
-
-diceElement.classList.remove("dice-rolling");
-
-const angles={
-1:{x:0,y:0},
-2:{x:0,y:-90},
-3:{x:0,y:-180},
-4:{x:0,y:90},
-5:{x:-90,y:0},
-6:{x:90,y:0}
-};
-
-const resultAngle = angles[finalDice];
-
-diceElement.style.transform=
-`translateZ(-50px) rotateX(${resultAngle.x+720}deg) rotateY(${resultAngle.y+720}deg)`;
-
-setTimeout(()=>{
-
-let reward = 0;
-
-if(finalDice === selectedDice){
-
-reward = bet * 5;
-
-reward = applyRewardLimit(reward);
-
-playSound(winSound);
-
-alert(
-"🎲 Dice Result: "+finalDice+
-"\n\nYou guessed correctly!\nReward: "+reward+" DMX"
-);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-else{
-
-playSound(loseSound);
-
-alert(
-"🎲 Dice Result: "+finalDice+
-"\n\nWrong guess! You lost your bet."
-);
-
-}
-
-gameRunning=false;
-
-},1000);
-
-},2000);
-
-}
 
     
 let tileReward = 0
@@ -4272,82 +4603,6 @@ gameRunning=false
 }
     
 
-        async function guessNumberAnimation(num){
-
-if(gameRunning) return
-
-let bet = processBet()
-if(!bet) return
-
-gameRunning=true
-
-const display=document.getElementById("guessStatusDisplay")
-
-display.classList.remove("guess-success","guess-fail")
-
-display.innerText=num
-
-playSound(spinSound)
-
-setTimeout(()=>{
-
-const random=Math.floor(Math.random()*5)+1
-
-if(num===random){
-
-display.classList.add("guess-success")
-display.innerText="OK"
-
-playSound(winSound)
-
-let reward = bet * 5
-reward = applyRewardLimit(reward)
-
-setTimeout(()=>{
-
-alert(
-"🎉 Correct Guess!\n\n"+
-"Winning Number: "+random+
-"\n\nReward: "+reward+" DMX"
-)
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-gameRunning=false
-
-display.innerText="0"
-
-},1000)
-
-}
-else{
-
-display.classList.add("guess-fail")
-display.innerText="ERR"
-
-playSound(loseSound)
-
-setTimeout(()=>{
-
-alert(
-"❌ Wrong Guess\n\n"+
-"Correct Number: "+random+
-"\n\nYou lost your bet."
-)
-
-gameRunning=false
-
-display.innerText="0"
-
-},1000)
-
-}
-
-},2000)
-
-}
 
         async function pickColor(userColor){
 
