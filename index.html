@@ -142,6 +142,18 @@ background:#9333ea;
 color:white;
 } 
 
+ .coin-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+
+ }   
+
 /* BATTLE STYLES */
     
 .battle-scene{
@@ -176,7 +188,62 @@ background:#06b6d4;
 color:black;
 transform:scale(1.1);
 
-}    
+}   
+
+ .battle-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+
+    }  
+
+/* DOOR STYLES */
+
+.door-scene{
+display:none;
+margin-top:30px;
+}
+
+.door-container{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-top:20px;
+}
+
+.door-btn{
+
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:16px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+transition:.3s;
+
+}
+
+.door-btn:hover{
+background:#06b6d4;
+color:black;
+}
+
+.door-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+
+    }    
 
         
 /* CARD FLIP 3D STYLES */
@@ -1046,6 +1113,18 @@ animation:coinPop 0.8s ease-out;
     transform: rotateY(180deg);
 }
 
+ .tiles-rules{
+
+margin-top:20px;
+background:#0f172a;
+border:1px solid #06b6d4;
+padding:12px;
+border-radius:10px;
+font-size:14px;
+color:#cbd5f5;
+
+ }   
+
 
 /* Grid shake animation */
 
@@ -1607,7 +1686,9 @@ Close
 
 <div class="game-btn" onclick="openCoinGame()">🪙 Coin Flip</div>
 
- <div class="game-btn" onclick="openBattleGame()">⚔ Battle Arena</div>   
+<div class="game-btn" onclick="openBattleGame()">⚔ Battle Arena</div>
+
+<div class="game-btn" onclick="openDoorGame()">🚪 Door Game</div>   
 
 <div class="game-btn" onclick="openLuckyBox()">🎁 Lucky Box</div>
 
@@ -1760,7 +1841,41 @@ Choose your weapon
 
   </div>  
 
-</div>    
+</div> 
+
+ <!-- DOOR GAME -->
+
+<div class="door-scene">
+
+<h3>🚪 Treasure Doors</h3>
+
+<p style="color:#94a3b8">
+Choose a door and reveal the treasure
+</p>
+
+<div class="door-container">
+
+<button class="door-btn" onclick="openDoor(1)">🚪 Door 1</button>
+
+<button class="door-btn" onclick="openDoor(2)">🚪 Door 2</button>
+
+<button class="door-btn" onclick="openDoor(3)">🚪 Door 3</button>
+
+</div>
+
+<div class="door-rules">
+
+<b>Door Game Rules</b>
+
+<p>
+💰 Gold → Win <b>2x</b><br>
+💎 Diamond → Win <b>5x</b> (Rare)<br>
+💣 Bomb → Lose your bet
+</p>
+
+</div>
+
+</div>   
 
 
 <!-- LUCKY BOX -->
@@ -1784,8 +1899,9 @@ Click the box to open it
 <!-- MAGIC TILES -->
 
 <div id="magicTilesPanel" class="game-section">
+<div id="magicTilesPanel" class="game-section">
 
-<h3>Magic Tiles - Find the Gold</h3>
+<h3>💎 Magic Tiles - Find the Gold</h3>
 
 <p id="tilesScore">
 Current Profit: 0 DMX
@@ -1793,18 +1909,55 @@ Current Profit: 0 DMX
 
 <div class="tiles-grid" id="tilesGrid"></div>
 
+<!-- CASHOUT BUTTON -->
+
 <button
 id="cashoutBtn"
 class="btn-bonus"
 style="display:none;"
 onclick="tilesCashout()">
 
-CASHOUT (Claim your reward)
+💰 CASHOUT (Collect Profit)
 
 </button>
 
+
+<!-- RULES BOX -->
+
+<div class="tiles-rules">
+
+<b>Game Rules</b>
+
+<p>
+
+💰 Gold Tile → Increase profit  
+💣 Bomb Tile → Lose all profit  
+
+<br><br>
+
+Tile Rewards:
+
+<br>
+
+1 Tile → 10 DMX  
+<br>
+2 Tiles → 20 DMX  
+<br>
+3 Tiles → 40 DMX  
+<br>
+4 Tiles → 80 DMX  
+<br>
+5 Tiles → 150 DMX  
+
+<br><br>
+
+✔ You can cashout anytime before hitting the bomb.
+
+</p>
+
 </div>
 
+</div>
 
 <div class="card-scene">
 
@@ -2486,7 +2639,11 @@ showGame(".coin-scene",clickSound)
 
 function openBattleGame(){
 showGame(".battle-scene",clickSound)
-    }    
+    }
+
+function openDoorGame(){
+showGame(".door-scene",spinSound)
+}    
 
 function openLuckyBox(){
 showGame(".box-scene",boxSound)
@@ -2710,7 +2867,97 @@ gameRunning=false;
 
 },1200);
 
-    }   
+    }  
+
+async function openDoor(door){
+
+if(gameRunning) return
+
+if (!(await checkGameCooldown())) return
+
+gameRunning = true
+
+playSound(spinSound)
+
+let result
+
+let chance = Math.random()
+
+if(chance < 0.60){
+
+result = "gold"
+
+}
+else if(chance < 0.85){
+
+result = "bomb"
+
+}
+else{
+
+result = "diamond"
+
+}
+
+setTimeout(()=>{
+
+if(result === "gold"){
+
+let reward = 20
+
+reward = applyRewardLimit(reward)
+
+playSound(winSound)
+
+alert(
+"🚪 Door Opened!\n\n"+
+"You found GOLD!\n"+
+"Reward: "+reward+" DMX"
+)
+
+claimGameReward(reward)
+
+addWinner(userAddress,reward)
+
+}
+
+else if(result === "diamond"){
+
+let reward = 50
+
+reward = applyRewardLimit(reward)
+
+playSound(winSound)
+
+alert(
+"💎 JACKPOT!\n\n"+
+"You found DIAMOND!\n"+
+"Reward: "+reward+" DMX"
+)
+
+claimGameReward(reward)
+
+addWinner(userAddress,reward)
+
+}
+
+else{
+
+playSound(loseSound)
+
+alert(
+"💣 BOOM!\n\n"+
+"You opened a bomb door.\n"+
+"You lost your bet."
+)
+
+}
+
+gameRunning=false
+
+},1200)
+
+    }    
 
 
 // ===============================
@@ -2895,7 +3142,6 @@ let activeTilesGame = true
 async function clickTile(index){
 
 if(gameRunning) return
-
 if(!activeTilesGame) return
 
 gameRunning = true
@@ -2912,7 +3158,6 @@ if(index===bombLocation){
 activeTilesGame=false
 
 tile.classList.add("revealed-bomb")
-
 tile.innerHTML="💣"
 
 document.getElementById("tilesGrid").classList.add("grid-shake")
@@ -2924,7 +3169,6 @@ setTimeout(()=>{
 alert("💥 BOOM! The bomb exploded. You lost all DMX.")
 
 gameRunning=false
-
 resetTilesGame()
 
 },1000)
@@ -2933,10 +3177,13 @@ resetTilesGame()
 else{
 
 tile.classList.add("revealed-gold")
-
 tile.innerHTML="💰"
 
-tileReward+=10
+let rewards=[10,20,40,80,150]
+
+let tileCount=document.querySelectorAll(".revealed-gold").length
+
+tileReward=rewards[Math.min(tileCount-1,rewards.length-1)]
 
 document.getElementById("tilesScore").innerText=
 `Current Profit: ${tileReward} DMX`
@@ -2954,16 +3201,19 @@ gameRunning=false
 
 function resetTilesGame(){
 
-activeTilesGame=true
-tileReward=0
-bombLocation=Math.floor(Math.random()*9)
+activeTilesGame = true
+tileReward = 0
 
-document.getElementById("tilesScore").innerText="Current Profit: 0 DMX"
-document.getElementById("cashoutBtn").style.display="none"
+bombLocation = Math.floor(Math.random()*9)
 
 const grid=document.getElementById("tilesGrid")
-
 if(!grid) return
+
+grid.classList.remove("grid-shake")
+
+document.getElementById("tilesScore").innerText="Current Profit: 0 DMX"
+
+document.getElementById("cashoutBtn").style.display="none"
 
 grid.innerHTML=""
 
@@ -2983,16 +3233,16 @@ grid.appendChild(tile)
 
 }
 
-
 async function tilesCashout(){
 
 if(tileReward<=0 || !activeTilesGame) return
 
-gameRunning=true
-
-activeTilesGame=false
+gameRunning = true
+activeTilesGame = false
 
 tileReward = applyRewardLimit(tileReward)
+
+playSound(winSound)
 
 alert(`🎉 Congratulations! You won ${tileReward} DMX.`)
 
@@ -3000,9 +3250,14 @@ claimGameReward(tileReward)
 
 addWinner(userAddress,tileReward)
 
-gameRunning=false
+document.getElementById("cashoutBtn").style.display="none"
 
+setTimeout(()=>{
+
+gameRunning=false
 resetTilesGame()
+
+},800)
 
 }
     
