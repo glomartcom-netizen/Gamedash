@@ -1389,7 +1389,8 @@ transform:scale(0.9);
 Play games and win DMX rewards
 </p>
 
-<!-- BALANCE -->
+
+<!-- PLAYER BALANCE -->
 
 <div style="margin-top:20px;font-size:18px">
 
@@ -1399,6 +1400,7 @@ Play games and win DMX rewards
 </span> DMX
 
 </div>
+
 
 
 <!-- BET PANEL -->
@@ -1422,15 +1424,41 @@ text-align:center;
 
 <br><br>
 
-<button class="btn-bonus" onclick="startBetGame()">
+<button
+class="btn-bonus"
+onclick="playGame()"
+style="
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:#22c55e;
+color:white;
+cursor:pointer;
+margin-right:10px;
+">
+
 🎮 Start Game
+
 </button>
 
-<button class="btn-bonus" onclick="openGameInfo()">
+<button
+class="btn-bonus"
+onclick="openGameInfo()"
+style="
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:#3b82f6;
+color:white;
+cursor:pointer;
+">
+
 📜 Game Rules
+
 </button>
 
 </div>
+
 
 
 <!-- RULES POPUP -->
@@ -1454,39 +1482,61 @@ z-index:9999;
 
 <h2>🎮 Game Information</h2>
 
+
 <h3>🆕 New Player Bonus</h3>
+
 <p>
-• New players receive 100 Game Points.<br>
-• Points are for gameplay only and cannot be withdrawn.
+• New players receive <b>100 Game Points</b><br>
+• Points are for gameplay only and cannot be withdrawn
 </p>
+
 
 <h3>👥 Referral Rewards</h3>
+
 <p>
-• Share your referral link with friends.<br>
-• When your referral deposits and plays games,<br>
-you receive 5% of their game activity as bonus points.
+• Share your referral link with friends<br>
+• When your referral deposits and plays games<br>
+you receive <b>5% of their gameplay activity</b>
 </p>
+
 
 <h3>👤 Member Benefits</h3>
+
 <p>
-• Members who deposit (stake) or direct referral<br>
-receive bonus play points.<br>
-• 2.5% of staking or direct referral amount<br>
-is credited as game points.
+• Members who deposit or stake receive bonus play points<br>
+• <b>2.5% of deposit volume</b> credited as game points
 </p>
+
 
 <h3>🎮 Game Rules</h3>
+
 <p>
-• Players can use their balance to play games.<br>
-• Enter your bet amount before playing.<br>
-• Win = up to 2x reward.<br>
-• Lose = bet amount deducted.<br>
-• Minimum bet: 10 DMX.
+• Players use balance to play games<br>
+• Enter bet amount before starting<br>
+• Winning pays up to <b>2x reward</b><br>
+• Losing deducts the bet amount<br>
+• Minimum bet: <b>10 DMX</b>
 </p>
 
-<button onclick="closeGameInfo()">Close</button>
+
+<button
+onclick="closeGameInfo()"
+style="
+margin-top:10px;
+padding:8px 16px;
+border:none;
+border-radius:8px;
+background:#ef4444;
+color:white;
+cursor:pointer;
+">
+
+Close
+
+</button>
 
 </div>
+
 
 
 <!-- LIVE WINNERS -->
@@ -1494,10 +1544,13 @@ is credited as game points.
 <div style="margin-top:20px">
 
 <marquee id="winnerBoard" style="color:#06b6d4;font-weight:bold">
+
 🔥 Live Winners will appear here 🔥
+
 </marquee>
 
 </div>
+
 
 
 <!-- JACKPOT -->
@@ -1507,10 +1560,13 @@ is credited as game points.
 🏆 Jackpot Pool:
 
 <span id="jackpotValue" style="color:#22c55e;font-weight:bold">
+
 5000
+
 </span> DMX
 
 </div>
+
 
 
 <!-- COMMUNITY LINKS -->
@@ -1518,17 +1574,22 @@ is credited as game points.
 <div style="margin-top:30px">
 
 <a href="https://t.me/YOURGROUP" target="_blank">
+
 📢 Join Telegram Community
+
 </a>
 
 <br><br>
 
 <a href="https://yourwebsite.com" target="_blank">
+
 🌐 Visit Official Website
+
 </a>
 
 </div>
-    
+
+</div>
 
 <div class="game-container">
 
