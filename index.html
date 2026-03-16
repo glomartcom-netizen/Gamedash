@@ -3998,65 +3998,88 @@ gameRunning=false
 // GAME — LUCKY BOX
 // ===============================
 
-<!-- 🎁 LUCKY BOX GAME -->
+function openLuckyBox(){
+showGame(".box-scene",boxSound)
+}
 
-<div class="box-scene">
+async function openBoxAnimation(){
 
-<h3>🎁 Lucky Box</h3>
+if(gameRunning) return
 
-<div class="box-container" id="boxElement" onclick="openBoxAnimation()">
+let bet = processBet()
+if(!bet) return
 
-<div class="box-lid"></div>
-<div class="box-body"></div>
-<div class="box-glow"></div>
+if(!(await checkGameCooldown())) return
 
-</div>
+gameRunning=true
 
-<p style="color:#94a3b8;font-size:14px;margin-top:20px;">
-Tap the box to open it
-</p>
+const box=document.getElementById("boxElement")
+if(!box) return
 
-<!-- RULES -->
+box.classList.add("box-shaking")
 
-<div class="game-rules">
+playSound(boxSound)
 
-<b>Lucky Box Rules</b>
+setTimeout(()=>{
 
-<p>
+box.classList.remove("box-shaking")
+box.classList.add("box-open")
 
-🎁 Open the mystery box  
+let reward = 0
 
-<br><br>
+const chance = Math.random()
 
-Possible rewards  
+if(chance < 0.4){
 
-<br>
+reward = bet * 2
 
-💰 2x reward  
-💰 3x reward  
-💰 5x jackpot  
+}
+else if(chance < 0.7){
 
-<br><br>
+reward = bet * 3
 
-Example  
+}
+else if(chance < 0.9){
 
-<br>
+reward = bet * 5
 
-Bet 10 DMX  
+}
+else{
 
-<br>
+reward = 0
 
-Win → 20 / 30 / 50 DMX  
+}
 
-<br>
+setTimeout(()=>{
 
-❌ Some boxes may lose your bet
+if(reward>0){
 
-</p>
+playSound(winSound)
 
-</div>
+reward = applyRewardLimit(reward)
 
-</div>
+alert("🎁 Lucky Box Opened!\n\nYou won "+reward+" DMX")
+
+claimGameReward(reward)
+
+addWinner(userAddress,reward)
+
+}
+else{
+
+playSound(loseSound)
+
+alert("💥 Empty box!\n\nYou lost your bet.")
+
+}
+
+gameRunning=false
+
+},800)
+
+},1500)
+
+}
 
 
 
