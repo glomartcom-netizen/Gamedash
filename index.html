@@ -4173,10 +4173,7 @@ let reward = currentBet * 2;
 
 playSound(winSound);
 
-alert(
-"⚔ Battle Won!\n\n"+
-"You earned "+reward+" DMX"
-);
+showBigWin(reward);
 
 claimGameReward(reward);
 
@@ -4244,11 +4241,7 @@ reward = applyRewardLimit(reward)
 
 playSound(winSound)
 
-alert(
-"🚪 Door Opened!\n\n"+
-"You found GOLD!\n"+
-"Reward: "+reward+" DMX"
-)
+showBigWin(reward)
 
 claimGameReward(reward)
 
@@ -4264,11 +4257,7 @@ reward = applyRewardLimit(reward)
 
 playSound(winSound)
 
-alert(
-"💎 JACKPOT!\n\n"+
-"You found DIAMOND!\n"+
-"Reward: "+reward+" DMX"
-)
+showBigWin(reward)
 
 claimGameReward(reward)
 
@@ -4280,11 +4269,7 @@ else{
 
 playSound(loseSound)
 
-alert(
-"💣 BOOM!\n\n"+
-"You opened a bomb door.\n"+
-"You lost your bet."
-)
+showLose("Bomb door exploded")
 
 }
 
@@ -4359,8 +4344,8 @@ playSound(winSound)
 
 reward = applyRewardLimit(reward)
 
-alert("🎁 Lucky Box Opened!\n\nYou won "+reward+" DMX")
-
+showBigWin(reward);
+    
 claimGameReward(reward)
 
 addWinner(userAddress,reward)
@@ -4370,7 +4355,7 @@ else{
 
 playSound(loseSound)
 
-alert("💥 Empty box!\n\nYou lost your bet.")
+showLose("Empty box! You lost your bet.");
 
 }
 
@@ -4416,7 +4401,7 @@ playSound(loseSound)
 
 setTimeout(()=>{
 
-alert("💥 BOOM! The bomb exploded. You lost all DMX.")
+showLose("💥 BOOM! Bomb exploded!");
 
 gameRunning=false
 resetTilesGame()
@@ -4494,7 +4479,7 @@ tileReward = applyRewardLimit(tileReward)
 
 playSound(winSound)
 
-alert(`🎉 Congratulations! You won ${tileReward} DMX.`)
+showBigWin(tileReward);
 
 claimGameReward(tileReward)
 
@@ -4580,8 +4565,8 @@ document.getElementById("rocket").innerText="💥"
 
 document.getElementById("takeProfitBtn").style.display="none"
 
-alert("💥 Rocket crashed!\n\nYou lost your bet.")
-
+showLose("💥 Rocket crashed!");
+    
 setTimeout(()=>{
 
 document.getElementById("rocket").innerText="🚀"
@@ -4604,9 +4589,7 @@ let winAmount = Math.floor(crashBet * crashValue)
 
 winAmount = applyRewardLimit(winAmount)
 
-alert(`💰 Success!
-Multiplier: ${crashValue.toFixed(2)}x
-Reward: ${winAmount} DMX`)
+showBigWin(winAmount);
 
 claimGameReward(winAmount)
 
@@ -4670,10 +4653,7 @@ document.getElementById("cardBack"+index).innerText="💰"
 
 setTimeout(()=>{
 
-alert(
-"🎉 Winning Card!\n\n"+
-"You won "+reward+" DMX"
-)
+showBigWin(reward);
 
 claimGameReward(reward)
 
@@ -4690,10 +4670,7 @@ document.getElementById("cardBack"+index).innerText="❌"
 
 setTimeout(()=>{
 
-alert(
-"❌ Wrong Card!\n\n"+
-"You lost your bet."
-)
+showLose("❌ Wrong Card!");
 
 resetCardGame()
 
@@ -4778,10 +4755,7 @@ playSound(loseSound)
 
 status.innerText="❌ Missed Target!"
 
-alert(
-"❌ Missed Target\n\n"+
-"You lost your bet."
-)
+showLose("❌ Missed Target!");
 
 gameRunning=false
 return
@@ -4796,10 +4770,7 @@ playSound(winSound)
 
 setTimeout(()=>{
 
-alert(
-resultText+"\n\n"+
-"Reward: "+reward+" DMX"
-)
+showBigWin(reward);
 
 claimGameReward(reward)
 
@@ -4877,6 +4848,54 @@ gameRunning = false;
 
 }
     
+function checkSlotResult(a,b,c,bet){
+
+let reward = 0;
+
+// JACKPOT
+if(a===b && b===c){
+
+reward = bet * 5;
+
+reward = applyRewardLimit(reward);
+
+playSound(winSound);
+
+showBigWin(reward);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+
+// SMALL WIN
+else if(a===b || b===c || a===c){
+
+reward = bet * 2;
+
+reward = applyRewardLimit(reward);
+
+playSound(winSound);
+
+showBigWin(reward);
+
+claimGameReward(reward);
+
+addWinner(userAddress,reward);
+
+}
+
+// LOSE
+else{
+
+playSound(loseSound);
+
+showLose("❌ No Match!");
+
+}
+
+ }    
 
 
         async function pickColor(userColor){
@@ -4950,13 +4969,7 @@ reward = applyRewardLimit(reward)
 
 playSound(winSound)
 
-alert(
-"🎉 Correct Color!\n\n"+
-"You chose: "+userColor.toUpperCase()+
-"\nResult: "+result.toUpperCase()+
-"\n\nReward: "+reward+" DMX"
-)
-
+showBigWin(reward);
 claimGameReward(reward)
 addWinner(userAddress,reward)
 
@@ -4967,10 +4980,7 @@ else{
 
 playSound(loseSound)
 
-alert(
-"❌ Wrong Color\n\n"+
-"You lost your bet."
-)
+showLose("❌ Wrong Color!");
 
 status.innerText="Better luck next time"
 
