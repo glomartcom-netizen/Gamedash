@@ -6274,66 +6274,83 @@ async function spinSlot(){
 
 
     
-
-
-
+// ===============================
+// BIG WIN POPUP
+// ===============================
 function showBigWin(amount){
 
-document.getElementById("bigWinPopup").style.display="flex";
+    const popup = document.getElementById("bigWinPopup");
+    const amountEl = document.getElementById("bigWinAmount");
 
-document.getElementById("bigWinAmount").innerText="+"+amount+" DMX";
+    if(!popup || !amountEl) return;
 
-playSound(win);
+    popup.style.display = "flex";
+    amountEl.innerText = "+" + amount + " DMX";
 
-for(let i=0;i<25;i++){
+    // ✅ FIXED SOUND
+    playSound("win");
 
-let coin=document.createElement("div");
+    // 💰 COIN ANIMATION
+    for(let i=0;i<20;i++){
 
-coin.innerText="💰";
+        let coin = document.createElement("div");
 
-coin.style.position="fixed";
+        coin.innerText = "💰";
 
-coin.style.left=Math.random()*100+"vw";
+        coin.style.position = "fixed";
+        coin.style.left = Math.random()*100 + "vw";
+        coin.style.top = "-20px";
+        coin.style.fontSize = "20px";
+        coin.style.pointerEvents = "none";
 
-coin.style.top="-20px";
+        coin.style.animation = "coinFall 2s linear";
 
-coin.style.fontSize="22px";
+        document.body.appendChild(coin);
 
-coin.style.animation="coinFall 2s linear";
-
-document.body.appendChild(coin);
-
-setTimeout(()=>{
-
-coin.remove();
-
-},2000);
-
-}
-
-}
-
-function closeBigWin(){
-
-document.getElementById("bigWinPopup").style.display="none";
-
+        setTimeout(()=>{
+            coin.remove();
+        },2000);
     }
 
-function showLose(text){
+}
 
-document.getElementById("losePopup").style.display="flex";
 
-document.getElementById("loseText").innerText=text;
+// CLOSE WIN
+function closeBigWin(){
 
-playSound(lose);
+    const popup = document.getElementById("bigWinPopup");
+    if(popup) popup.style.display = "none";
 
 }
 
+
+
+// ===============================
+// LOSE POPUP
+// ===============================
+function showLose(text){
+
+    const popup = document.getElementById("losePopup");
+    const textEl = document.getElementById("loseText");
+
+    if(!popup || !textEl) return;
+
+    popup.style.display = "flex";
+    textEl.innerText = text;
+
+    // ✅ FIXED SOUND
+    playSound("lose");
+
+}
+
+
+// CLOSE LOSE
 function closeLose(){
 
-document.getElementById("losePopup").style.display="none";
+    const popup = document.getElementById("losePopup");
+    if(popup) popup.style.display = "none";
 
-                          }    
+}
     
     
     </script>
