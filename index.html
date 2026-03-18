@@ -3960,6 +3960,12 @@ function startCooldown(seconds){
 // ===============================
 function playSelectedGame(){
 
+    // 🔥 ADD THIS FIRST
+    if(gameCooldown){
+        showLose("⏱ Wait...");
+        return;
+    }
+
     if(!startGame()){
         showLose("⏱ Wait...");
         return;
