@@ -3276,7 +3276,7 @@ jackpotPool =
 Math.max(0, jackpotPool - Math.floor(reward * 0.5));
 
 // WIN SOUND
-playSound(winSound);
+playSound(win);
 
 // POPUP WIN
 showBigWin(reward);
@@ -3289,7 +3289,7 @@ addWinner(userAddress, reward);
 else{
 
 // LOSE SOUND
-playSound(loseSound);
+playSound(lose);
 
 // POPUP LOSE
 showLose("Better luck next time");
@@ -3346,7 +3346,7 @@ board.removeChild(board.lastChild);
 // ===============================
 function jackpotEffect(){
 
-playSound(winSound);
+playSound(win);
 
 // screen flash
 document.body.classList.add("win-flash");
@@ -3441,7 +3441,7 @@ document.body.addEventListener("click",function(e){
 if(e.target.tagName === "BUTTON"){    
 
     if(typeof clickSound !== "undefined"){    
-        playSound(clickSound);    
+        playSound(click);    
     }    
 
 }    
