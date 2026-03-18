@@ -4094,22 +4094,6 @@ return entry;
 
 
 // ===============================
-// 8. GAME PLAY BUTTON
-// ===============================
-function playGame(){
-
-let bet = processBet();
-if(!bet) return;
-
-// ❌ REMOVE LOCK (IMPORTANT)
-// gameRunning = true;
-
-alert("Bet locked! Now choose a game.");
-
-}
-
-
-// ===============================
 // 9. RESULT ENGINE
 // ===============================
 function resolveGame(gameName, manualResult, entry){
@@ -4840,12 +4824,14 @@ function resetRace(){
 
  
 // ===============================
-// LUCKY NUMBER (SYNC VERSION)
+// LUCKY NUMBER (FINAL FIXED VERSION)
 // ===============================
 
 let selectedLucky = null;
 
+// ===============================
 // SELECT NUMBER
+// ===============================
 function selectLuckyNumber(num){
 
     selectedLucky = num;
@@ -4858,7 +4844,9 @@ function selectLuckyNumber(num){
 }
 
 
+// ===============================
 // PLAY GAME
+// ===============================
 function playLuckyNumber(){
 
     if(!startGame()) return;
@@ -4880,19 +4868,14 @@ function playLuckyNumber(){
 
     display.classList.add("spin-number");
 
-    // ===============================
-    // 🎯 USE UNIVERSAL RESULT
-    // ===============================
-
+    // 🎯 UNIVERSAL RESULT
     let result = globalResults.luckyNumber;
-
-    // ===============================
-    // RESULT SHOW
-    // ===============================
 
     setTimeout(()=>{
 
-        display.classList.remove("spin");
+        // ✅ FIXED CLASS NAME
+        display.classList.remove("spin-number");
+
         display.innerText = result;
 
         // ===============================
@@ -4908,34 +4891,35 @@ function playLuckyNumber(){
             playSound("win");
 
             showBigWin(reward);
-
             claimGameReward(reward);
-
             addWinner(userAddress, reward);
 
         }else{
 
             playSound("lose");
-
             showLose("Result: " + result);
 
         }
 
         // ===============================
-        // RESET + COOLDOWN
+        // RESET
         // ===============================
 
         selectedLucky = null;
 
-        endGame(); // 🔥 universal reset
+        // 🔥 UI RESET (extra improvement)
+        document.querySelectorAll(".num-choice").forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+        endGame();
 
     },1000);
-
 }
 
 
 // ===============================
-// LUCKY 7 (SYNC VERSION)
+// LUCKY 7 (FINAL FIXED VERSION)
 // ===============================
 
 let lucky7Choice = null;
@@ -4975,15 +4959,8 @@ function playLucky7(){
 
     dice.classList.add("rolling");
 
-    // ===============================
-    // 🎯 USE UNIVERSAL RESULT
-    // ===============================
-
+    // 🎯 UNIVERSAL RESULT ONLY
     let result = globalResults.lucky7;
-
-    // ===============================
-    // RESULT SHOW
-    // ===============================
 
     setTimeout(()=>{
 
@@ -4993,27 +4970,19 @@ function playLucky7(){
         let win = false;
         let reward = 0;
 
-        // ===============================
-        // CHECK RESULT
-        // ===============================
-
-        let result = Math.floor(Math.random()*7)+1;
-
-if(lucky7Choice === "low" && result >= 1 && result <= 3){
-    win = true;
-    reward = bet * 2;
-}
-else if(lucky7Choice === "high" && result >= 5 && result <= 6){
-    win = true;
-    reward = bet * 2;
-}
-else if(lucky7Choice === "seven" && result === 7){
-    win = true;
-    reward = bet * 6;
-}
-else{
-    win = false;
-}
+        // ✅ CHECK RESULT (CORRECT LOGIC)
+        if(lucky7Choice === "low" && result >= 1 && result <= 3){
+            win = true;
+            reward = bet * 2;
+        }
+        else if(lucky7Choice === "high" && result >= 5 && result <= 6){
+            win = true;
+            reward = bet * 2;
+        }
+        else if(lucky7Choice === "seven" && result === 7){
+            win = true;
+            reward = bet * 6;
+        }
 
         // ===============================
         // WIN / LOSE
@@ -5021,66 +4990,59 @@ else{
 
         if(win){
 
-    reward = applyRewardLimit(reward);
+            reward = applyRewardLimit(reward);
 
-    playSound("win");
+            playSound("win");
 
-    // 🔥 JACKPOT EFFECT (ONLY FOR 7)
-    if(result === 7){
+            // 🔥 JACKPOT EFFECT (ONLY FOR 7)
+            if(result === 7){
 
-        document.body.classList.add("win-flash");
+                document.body.classList.add("win-flash");
 
-        setTimeout(()=>{
-            document.body.classList.remove("win-flash");
-        },1200);
+                setTimeout(()=>{
+                    document.body.classList.remove("win-flash");
+                },1200);
 
-        // spark effect
-        for(let i=0;i<10;i++){
-            let spark=document.createElement("div");
-            spark.className="spark";
-            spark.style.left=Math.random()*100+"vw";
-            spark.style.top=Math.random()*100+"vh";
-            document.body.appendChild(spark);
+                // spark effect
+                for(let i=0;i<10;i++){
+                    let spark=document.createElement("div");
+                    spark.className="spark";
+                    spark.style.left=Math.random()*100+"vw";
+                    spark.style.top=Math.random()*100+"vh";
+                    document.body.appendChild(spark);
 
-            setTimeout(()=>spark.remove(),800);
+                    setTimeout(()=>spark.remove(),800);
+                }
+            }
+
+            showBigWin(reward);
+            claimGameReward(reward);
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+            showLose("Result: " + result);
+
         }
-
-    }
-
-    showBigWin(reward);
-
-    claimGameReward(reward);
-
-    addWinner(userAddress, reward);
-
-}else{
-
-    playSound("lose");
-
-    showLose("Result: " + result);
-
-}
-
-        // ===============================
-        // RESET + COOLDOWN
-        // ===============================
 
         lucky7Choice = null;
 
-        endGame(); // 🔥 universal reset
+        endGame(); // 🔥 reset
 
     },1000);
-
 }
 
 
 // ===============================
-// ODD EVEN (SYNC VERSION)
+// ODD EVEN (FINAL FIXED VERSION)
 // ===============================
 
 let oddEvenChoice = null;
 
+// ===============================
 // SELECT
+// ===============================
 function selectOddEven(choice){
 
     oddEvenChoice = choice;
@@ -5093,7 +5055,9 @@ function selectOddEven(choice){
 }
 
 
+// ===============================
 // PLAY GAME
+// ===============================
 function playOddEven(){
 
     if(!startGame()) return;
@@ -5115,15 +5079,12 @@ function playOddEven(){
 
     display.classList.add("spin-number");
 
-    // ===============================
-    // 🎯 USE UNIVERSAL RESULT
-    // ===============================
-
+    // 🎯 UNIVERSAL RESULT
     let resultType = globalResults.oddEven;
 
-    // generate number for display
     let number;
 
+    // ✅ SAFE NUMBER GENERATION
     if(resultType === "odd"){
         const odds = [1,3,5,7,9];
         number = odds[Math.floor(Math.random()*odds.length)];
@@ -5131,10 +5092,6 @@ function playOddEven(){
         const evens = [2,4,6,8];
         number = evens[Math.floor(Math.random()*evens.length)];
     }
-
-    // ===============================
-    // RESULT SHOW
-    // ===============================
 
     setTimeout(()=>{
 
@@ -5154,51 +5111,58 @@ function playOddEven(){
             playSound("win");
 
             showBigWin(reward);
-
             claimGameReward(reward);
-
             addWinner(userAddress, reward);
 
         }else{
 
             playSound("lose");
-
             showLose("Result: " + resultType.toUpperCase());
 
         }
 
         // ===============================
-        // RESET + COOLDOWN
+        // RESET
         // ===============================
 
         oddEvenChoice = null;
 
-        endGame(); // 🔥 universal reset
+        // 🔥 REMOVE ACTIVE UI ALSO (IMPROVEMENT)
+        document.querySelectorAll(".bet-btn").forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+        endGame();
 
     },1000);
-
 }
 
 
+
 // ===============================
-// COLOR GAME (SYNC VERSION)
+// COLOR GAME (FINAL FIXED VERSION)
 // ===============================
 
 let selectedColor = null;
 
-// SELECT
+// ===============================
+// SELECT COLOR
+// ===============================
 function pickColor(color){
 
     selectedColor = color;
 
     document.querySelectorAll(".color-pod").forEach(p=>{
-    p.classList.remove("active");
-});
+        p.classList.remove("active");
+    });
 
-document.getElementById("pod-"+color).classList.add("active");
+    document.getElementById("pod-"+color).classList.add("active");
+}
 
 
+// ===============================
 // PLAY GAME
+// ===============================
 function playColorGame(){
 
     if(!startGame()) return;
@@ -5219,16 +5183,10 @@ function playColorGame(){
 
     playSound("spin");
 
-    // ===============================
-    // 🎯 USE UNIVERSAL RESULT
-    // ===============================
-
+    // 🎯 UNIVERSAL RESULT
     let result = globalResults.color;
 
-    // ===============================
-    // ORB ANIMATION
-    // ===============================
-
+    // ORB START
     orb.classList.add("orb-active");
     orb.style.background = "#475569";
 
@@ -5236,7 +5194,7 @@ function playColorGame(){
 
     setTimeout(()=>{
 
-        // apply result color
+        // 🎨 APPLY COLOR
         if(result === "green"){
             orb.style.background = "#22c55e";
         }
@@ -5268,9 +5226,7 @@ function playColorGame(){
             orb.classList.add("orb-win");
 
             showBigWin(reward);
-
             claimGameReward(reward);
-
             addWinner(userAddress, reward);
 
             status.innerText = "You WON 🎉";
@@ -5294,19 +5250,14 @@ function playColorGame(){
             selectedColor = null;
 
             document.querySelectorAll(".color-pod").forEach(p=>{
-                p.classList.remove("pod-selected");
+                p.classList.remove("active"); // ✅ FIXED
             });
 
         },800);
 
-        // ===============================
-        // RESET + COOLDOWN
-        // ===============================
-
-        endGame(); // 🔥 universal reset
+        endGame();
 
     },1000);
-
 }
 
 
