@@ -4503,345 +4503,945 @@ function openOddEven(){openGame('#oddEvenGame')}
 function openHorseRace(){openGame('#horseRaceGame')}
 function openCarRace(){openGame('#carRaceGame')}
 
-// ============================
-// RACE SYSTEM (HORSE + CAR)
-// ============================
+// ===============================
+// HORSE RACE (FINAL SYNC)
+// ===============================
 
-// selected options
 let selectedHorse = null;
-let selectedCar = null;
 
-
-// ----------------------------
-// SELECT HORSE
-// ----------------------------
+// SELECT
 function selectHorse(num){
 
-selectedHorse = num;
+    selectedHorse = num;
 
-// remove previous highlight
-document.querySelectorAll(".horse-btn").forEach(btn=>{
-btn.classList.remove("selected-btn");
-});
+    document.querySelectorAll(".horse-btn").forEach(btn=>{
+        btn.classList.remove("active");
+    });
 
-// highlight selected button
-document.querySelectorAll(".horse-btn")[num-1].classList.add("selected-btn");
-
+    event.target.classList.add("active");
 }
 
 
-// ----------------------------
-// SELECT CAR
-// ----------------------------
+// START RACE
+function startHorseRace(){
+
+    if(!startGame()) return;
+
+    if(selectedHorse === null){
+        showLose("Select Horse");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    playSound("race");
+
+    // ZOOM EFFECT
+    document.body.classList.add("zoom-effect");
+    setTimeout(()=>document.body.classList.remove("zoom-effect"),500);
+
+    const horses = [1,2,3,4];
+
+    // 🎯 UNIVERSAL RESULT
+    let winner = globalResults.horse;
+
+    // START RUN
+    horses.forEach(i=>{
+        let el=document.getElementById("horse"+i);
+        if(el){
+            el.classList.add("horse-running");
+            el.style.left="30px"; // reset start
+        }
+    });
+
+    // DUST EFFECT
+    let dustInterval = setInterval(()=>{
+        horses.forEach(i=>{
+            let horse=document.getElementById("horse"+i);
+            if(!horse) return;
+
+            let dust=document.createElement("div");
+            dust.className="horse-dust";
+
+            horse.appendChild(dust);
+
+            setTimeout(()=>dust.remove(),800);
+        });
+    },200);
+
+    // MOVE
+    setTimeout(()=>{
+
+        horses.forEach(i=>{
+            let el=document.getElementById("horse"+i);
+            if(!el) return;
+
+            if(i===winner){
+                el.style.left="90%";
+            }else{
+                let distance=Math.random()*60+10;
+                el.style.left=distance+"%";
+            }
+        });
+
+    },100);
+
+
+    // FINISH
+    setTimeout(()=>{
+
+        clearInterval(dustInterval);
+
+        // STOP RUN
+        horses.forEach(i=>{
+            let el=document.getElementById("horse"+i);
+            if(el) el.classList.remove("horse-running");
+        });
+
+        let winHorse = document.getElementById("horse"+winner);
+
+        if(winHorse){
+            winHorse.classList.add("horse-winner","mega-win","slow-finish");
+        }
+
+        // ===============================
+        // RESULT
+        // ===============================
+
+        if(selectedHorse === winner){
+
+            let reward = bet * 4;
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("Horse " + winner + " wins!");
+
+        }
+
+        addHorseHistory(winner);
+
+        // ===============================
+        // RESET
+        // ===============================
+
+        setTimeout(()=>{
+
+            resetRace();
+
+            if(winHorse){
+                winHorse.classList.remove("horse-winner","mega-win","slow-finish");
+            }
+
+            selectedHorse = null;
+
+            document.querySelectorAll(".horse-btn").forEach(btn=>{
+                btn.classList.remove("active");
+            });
+
+            endGame(); // 🔥 universal reset
+
+        },2000);
+
+    },2200);
+
+}
+
+// ===============================
+// CAR RACE (FINAL SYNC)
+// ===============================
+
+let selectedCar = null;
+
+// SELECT
 function selectCar(num){
 
-selectedCar = num;
+    selectedCar = num;
 
-// remove previous highlight
-document.querySelectorAll(".car-btn").forEach(btn=>{
-btn.classList.remove("selected-btn");
-});
+    document.querySelectorAll(".car-btn").forEach(btn=>{
+        btn.classList.remove("active");
+    });
 
-// highlight selected button
-document.querySelectorAll(".car-btn")[num-1].classList.add("selected-btn");
-
+    event.target.classList.add("active");
 }
 
 
-async function startHorseRace(){
+// START RACE
+function startCarRace(){
 
-if(gameRunning) return;
+    if(!startGame()) return;
 
-let bet = processBet();
-if(!bet) return;
+    if(selectedCar === null){
+        showLose("Select Car");
+        return;
+    }
 
-if(selectedHorse === null){
-alert("Select Horse");
-return;
-}
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
 
-gameRunning = true;
+    playSound("race");
 
-playSound("race");
+    // ZOOM
+    document.body.classList.add("zoom-effect");
+    setTimeout(()=>document.body.classList.remove("zoom-effect"),500);
 
-// 🔥 ZOOM
-document.body.classList.add("zoom-effect");
-setTimeout(()=>{
-document.body.classList.remove("zoom-effect");
-},500);
+    const cars = [1,2,3,4];
 
+    // 🎯 UNIVERSAL RESULT
+    let winner = globalResults.car;
 
-// 🔥 SOUND BOOST
-let sound = SoundEngine.sounds["race"];
-if(sound){
-sound.volume = 1;
-setTimeout(()=>{ sound.volume = 0.5; },2000);
-}
+    // START RUN
+    cars.forEach(i=>{
+        let el=document.getElementById("car"+i);
+        if(el){
+            el.classList.add("car-running");
+            el.style.left="30px"; // reset start
+        }
+    });
 
+    // 💨 SMOKE EFFECT
+    let smokeInterval = setInterval(()=>{
+        cars.forEach(i=>{
+            let car=document.getElementById("car"+i);
+            if(!car) return;
 
-const horses = [1,2,3,4];
-const winner = Math.floor(Math.random()*4)+1;
+            let smoke=document.createElement("div");
+            smoke.className="smoke";
 
+            car.appendChild(smoke);
 
-// 🐎 START RUN
-horses.forEach(i=>{
-let el=document.getElementById("horse"+i);
-if(el) el.classList.add("horse-running");
-});
+            setTimeout(()=>smoke.remove(),800);
+        });
+    },200);
 
+    // MOVE
+    setTimeout(()=>{
 
-// 💨 DUST EFFECT
-let dustInterval = setInterval(()=>{
+        cars.forEach(i=>{
+            let el=document.getElementById("car"+i);
+            if(!el) return;
 
-horses.forEach(i=>{
-let horse=document.getElementById("horse"+i);
-if(!horse) return;
+            if(i===winner){
+                el.style.left="90%";
+            }else{
+                let distance=Math.random()*60+10;
+                el.style.left=distance+"%";
+            }
+        });
 
-let dust=document.createElement("div");
-dust.className="horse-dust";
+    },100);
 
-horse.appendChild(dust);
 
-setTimeout(()=>dust.remove(),1000);
+    // FINISH
+    setTimeout(()=>{
 
-});
+        clearInterval(smokeInterval);
 
-},200);
+        // STOP RUN
+        cars.forEach(i=>{
+            let el=document.getElementById("car"+i);
+            if(el) el.classList.remove("car-running");
+        });
 
+        let winCar = document.getElementById("car"+winner);
 
-// 🐎 MOVE
-setTimeout(()=>{
+        if(winCar){
+            winCar.classList.add("winner","mega-win","slow-finish");
+        }
 
-horses.forEach(i=>{
+        // ===============================
+        // RESULT
+        // ===============================
 
-let el=document.getElementById("horse"+i);
-if(!el) return;
+        if(selectedCar === winner){
 
-if(i===winner){
-el.style.left="90%";
-}else{
-let distance=Math.random()*60+10;
-el.style.left=distance+"%";
-}
+            let reward = bet * 4;
 
-});
+            reward = applyRewardLimit(reward);
 
-},100);
+            playSound("win");
 
+            showBigWin(reward);
 
-// 🏁 FINISH
-setTimeout(()=>{
+            claimGameReward(reward);
 
-clearInterval(dustInterval);
+            addWinner(userAddress, reward);
 
-// STOP RUN
-horses.forEach(i=>{
-let el=document.getElementById("horse"+i);
-if(el) el.classList.remove("horse-running");
-});
+        }else{
 
-// 🌟 WINNER EFFECT
-let winHorse = document.getElementById("horse"+winner);
+            playSound("lose");
 
-if(winHorse){
-winHorse.classList.add("horse-winner");
-winHorse.classList.add("mega-win");
-winHorse.classList.add("slow-finish");
-}
+            showLose("Car " + winner + " wins!");
 
-let win = (selectedHorse === winner);
+        }
 
-// ENGINE
-resolveGame("Horse Race", win, bet);
+        addCarHistory(winner);
 
-addHorseHistory(winner);
+        // ===============================
+        // RESET
+        // ===============================
 
+        setTimeout(()=>{
 
-// RESET
-setTimeout(()=>{
+            resetRace();
 
-resetRace();
+            if(winCar){
+                winCar.classList.remove("winner","mega-win","slow-finish");
+            }
 
-if(winHorse){
-winHorse.classList.remove("horse-winner");
-winHorse.classList.remove("mega-win");
-winHorse.classList.remove("slow-finish");
-}
+            selectedCar = null;
 
-},2500);
+            document.querySelectorAll(".car-btn").forEach(btn=>{
+                btn.classList.remove("active");
+            });
 
-},2200);
+            endGame(); // 🔥 universal reset
 
-}
+        },2000);
 
-
-// ----------------------------
-// CAR RACE
-// ----------------------------
-
-
-async function startCarRace(){
-
-if(gameRunning) return;
-
-let bet = processBet();
-if(!bet) return;
-
-if(selectedCar === null){
-alert("Select Car");
-return;
-}
-
-gameRunning = true;
-
-playSound("race");
-
-// 🔥 ZOOM EFFECT
-document.body.classList.add("zoom-effect");
-setTimeout(()=>{
-document.body.classList.remove("zoom-effect");
-},500);
-
-
-// 🔥 SOUND BOOST
-let sound = SoundEngine.sounds["race"];
-if(sound){
-sound.volume = 1;
-setTimeout(()=>{ sound.volume = 0.5; },2000);
-}
-
-
-const cars=[1,2,3,4];
-const winner=Math.floor(Math.random()*4)+1;
-
-
-// 🚗 START RUN
-cars.forEach(i=>{
-let el=document.getElementById("car"+i);
-if(el) el.classList.add("car-running");
-});
-
-
-// 💨 SMOKE
-let smokeInterval = setInterval(()=>{
-
-cars.forEach(i=>{
-let car=document.getElementById("car"+i);
-if(!car) return;
-
-let smoke=document.createElement("div");
-smoke.className="smoke";
-
-car.appendChild(smoke);
-
-setTimeout(()=>smoke.remove(),1000);
-
-});
-
-},200);
-
-
-// 🚗 MOVE
-setTimeout(()=>{
-
-cars.forEach(i=>{
-
-let el=document.getElementById("car"+i);
-if(!el) return;
-
-if(i===winner){
-el.style.left="90%";
-}else{
-let distance=Math.random()*60+10;
-el.style.left=distance+"%";
-}
-
-});
-
-},100);
-
-
-// 🏁 FINISH
-setTimeout(()=>{
-
-clearInterval(smokeInterval);
-
-// STOP
-cars.forEach(i=>{
-let el=document.getElementById("car"+i);
-if(el) el.classList.remove("car-running");
-});
-
-// 🌟 WINNER EFFECT
-let winCar = document.getElementById("car"+winner);
-
-if(winCar){
-winCar.classList.add("winner");
-winCar.classList.add("mega-win");
-winCar.classList.add("slow-finish");
-}
-
-let win = (selectedCar===winner);
-
-// ENGINE
-resolveGame("Car Race", win, bet);
-
-addCarHistory(winner);
-
-
-// RESET
-setTimeout(()=>{
-
-resetRace();
-
-if(winCar){
-winCar.classList.remove("winner");
-winCar.classList.remove("mega-win");
-winCar.classList.remove("slow-finish");
-}
-
-},2500);
-
-},2200);
+    },2200);
 
 }
-
-
 
 // ----------------------------
 // RESET FUNCTION
 // ----------------------------
 function resetRace(){
 
-for(let i=1;i<=4;i++){
+    for(let i=1;i<=4;i++){
 
-let horse=document.getElementById("horse"+i);
-if(horse){
-horse.style.left="30px";
-horse.classList.remove("horse-running");
-horse.classList.remove("horse-winner");
-horse.classList.remove("mega-win");
-horse.classList.remove("slow-finish");
-}
+        let horse=document.getElementById("horse"+i);
+        if(horse){
+            horse.style.left="30px";
+            horse.classList.remove("horse-running","horse-winner","mega-win","slow-finish");
+        }
 
-let car=document.getElementById("car"+i);
-if(car){
-car.style.left="30px";
-car.classList.remove("car-running");
-car.classList.remove("winner");
-car.classList.remove("mega-win");
-car.classList.remove("slow-finish");
-}
+        let car=document.getElementById("car"+i);
+        if(car){
+            car.style.left="30px";
+            car.classList.remove("car-running","winner","mega-win","slow-finish");
+        }
+
+    }
 
 }
 
-gameRunning = false;
+
+ 
+// ===============================
+// LUCKY NUMBER (SYNC VERSION)
+// ===============================
+
+let selectedLucky = null;
+
+// SELECT NUMBER
+function selectLuckyNumber(num){
+
+    selectedLucky = num;
+
+    document.querySelectorAll(".num-choice").forEach(btn=>{
+        btn.classList.remove("active");
+    });
+
+    event.target.classList.add("active");
+}
+
+
+// PLAY GAME
+function playLuckyNumber(){
+
+    if(!startGame()) return;
+
+    if(!selectedLucky){
+        showLose("Select a number");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    const display = document.getElementById("luckyDisplay");
+
+    playSound("spin");
+
+    display.classList.add("spin");
+
+    // ===============================
+    // 🎯 USE UNIVERSAL RESULT
+    // ===============================
+
+    let result = globalResults.luckyNumber;
+
+    // ===============================
+    // RESULT SHOW
+    // ===============================
+
+    setTimeout(()=>{
+
+        display.classList.remove("spin");
+        display.innerText = result;
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(result === selectedLucky){
+
+            let reward = bet * 5;
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("Result: " + result);
+
+        }
+
+        // ===============================
+        // RESET + COOLDOWN
+        // ===============================
+
+        selectedLucky = null;
+
+        endGame(); // 🔥 universal reset
+
+    },1000);
 
 }
-    
 
 
+// ===============================
+// LUCKY 7 (SYNC VERSION)
+// ===============================
 
+let lucky7Choice = null;
+
+// SELECT
+function selectLucky7(choice){
+
+    lucky7Choice = choice;
+
+    document.querySelectorAll(".bet-btn").forEach(btn=>{
+        btn.classList.remove("active");
+    });
+
+    event.target.classList.add("active");
+}
+
+
+// PLAY GAME
+function playLucky7(){
+
+    if(!startGame()) return;
+
+    if(!lucky7Choice){
+        showLose("Select an option");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    const dice = document.getElementById("lucky7Dice");
+
+    playSound("dice");
+
+    dice.classList.add("rolling");
+
+    // ===============================
+    // 🎯 USE UNIVERSAL RESULT
+    // ===============================
+
+    let result = globalResults.lucky7;
+
+    // ===============================
+    // RESULT SHOW
+    // ===============================
+
+    setTimeout(()=>{
+
+        dice.classList.remove("rolling");
+        dice.innerText = result;
+
+        let win = false;
+        let reward = 0;
+
+        // ===============================
+        // CHECK RESULT
+        // ===============================
+
+        if(lucky7Choice === "low" && result >= 1 && result <= 3){
+            win = true;
+            reward = bet * 2;
+        }
+        else if(lucky7Choice === "high" && result >= 5 && result <= 6){
+            win = true;
+            reward = bet * 2;
+        }
+        else if(lucky7Choice === "seven" && result === 4){
+            // 🔥 center value = jackpot (simulate 7)
+            win = true;
+            reward = bet * 6;
+        }
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(win){
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("Result: " + result);
+
+        }
+
+        // ===============================
+        // RESET + COOLDOWN
+        // ===============================
+
+        lucky7Choice = null;
+
+        endGame(); // 🔥 universal reset
+
+    },1000);
+
+}
+
+
+// ===============================
+// ODD EVEN (SYNC VERSION)
+// ===============================
+
+let oddEvenChoice = null;
+
+// SELECT
+function selectOddEven(choice){
+
+    oddEvenChoice = choice;
+
+    document.querySelectorAll(".bet-btn").forEach(btn=>{
+        btn.classList.remove("active");
+    });
+
+    event.target.classList.add("active");
+}
+
+
+// PLAY GAME
+function playOddEven(){
+
+    if(!startGame()) return;
+
+    if(!oddEvenChoice){
+        showLose("Select Odd or Even");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    const display = document.getElementById("oddEvenNumber");
+
+    playSound("spin");
+
+    display.classList.add("spin-number");
+
+    // ===============================
+    // 🎯 USE UNIVERSAL RESULT
+    // ===============================
+
+    let resultType = globalResults.oddEven;
+
+    // generate number for display
+    let number;
+
+    if(resultType === "odd"){
+        const odds = [1,3,5,7,9];
+        number = odds[Math.floor(Math.random()*odds.length)];
+    }else{
+        const evens = [2,4,6,8];
+        number = evens[Math.floor(Math.random()*evens.length)];
+    }
+
+    // ===============================
+    // RESULT SHOW
+    // ===============================
+
+    setTimeout(()=>{
+
+        display.classList.remove("spin-number");
+        display.innerText = number;
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(oddEvenChoice === resultType){
+
+            let reward = bet * 2;
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("Result: " + resultType.toUpperCase());
+
+        }
+
+        // ===============================
+        // RESET + COOLDOWN
+        // ===============================
+
+        oddEvenChoice = null;
+
+        endGame(); // 🔥 universal reset
+
+    },1000);
+
+}
+
+
+// ===============================
+// COLOR GAME (SYNC VERSION)
+// ===============================
+
+let selectedColor = null;
+
+// SELECT
+function pickColor(color){
+
+    selectedColor = color;
+
+    document.querySelectorAll(".color-pod").forEach(p=>{
+        p.classList.remove("pod-selected");
+    });
+
+    document.getElementById("pod-"+color).classList.add("pod-selected");
+
+}
+
+
+// PLAY GAME
+function playColorGame(){
+
+    if(!startGame()) return;
+
+    if(!selectedColor){
+        showLose("Pick a color");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    const orb = document.getElementById("resultOrb");
+    const status = document.getElementById("colorStatus");
+
+    playSound("spin");
+
+    // ===============================
+    // 🎯 USE UNIVERSAL RESULT
+    // ===============================
+
+    let result = globalResults.color;
+
+    // ===============================
+    // ORB ANIMATION
+    // ===============================
+
+    orb.classList.add("orb-active");
+    orb.style.background = "#475569";
+
+    status.innerText = "Spinning...";
+
+    setTimeout(()=>{
+
+        // apply result color
+        if(result === "green"){
+            orb.style.background = "#22c55e";
+        }
+        else if(result === "red"){
+            orb.style.background = "#ef4444";
+        }
+        else{
+            orb.style.background = "#a855f7";
+        }
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(selectedColor === result){
+
+            let reward;
+
+            if(result === "purple"){
+                reward = bet * 5;
+            }else{
+                reward = bet * 2;
+            }
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            orb.classList.add("orb-win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+            status.innerText = "You WON 🎉";
+
+        }else{
+
+            playSound("lose");
+
+            status.innerText = "Result: " + result.toUpperCase();
+
+        }
+
+        // ===============================
+        // RESET UI
+        // ===============================
+
+        setTimeout(()=>{
+
+            orb.classList.remove("orb-active","orb-win");
+
+            selectedColor = null;
+
+            document.querySelectorAll(".color-pod").forEach(p=>{
+                p.classList.remove("pod-selected");
+            });
+
+        },800);
+
+        // ===============================
+        // RESET + COOLDOWN
+        // ===============================
+
+        endGame(); // 🔥 universal reset
+
+    },1000);
+
+}
+
+
+// ===============================
+// CRASH GAME (FINAL)
+// ===============================
+
+let crashRunning = false;
+let crashMultiplier = 1;
+let crashInterval = null;
+let crashPoint = 0;
+let cashedOut = false;
+let crashBet = 0;
+
+
+// START
+function startCrash(){
+
+    if(!startGame()) return;
+
+    if(crashRunning) return;
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    crashBet = bet;
+
+    crashRunning = true;
+    cashedOut = false;
+
+    crashMultiplier = 1;
+
+    document.getElementById("launchBtn").style.display = "none";
+    document.getElementById("takeProfitBtn").style.display = "inline-block";
+
+    const rocket = document.getElementById("rocket");
+    const display = document.getElementById("crashMultiplier");
+    const status = document.getElementById("crashStatus");
+
+    playSound("spin");
+
+    rocket.classList.add("active");
+
+    // 🎯 RANDOM CRASH POINT (PROFIT SAFE)
+    crashPoint = (Math.random() * 3 + 1.5).toFixed(2); 
+    // 1.5x to 4.5x range → safe RTP
+
+    crashInterval = setInterval(()=>{
+
+        crashMultiplier += 0.02;
+
+        display.innerText = crashMultiplier.toFixed(2) + "x";
+
+        display.classList.add("multiplier-grow");
+
+        setTimeout(()=>{
+            display.classList.remove("multiplier-grow");
+        },100);
+
+        // rocket move
+        rocket.style.transform =
+        `translate(-50%, ${-crashMultiplier*30}px)`;
+
+        // 💥 CRASH
+        if(crashMultiplier >= crashPoint){
+
+            clearInterval(crashInterval);
+
+            crashGameOver(false);
+
+        }
+
+    },100);
+
+}
+
+
+// 💰 CASHOUT
+function takeProfit(){
+
+    if(!crashRunning || cashedOut) return;
+
+    cashedOut = true;
+
+    clearInterval(crashInterval);
+
+    let reward = crashBet * crashMultiplier;
+
+    reward = Math.floor(reward);
+
+    reward = applyRewardLimit(reward);
+
+    playSound("win");
+
+    showBigWin(reward);
+
+    claimGameReward(reward);
+
+    addWinner(userAddress, reward);
+
+    crashGameOver(true);
+
+}
+
+
+// 💥 END GAME
+function crashGameOver(won){
+
+    crashRunning = false;
+
+    const rocket = document.getElementById("rocket");
+    const area = document.querySelector(".crash-area");
+    const status = document.getElementById("crashStatus");
+
+    rocket.classList.remove("active");
+
+    if(!won){
+
+        playSound("lose");
+
+        area.classList.add("crash-flash");
+
+        status.innerText = "💥 Crashed at " + crashMultiplier.toFixed(2) + "x";
+
+    }else{
+
+        status.innerText = "💰 Cashed out at " + crashMultiplier.toFixed(2) + "x";
+
+    }
+
+    // RESET UI AFTER DELAY
+    setTimeout(()=>{
+
+        document.getElementById("launchBtn").style.display = "inline-block";
+        document.getElementById("takeProfitBtn").style.display = "none";
+
+        document.getElementById("crashMultiplier").innerText = "1.00x";
+
+        rocket.style.transform = "translate(-50%,0)";
+
+        area.classList.remove("crash-flash");
+
+        status.innerText = "Launch the rocket and cash out before crash!";
+
+        endGame(); // 🔥 universal reset
+
+    },2000);
+
+}
 
 
 
