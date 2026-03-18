@@ -2640,6 +2640,10 @@ display:none;
 margin-top:30px;
 }
 
+    #gamePage{
+overflow-y:auto;
+}
+
 
 /* =========================
 📱 MOBILE FIX
@@ -4570,12 +4574,6 @@ async function checkGameCooldown(){
 }
 
 
-// ===============================
-// 🔥 PAGE CONTROL (FINAL)
-// ===============================
-let gamePageTimer = null;
-let gameCooldown = false;
-
 function openGamePage(gameName){
 
     const page = document.getElementById("gamePage");
@@ -4608,7 +4606,19 @@ function openGamePage(gameName){
         return;
     }
 
-    openGame(selector);
+    // 🔥 FIX START
+    const allGames = page.querySelectorAll(
+        ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
+    );
+
+    allGames.forEach(g => g.style.display = "none");
+
+    const game = page.querySelector(selector);
+
+    if(game){
+        game.style.display = "block";
+    }
+    // 🔥 FIX END
 
     startGamePageTimer();
 }
@@ -4620,10 +4630,22 @@ function closeGamePage(){
 
     if(page) page.style.display = "none";
 
+    // 🔥 STOP TIMER
     clearInterval(gamePageTimer);
     gameCooldown = false;
-}
 
+    // 🔥 RESET GAME STATE (IMPORTANT)
+    gameRunning = false;
+    gameLocked = false;
+
+    // 🔥 HIDE ALL GAMES
+    document.querySelectorAll(
+        ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
+    ).forEach(g=>{
+        g.style.display = "none";
+    });
+
+}
 
 // ===============================
 // ⏱ GAME TIMER SYSTEM
