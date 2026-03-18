@@ -3946,6 +3946,12 @@ SoundEngine.play(name)
 
 }
 
+updateJackpot();
+
+},1000);
+
+}
+
 // ===============================
 // 🔒 FINAL UNIVERSAL GAME CONTROL
 // ===============================
@@ -3954,54 +3960,54 @@ let gameRunning = false;
 let gameLocked = false;
 
 function startGame(){
-    if(gameRunning || gameLocked) return false;
-    gameRunning = true;
-    return true;
+if(gameRunning || gameLocked) return false;
+gameRunning = true;
+return true;
 }
 
 function endGame(delay = 1500){
-    setTimeout(()=>{
-        gameRunning = false;
-        gameLocked = true;
-        startCooldown(3);
-    }, delay);
+setTimeout(()=>{
+gameRunning = false;
+gameLocked = true;
+startCooldown(3);
+}, delay);
 }
 
 function startCooldown(seconds){
-    let count = seconds;
+let count = seconds;
 
-    const el = document.getElementById("cooldownTimer");
+const el = document.getElementById("cooldownTimer");  
 
-    if(el) el.style.display = "block";
+if(el) el.style.display = "block";  
 
-    let interval = setInterval(()=>{
+let interval = setInterval(()=>{  
 
-        if(el) el.innerText = "Next Game in " + count + "s";
+    if(el) el.innerText = "Next Game in " + count + "s";  
 
-        count--;
+    count--;  
 
-        if(count < 0){
-            clearInterval(interval);
-            gameLocked = false;
-            if(el) el.style.display = "none";
-        }
+    if(count < 0){  
+        clearInterval(interval);  
+        gameLocked = false;  
+        if(el) el.style.display = "none";  
+    }  
 
-    },1000);
+},1000);
+
 }
-    
 
 // ===============================
 // 1. CORE GAME STATE & SECURITY
 // ===============================
 let userAddress = localStorage.getItem("walletAddress") || ("GUEST_" + Math.floor(Math.random()*100000));
-let currentBet = 0;    
+let currentBet = 0;
 
 let claimBalance = Number(localStorage.getItem("claimBalance")) || 0;
 
 if (localStorage.getItem("isNewPlayer") === null) {
-    claimBalance = 100;
-    localStorage.setItem("claimBalance", claimBalance);
-    localStorage.setItem("isNewPlayer", "true");
+claimBalance = 100;
+localStorage.setItem("claimBalance", claimBalance);
+localStorage.setItem("isNewPlayer", "true");
 }
 
 let jackpotPool = Number(localStorage.getItem("jackpotPool")) || 5000;
@@ -4011,16 +4017,14 @@ const MAX_WIN_PROTECTION = 100000;
 let totalBet = Number(localStorage.getItem("totalBet")) || 0;
 let totalPayout = Number(localStorage.getItem("totalPayout")) || 0;
 
-
 // ===============================
 // 2. ANTI REFRESH PROTECTION
 // ===============================
 window.onbeforeunload = function(){
-    if(gameRunning){
-        return "Game running. Refresh may lose bet.";
-    }
+if(gameRunning){
+return "Game running. Refresh may lose bet.";
+}
 };
-
 
 // ===============================
 // 3. SMART WIN ENGINE
@@ -4039,7 +4043,6 @@ if(percent < 20) return 0.35;
 return 0.45;
 
 }
-
 
 // ===============================
 // 4. ANTI BOT PROTECTION
@@ -4070,26 +4073,25 @@ return true;
 
 }
 
-
 // ===============================
 // 5. BALANCE UI SYSTEM
 // ===============================
 function updateBalance(){
 
-    let el = document.getElementById("balanceValue");
+let el = document.getElementById("balanceValue");  
 
-    if(el){
-        el.innerText = claimBalance.toFixed(0);
+if(el){  
+    el.innerText = claimBalance.toFixed(0);  
 
-        // 🔥 glow animation
-        el.classList.add("win-flash");
+    el.classList.add("win-flash");  
 
-        setTimeout(()=>{
-            el.classList.remove("win-flash");
-        },500);
-    }
+    setTimeout(()=>{  
+        el.classList.remove("win-flash");  
+    },500);  
+}  
 
-    localStorage.setItem("claimBalance", claimBalance);
+localStorage.setItem("claimBalance", claimBalance);
+
 }
 
 // ===============================
@@ -4107,15 +4109,15 @@ localStorage.setItem("jackpotPool", jackpotPool);
 
 }
 
-
 // ===============================
-// 7. BET ENGINE
+// 7. BET ENGINE (FULL FIXED ✅)
 // ===============================
 function processBet(){
 
 if(!antiExploitCheck()) return false;
 
-let entry = Number(document.getElementById("betAmount").value);
+// ✅ FIXED HERE
+let entry = Number(document.getElementById("gameBet").value);
 
 if(entry < 10){
 alert("Minimum bet is 10 DMX");
@@ -4139,7 +4141,6 @@ updateJackpot();
 return entry;
 
 }
-
 
 // ===============================
 // 9. RESULT ENGINE
@@ -4182,7 +4183,6 @@ updateJackpot();
 
 }
 
-
 // ===============================
 // 10. WINNER BOARD
 // ===============================
@@ -4203,7 +4203,6 @@ board.removeChild(board.lastChild);
 
 }
 
-
 // ===============================
 // 11. WIN EFFECT
 // ===============================
@@ -4219,7 +4218,6 @@ document.body.classList.remove("win-flash");
 
 }
 
-
 // ===============================
 // 12. RULES POPUP
 // ===============================
@@ -4230,7 +4228,6 @@ document.getElementById("gameInfoPopup").style.display="block";
 function closeGameInfo(){
 document.getElementById("gameInfoPopup").style.display="none";
 }
-
 
 // ===============================
 // 13. BALANCE TAMPER PROTECTION
@@ -4246,7 +4243,6 @@ updateBalance();
 
 },2000);
 
-
 // ===============================
 // 14. MULTI TAB PROTECTION
 // ===============================
@@ -4255,7 +4251,6 @@ if(e.key === "claimBalance"){
 location.reload();
 }
 });
-
 
 // ===============================
 // 15. INITIALIZATION
@@ -4275,82 +4270,130 @@ resetTilesGame();
 
 };
 
-
 // 🔥 GLOBAL SAFETY
 window.onerror = function(){
 gameRunning = false;
 }
 
-
 // ===============================
-// FIX 1: function syntax (IMPORTANT)
+// FIX 1: REWARD LIMIT SAFE
 // ===============================
 function applyRewardLimit(reward){
 
 if(reward > jackpotPool){
-reward = jackpotPool
+reward = jackpotPool;
 }
 
-return reward
+return reward;
 
 }
-
 
 // ===============================
-// FIX 2: SAFE CLAIM (no bug)
+// FIX 2: SAFE CLAIM
 // ===============================
 function claimGameReward(amount){
 
-if(!amount || amount <= 0) return
+if(!amount || amount <= 0) return;
 
-claimBalance += amount
+claimBalance += amount;
 
-updateBalance()
+updateBalance();
 
 }
 
-
 // ===============================
-// FIX 3: GAME COOLDOWN (future ready)
+// FIX 3: GAME COOLDOWN
 // ===============================
 async function checkGameCooldown(){
+return true;
+}
 
-return true
+// ===============================
+// 🔥 PAGE CONTROL (FINAL WITH TIMER)
+// ===============================
 
+let gamePageTimer = null;
+let gameCooldown = false;
+
+function openGamePage(gameName){
+
+document.getElementById("gamePage").style.display = "block";  
+document.getElementById("gamePageTitle").innerText = gameName;  
+
+const map = {  
+    "Coin Game": ".coin-scene",  
+    "Battle Game": ".battle-scene",  
+    "Door Game": ".door-scene",  
+    "Lucky Box": ".box-scene",  
+    "Card Game": ".card-scene",  
+    "Slot": ".slot-machine-container",  
+    "Magic Tiles": "#magicTilesPanel",  
+    "Color Game": ".color-game-container",  
+    "Lucky Number": "#luckyNumberGame",  
+    "Lucky 7": "#luckySevenGame",  
+    "Odd Even": "#oddEvenGame",  
+    "Horse Race": "#horseRaceGame",  
+    "Car Race": "#carRaceGame",  
+    "Crash Game": "#crashGamePanel"  
+};  
+
+openGame(map[gameName]);
+
+// 🔥 TIMER START
+startGamePageTimer();
+
+}
+
+function closeGamePage(){
+document.getElementById("gamePage").style.display = "none";
+
+// 🔥 STOP TIMER
+clearInterval(gamePageTimer);
+gameCooldown = false;
 }
 
 
 // ===============================
-// FIX 4: SAFE GAME SWITCH (IMPORTANT FIX)
+// ⏱ GAME TIMER SYSTEM
 // ===============================
-function openGame(selector){
+function startGamePageTimer(){
 
-const games = [
+let time = 10;
+gameCooldown = true;
 
-".coin-scene",
-".battle-scene",
-".door-scene",
-".box-scene",
-".card-scene",
-".target-scene",
-".slot-machine-container",
-".color-game-container",
-"#magicTilesPanel",
-"#crashGamePanel",
-"#luckyNumberGame",
-"#luckySevenGame",
-"#oddEvenGame",
-"#horseRaceGame",
-"#carRaceGame"
+const el = document.getElementById("gameTimer");
 
-]
+clearInterval(gamePageTimer);
+
+gamePageTimer = setInterval(()=>{
+
+    if(el){
+        el.innerText = "Next Game in: " + time + "s";
+    }
+
+    time--;
+
+    if(time < 0){
+
+        clearInterval(gamePageTimer);
+
+        if(el){
+            el.innerText = "✅ You can play now";
+        }
+
+        gameCooldown = false;
+    }
+
+},1000);
+
+}
 
 // 🔥 HIDE ALL
 games.forEach(g=>{
 let el=document.querySelector(g)
 if(el){
 el.style.display="none"
-el.classList.remove("game-open") // FIX
+el.classList.remove("game-open")
 }
 })
 
@@ -4361,7 +4404,6 @@ if(game){
 game.style.display="block"
 game.classList.add("game-open")
 
-// 🔥 AUTO SCROLL (ADD)
 setTimeout(()=>{
 game.scrollIntoView({
 behavior:"smooth",
@@ -4372,25 +4414,20 @@ block:"center"
 }
 
 }
-    
 
 // ===============================
-// FIX 5: showGame() error fix
+// FIX 5: showGame()
 // ===============================
 function showGame(selector,sound){
-
-// ❌ closeAllGames() not defined
-// 🔥 replace with openGame logic
 
 openGame(selector)
 
 if(sound) playSound(sound)
 
 }
-    
 
 // ===============================
-// FIX 6: SAFE HISTORY (NO ERROR)
+// FIX 6: SAFE HISTORY
 // ===============================
 function safeAdd(historyId,text){
 
@@ -4408,9 +4445,6 @@ history.removeChild(history.lastChild)
 
 }
 
-// ===============================
-// REPLACE HISTORY FUNCTIONS
-// ===============================
 function addColorHistory(r){ safeAdd("colorHistory",r) }
 function addCrashHistory(m){ safeAdd("crashHistory",m+"x") }
 function addLuckyNumberHistory(n){ safeAdd("luckyNumberHistory",n) }
@@ -4419,9 +4453,8 @@ function addOddEvenHistory(r){ safeAdd("oddEvenHistory",r) }
 function addHorseHistory(h){ safeAdd("horseHistory","🐎"+h) }
 function addCarHistory(c){ safeAdd("carHistory","🏎"+c) }
 
-
 // ===============================
-// FIX 7: TIMER SAFE (NO MULTIPLE INTERVAL BUG)
+// FIX 7: TIMER SAFE
 // ===============================
 let roundId = 1001
 let roundTime = 10
@@ -4431,7 +4464,7 @@ let roundInterval = null
 
 function startRoundTimer(){
 
-if(roundInterval) return // 🔥 prevent duplicate
+if(roundInterval) return
 
 roundInterval = setInterval(()=>{
 
@@ -4458,9 +4491,8 @@ resetUniversalGames()
 
 }
 
-
 // ===============================
-// FIX 8: SAFE RESET (NO ERROR)
+// FIX 8: SAFE RESET
 // ===============================
 function resetUniversalGames(){
 
@@ -4471,14 +4503,13 @@ if(typeof selectedLucky !== "undefined") selectedLucky = null
 let oddDisplay = document.getElementById("oddEvenNumber")
 if(oddDisplay) oddDisplay.innerText = "?"
 
-let luckyDisplay = document.getElementById("luckyNumberDisplay")
+let luckyDisplay = document.getElementById("luckyDisplay") // ✅ FIXED ID
 if(luckyDisplay) luckyDisplay.innerText = "?"
 
 }
 
-
 // ===============================
-// FIX 9: GENERATE RESULTS SAFE
+// FIX 9: GENERATE RESULTS (FIXED)
 // ===============================
 function generateResults(){
 
@@ -4489,7 +4520,8 @@ addColorHistory(globalResults.color)
 globalResults.luckyNumber = Math.floor(Math.random()*5)+1
 addLuckyNumberHistory(globalResults.luckyNumber)
 
-globalResults.lucky7 = Math.floor(Math.random()*6)+1
+// ✅ FIXED (7 WORKING)
+globalResults.lucky7 = Math.floor(Math.random()*7)+1
 addLuckySevenHistory(globalResults.lucky7)
 
 let num=Math.floor(Math.random()*10)+1
@@ -4507,10 +4539,9 @@ globalResults.crash = crashValue
 addCrashHistory(crashValue)
 
 }
-    
 
 // ===============================
-// GAME OPEN FUNCTIONS (NO CHANGE)
+// GAME OPEN FUNCTIONS
 // ===============================
 function openCoinGame(){openGame('.coin-scene')}
 function openBattleGame(){openGame('.battle-scene')}
