@@ -3950,7 +3950,6 @@ function startCooldown(seconds){
 // ===============================
 // 1. CORE GAME STATE & SECURITY
 // ===============================
-let gameRunning = false;
 let userAddress = localStorage.getItem("walletAddress") || ("GUEST_" + Math.floor(Math.random()*100000));
 let currentBet = 0;    
 
@@ -4516,7 +4515,7 @@ function selectHorse(num){
         btn.classList.remove("active");
     });
 
-    event.target.classList.add("active");
+    document.activeElement.classList.add("active");
 }
 
 
@@ -4675,7 +4674,7 @@ function selectCar(num){
         btn.classList.remove("active");
     });
 
-    event.target.classList.add("active");
+    document.activeElement.classList.add("active");
 }
 
 
@@ -4859,7 +4858,7 @@ function selectLuckyNumber(num){
         btn.classList.remove("active");
     });
 
-    event.target.classList.add("active");
+    document.activeElement.classList.add("active");
 }
 
 
@@ -4954,7 +4953,7 @@ function selectLucky7(choice){
         btn.classList.remove("active");
     });
 
-    event.target.classList.add("active");
+    document.activeElement.classList.add("active");
 }
 
 
@@ -5068,7 +5067,7 @@ function selectOddEven(choice){
         btn.classList.remove("active");
     });
 
-    event.target.classList.add("active");
+    document.activeElement.classList.add("active");
 }
 
 
@@ -5457,7 +5456,7 @@ function chooseCoin(choice){
         btn.classList.remove("selected-btn");
     });
 
-    event.target.classList.add("selected-btn");
+    document.activeElement.classList.add("active");
 }
 
 
@@ -5582,7 +5581,7 @@ function chooseBattle(choice){
         btn.classList.remove("selected-btn");
     });
 
-    event.target.classList.add("selected-btn");
+    document.activeElement.classList.add("active");
 
 }
 
