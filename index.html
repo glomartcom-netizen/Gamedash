@@ -3940,17 +3940,14 @@ function toggleMusic(){
 }
 
 function playSound(name){
-
-if(!name) return
-SoundEngine.play(name)
-
+    if(!name) return;
+    SoundEngine.play(name);
 }
 
-updateJackpot();
-
+// ✅ FIXED INTERVAL
+setInterval(()=>{
+    updateJackpot();
 },1000);
-
-}
 
 // ===============================
 // 🔒 FINAL UNIVERSAL GAME CONTROL
@@ -4274,6 +4271,23 @@ resetTilesGame();
 window.onerror = function(){
 gameRunning = false;
 }
+
+    const games = [
+".coin-scene",
+".battle-scene",
+".door-scene",
+".box-scene",
+".card-scene",
+".slot-machine-container",
+"#magicTilesPanel",
+".color-game-container",
+"#luckyNumberGame",
+"#luckySevenGame",
+"#oddEvenGame",
+"#horseRaceGame",
+"#carRaceGame",
+"#crashGamePanel"
+];
 
 // ===============================
 // FIX 1: REWARD LIMIT SAFE
