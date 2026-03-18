@@ -3951,7 +3951,7 @@ setInterval(()=>{
 
 
 // ===============================
-// 🔐 SECURE BALANCE SYSTEM
+// 💰 BALANCE (SECURE)
 // ===============================
 
 const SECRET_KEY = "DMX@2026_SECURE_KEY";
@@ -4057,7 +4057,6 @@ function startCooldown(seconds){
 // ===============================
 function playSelectedGame(){
 
-    // 🔒 unified control
     if(!startGame()){
         showLose("⏱ Wait...");
         return;
@@ -4104,7 +4103,7 @@ if(!userAddress){
 // ===============================
 let claimBalance = loadBalance();
 
-// 🎁 NEW PLAYER BONUS
+// 🎁 FIRST TIME BONUS
 if (localStorage.getItem("isNewPlayer") === null) {
 
     claimBalance = 100;
