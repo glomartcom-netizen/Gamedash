@@ -4075,25 +4075,199 @@ car.classList.remove("slow-finish");
 gameRunning = false;
 
 }
-
-    
     
 
-let oddEvenChoice = null;
+let lucky7Choice = null;
 
-function selectOddEven(choice){
+function selectLucky7(choice){
 
-oddEvenChoice = choice;
+lucky7Choice = choice;
 
 // remove old selection
-document.querySelectorAll(".odd-btn").forEach(btn=>{
+document.querySelectorAll(".bet-btn").forEach(btn=>{
 btn.classList.remove("active");
 });
 
 // highlight selected
 event.target.classList.add("active");
 
+    }
+
+async function playLucky7(){
+
+if(gameRunning) return;
+
+let bet = processBet();
+if(!bet) return;
+
+if(!lucky7Choice){
+showLose("Select an option");
+return;
 }
+
+gameRunning = true;
+
+playSound("dice");
+
+const dice = document.getElementById("lucky7Dice");
+
+dice.classList.add("rolling");
+
+setTimeout(()=>{
+
+dice.classList.remove("rolling");
+
+// 🎯 RANDOM RESULT (1–6)
+let result = Math.floor(Math.random()*6)+1;
+
+// 🎯 RARE JACKPOT (7 simulate)
+let isJackpot = Math.random() < 0.05; // 5% chance
+
+if(isJackpot){
+result = 7;
+}
+
+dice.innerText = result;
+
+let win = false;
+let multiplier = 0;
+
+// LOW
+if(result >=1 && result <=3 && lucky7Choice==="low"){
+win = true;
+multiplier = 2;
+}
+
+// HIGH
+else if(result >=5 && result <=6 && lucky7Choice==="high"){
+win = true;
+multiplier = 2;
+}
+
+// JACKPOT
+else if(result === 7 && lucky7Choice==="seven"){
+win = true;
+multiplier = 6;
+}
+
+// 🎯 UNIVERSAL ENGINE
+resolveGame("Lucky 7", win, bet, multiplier || 2);
+
+// history
+addLuckySevenHistory(result);
+
+// reset
+setTimeout(()=>{
+resetLucky7();
+},1500);
+
+},2000);
+
+    }
+
+function resetLucky7(){
+
+lucky7Choice = null;
+
+document.querySelectorAll(".bet-btn").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+let dice = document.getElementById("lucky7Dice");
+if(dice) dice.innerText = "?";
+
+    }
+
+let selectedLucky = null;
+
+function selectLuckyNumber(num){
+
+selectedLucky = num;
+
+// remove old selection
+document.querySelectorAll(".num-choice").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+// highlight selected
+event.target.classList.add("active");
+
+    }
+
+async function playLuckyNumber(){
+
+if(gameRunning) return;
+
+let bet = processBet();
+if(!bet) return;
+
+if(selectedLucky === null){
+showLose("Select a number");
+return;
+}
+
+gameRunning = true;
+
+playSound("spin");
+
+const display = document.getElementById("luckyDisplay");
+
+display.classList.add("spin-number");
+
+setTimeout(()=>{
+
+display.classList.remove("spin-number");
+
+// 🎯 random result
+const result = Math.floor(Math.random()*5)+1;
+
+display.innerText = result;
+
+let win = (result === selectedLucky);
+
+// 🎯 universal engine
+resolveGame("Lucky Number", win, bet, 5);
+
+// history
+addLuckyNumberHistory(result);
+
+// reset
+setTimeout(()=>{
+resetLuckyNumber();
+},1500);
+
+},2000);
+
+    }
+
+function resetLuckyNumber(){
+
+selectedLucky = null;
+
+document.querySelectorAll(".num-choice").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+let display = document.getElementById("luckyDisplay");
+if(display) display.innerText = "?";
+
+    } 
+
+ let oddEvenChoice = null;
+
+function selectOddEven(choice){
+
+oddEvenChoice = choice;
+
+// remove old selection
+document.querySelectorAll(".bet-btn").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+// highlight selected
+event.target.classList.add("active");
+
+    }   
 
 async function playOddEven(){
 
@@ -4119,7 +4293,8 @@ setTimeout(()=>{
 
 display.classList.remove("spin-number");
 
-const result = Math.floor(Math.random()*10)+1;
+// 🎯 random number (1–9)
+const result = Math.floor(Math.random()*9)+1;
 
 display.innerText = result;
 
@@ -4128,1172 +4303,241 @@ let win = false;
 if(result % 2 === 0 && oddEvenChoice === "even") win = true;
 if(result % 2 === 1 && oddEvenChoice === "odd") win = true;
 
-// 🎯 USE UNIVERSAL ENGINE
+// 🎯 universal engine
 resolveGame("Odd Even", win, bet, 2);
 
 // history update
 addOddEvenHistory(result);
 
-// reset selection
+// reset
 setTimeout(()=>{
 resetOddEven();
 },1500);
 
 },2000);
 
-}
-    
- function resetOddEven(){
+    } 
+
+function resetOddEven(){
 
 oddEvenChoice = null;
 
-document.querySelectorAll(".odd-btn").forEach(btn=>{
+document.querySelectorAll(".bet-btn").forEach(btn=>{
 btn.classList.remove("active");
 });
 
 let display = document.getElementById("oddEvenNumber");
 if(display) display.innerText = "?";
 
-}
+   } 
 
+let selectedColor = null;
 
+function pickColor(color){
 
+selectedColor = color;
 
-let lucky7Choice = null;
-
-function selectLucky7(choice){
-
-lucky7Choice = choice;
-
-// remove previous selection
-document.querySelectorAll(".lucky7-options .bet-btn").forEach(btn=>{
-btn.classList.remove("selected-btn");
+// remove old selection
+document.querySelectorAll(".color-pod").forEach(p=>{
+p.classList.remove("active");
 });
 
-// highlight selected button
-event.target.classList.add("selected-btn");
+// highlight selected
+document.getElementById("pod-"+color).classList.add("active");
 
-}
+    }
 
-async function playLucky7(){
+async function playColorGame(){
 
 if(gameRunning) return;
 
 let bet = processBet();
 if(!bet) return;
 
-if(!(await checkGameCooldown())) return;
-
-gameRunning=true;
-
-const dice=document.getElementById("lucky7Dice");
-
-dice.classList.add("roll");
-
-playSound(dice);
-
-setTimeout(()=>{
-
-dice.classList.remove("roll");
-
-const result = Math.floor(Math.random()*6)+1;
-
-dice.innerText=result;
-
-let reward=0;
-
-if(result<=3 && lucky7Choice==="low"){
-
-reward = bet*2;
-
+if(!selectedColor){
+showLose("Pick a color first");
+return;
 }
-
-else if(result>=5 && lucky7Choice==="high"){
-
-reward = bet*2;
-
-}
-
-else if(result===4 && lucky7Choice==="seven"){
-
-reward = bet*6;
-
-}
-
-if(reward>0){
-
-reward = applyRewardLimit(reward);
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-else{
-
-playSound(lose);
-
-showLose("Dice: "+result);
-
-}
-
-gameRunning=false;
-
-},2000);
-
-    }  
-
-
-let selectedLucky = null;
-
-function selectLuckyNumber(num){
-
-selectedLucky = num;
-
-// remove previous highlight
-document.querySelectorAll(".num-choice").forEach(btn=>{
-btn.classList.remove("selected-btn");
-});
-
-// highlight selected number
-event.target.classList.add("selected-btn");
-
-}
-
-async function playLuckyNumber(){
-
-if(gameRunning) return;
-
-let bet = processBet();
-if(!bet) return;
-
-if(!(await checkGameCooldown())) return;
 
 gameRunning = true;
 
-const display = document.getElementById("luckyDisplay");
+playSound("spin");
 
-display.classList.add("spin");
+const orb = document.getElementById("resultOrb");
+const status = document.getElementById("colorStatus");
 
-playSound(spin);
+// animation
+orb.classList.add("orb-spin");
 
 setTimeout(()=>{
 
-display.classList.remove("spin");
+orb.classList.remove("orb-spin");
 
-const result = Math.floor(Math.random()*5)+1;
+// 🎯 result logic
+let rand = Math.random();
+let result;
 
-display.innerText = result;
-
-if(result === selectedLucky){
-
-let reward = bet * 5;
-
-reward = applyRewardLimit(reward);
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
+if(rand < 0.4){
+result = "green";
+}
+else if(rand < 0.8){
+result = "red";
 }
 else{
-
-playSound(lose);
-
-showLose("Result: "+result);
-
+result = "purple";
 }
 
-gameRunning=false;
+// update UI
+orb.className = "result-orb " + result;
+status.innerText = "Result: " + result.toUpperCase();
+
+// 🎯 win logic
+let win = (result === selectedColor);
+
+let multiplier = 2;
+if(result === "purple") multiplier = 5;
+
+// 🎯 universal engine
+resolveGame("Color Game", win, bet, multiplier);
+
+// reset
+setTimeout(()=>{
+resetColorGame();
+},1500);
 
 },2000);
 
     }
-    
-    
 
-    
-let selectedCoin = null;
+ function resetColorGame(){
 
-function chooseCoin(choice){
+selectedColor = null;
 
-selectedCoin = choice;
-
-// remove previous highlight
-document.querySelectorAll(".coin-scene .btn-bonus").forEach(btn=>{
-btn.classList.remove("selected-btn");
+document.querySelectorAll(".color-pod").forEach(p=>{
+p.classList.remove("active");
 });
 
-// highlight selected button
-event.target.classList.add("selected-btn");
+let orb = document.getElementById("resultOrb");
+orb.className = "result-orb";
 
-}
+let status = document.getElementById("colorStatus");
+status.innerText = "Pick your color";
 
-async function flipCoin(){
+    }   
 
-if(gameRunning) return;
+let crashRunning = false;
+let crashMultiplier = 1;
+let crashInterval;
+let crashed = false;   
 
-if(currentBet <= 0){
-alert("Start Game first");
-return;
-}
+ async function startCrash(){
 
-if(selectedCoin === null){
-alert("Choose Heads, Tails or Edge");
-return;
-}
-
-gameRunning = true;
-
-playSound(spin);
-
-const coin = document.getElementById("coinElement");
-
-const rand = Math.random();
-
-let result;
-
-if(rand < 0.45){
-result = "heads";
-}
-else if(rand < 0.90){
-result = "tails";
-}
-else{
-result = "edge";
-}
-
-let rotate = result === "heads" ? 1800 : 1980;
-
-coin.style.transform = `rotateY(${rotate}deg)`;
-
-setTimeout(()=>{
-
-if(result === selectedCoin){
-
-let reward = result === "edge" ? currentBet * 4 : currentBet * 2;
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}else{
-
-playSound(lose);
-
-showLose("Result: "+result.toUpperCase());
-
-}
-
-gameRunning = false;
-
-},1200);
-
-}
-    
-
- let selectedBattle = null;
-
-function chooseBattle(choice){
-
-selectedBattle = choice;
-
-// remove previous highlight
-document.querySelectorAll(".battle-btn").forEach(btn=>{
-btn.classList.remove("selected-btn");
-});
-
-// highlight selected button
-event.target.classList.add("selected-btn");
-
-}
-
-async function startBattle(){
-
-if(gameRunning) return;
-
-if(currentBet <= 0){
-alert("Start Game first");
-return;
-}
-
-if(selectedBattle === null){
-alert("Choose your weapon first");
-return;
-}
-
-gameRunning = true;
-
-playSound(spin);
-
-const outcomes = ["lose","win","rare"];
-
-let rand = Math.random();
-
-let result;
-
-if(rand < 0.60){
-
-result = "lose";
-
-}else if(rand < 0.90){
-
-result = "win";
-
-}else{
-
-result = "rare";
-
-}
-
-setTimeout(()=>{
-
-if(result === "lose"){
-
-playSound(lose);
-
-showLose("Battle lost");
-
-}
-
-else if(result === "win"){
-
-let reward = currentBet * 2;
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-
-else{
-
-let reward = currentBet * 4;
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-
-gameRunning=false;
-
-},1200);
-
-    }  
-
-async function openDoor(door){
-
-if(gameRunning) return
-
-if (!(await checkGameCooldown())) return
-
-gameRunning = true
-
-playSound(spin)
-
-let result
-
-let chance = Math.random()
-
-if(chance < 0.60){
-
-result = "gold"
-
-}
-else if(chance < 0.85){
-
-result = "bomb"
-
-}
-else{
-
-result = "diamond"
-
-}
-
-setTimeout(()=>{
-
-if(result === "gold"){
-
-let reward = 20
-
-reward = applyRewardLimit(reward)
-
-playSound(win)
-
-showBigWin(reward)
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-}
-
-else if(result === "diamond"){
-
-let reward = 50
-
-reward = applyRewardLimit(reward)
-
-playSound(win)
-
-showBigWin(reward)
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-}
-
-else{
-
-playSound(lose)
-
-showLose("Bomb door exploded")
-
-}
-
-gameRunning=false
-
-},1200)
-
-    }    
-
-
-// ===============================
-// GAME — LUCKY BOX
-// ===============================
-
-function openLuckyBox(){
-showGame(".box-scene",boxSound)
-}
-
-async function openBoxAnimation(){
-
-if(gameRunning) return
-
-let bet = processBet()
-if(!bet) return
-
-if(!(await checkGameCooldown())) return
-
-gameRunning=true
-
-const box=document.getElementById("boxElement")
-if(!box) return
-
-box.classList.add("box-shaking")
-
-playSound(box)
-
-setTimeout(()=>{
-
-box.classList.remove("box-shaking")
-box.classList.add("box-open")
-
-let reward = 0
-
-const chance = Math.random()
-
-if(chance < 0.4){
-
-reward = bet * 2
-
-}
-else if(chance < 0.7){
-
-reward = bet * 3
-
-}
-else if(chance < 0.9){
-
-reward = bet * 5
-
-}
-else{
-
-reward = 0
-
-}
-
-setTimeout(()=>{
-
-if(reward>0){
-
-playSound(win)
-
-reward = applyRewardLimit(reward)
-
-showBigWin(reward);
-    
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-}
-else{
-
-playSound(lose)
-
-showLose("Empty box! You lost your bet.");
-
-}
-
-gameRunning=false
-
-},800)
-
-},1500)
-
-}
-
-
-
-    
-let tileReward = 0
-let bombLocation = 0
-let activeTilesGame = true
-
-async function clickTile(index){
-
-if(gameRunning) return
-if(!activeTilesGame) return
-
-gameRunning = true
-
-const tile=document.getElementById(`tile-${index}`)
-
-if(tile.classList.contains("revealed-gold")){
-gameRunning=false
-return
-}
-
-if(index===bombLocation){
-
-activeTilesGame=false
-
-tile.classList.add("revealed-bomb")
-tile.innerHTML="💣"
-
-document.getElementById("tilesGrid").classList.add("grid-shake")
-
-playSound(lose)
-
-setTimeout(()=>{
-
-showLose("💥 BOOM! Bomb exploded!");
-
-gameRunning=false
-resetTilesGame()
-
-},1000)
-
-}
-else{
-
-tile.classList.add("revealed-gold")
-tile.innerHTML="💰"
-
-let rewards=[10,20,40,80,150]
-
-let tileCount=document.querySelectorAll(".revealed-gold").length
-
-tileReward=rewards[Math.min(tileCount-1,rewards.length-1)]
-
-document.getElementById("tilesScore").innerText=
-`Current Profit: ${tileReward} DMX`
-
-document.getElementById("cashoutBtn").style.display="block"
-
-playSound(win)
-
-gameRunning=false
-
-}
-
-}
-
-
-function resetTilesGame(){
-
-activeTilesGame = true
-tileReward = 0
-
-bombLocation = Math.floor(Math.random()*9)
-
-const grid=document.getElementById("tilesGrid")
-if(!grid) return
-
-grid.classList.remove("grid-shake")
-
-document.getElementById("tilesScore").innerText="Current Profit: 0 DMX"
-
-document.getElementById("cashoutBtn").style.display="none"
-
-grid.innerHTML=""
-
-for(let i=0;i<9;i++){
-
-const tile=document.createElement("div")
-
-tile.className="tile"
-tile.id=`tile-${i}`
-tile.innerHTML="❓"
-
-tile.onclick=()=>clickTile(i)
-
-grid.appendChild(tile)
-
-}
-
-}
-
-async function tilesCashout(){
-
-if(tileReward<=0 || !activeTilesGame) return
-
-gameRunning = true
-activeTilesGame = false
-
-tileReward = applyRewardLimit(tileReward)
-
-playSound(win)
-
-showBigWin(tileReward);
-
-claimGameReward(tileReward)
-
-addWinner(userAddress,tileReward)
-
-document.getElementById("cashoutBtn").style.display="none"
-
-setTimeout(()=>{
-
-gameRunning=false
-resetTilesGame()
-
-},800)
-
-}
-    
-
-let crashValue = 1.0
-let crashInterval
-let isCrashed = false
-let crashBet = 0
-
-// START GAME
-async function startCrash(){
-
-if(gameRunning) return
-
-let bet = processBet()
-if(!bet) return
-
-crashBet = bet
-
-if(!(await checkGameCooldown())) return
-
-gameRunning = true
-isCrashed = false
-crashValue = 1.0
-
-document.getElementById("launchBtn").style.display="none"
-document.getElementById("takeProfitBtn").style.display="block"
-
-document.getElementById("crashMultiplier").style.color="#22c55e"
-
-let limit = Math.random()*4 + 1.5
-
-crashInterval = setInterval(()=>{
-
-crashValue += 0.05
-
-document.getElementById("crashMultiplier").innerText =
-crashValue.toFixed(2)+"x"
-
-let pos = (crashValue-1)*20
-
-document.getElementById("rocket").style.bottom=(10+pos)+"px"
-document.getElementById("rocket").style.left=(10+pos)+"px"
-
-if(crashValue >= limit){
-
-rocketExplode()
-
-}
-
-},100)
-
-}
-
-
-// CRASH EVENT
-function rocketExplode(){
-
-clearInterval(crashInterval)
-
-isCrashed = true
-gameRunning = false
-
-playSound(lose)
-
-document.getElementById("crashMultiplier").innerText="CRASHED!"
-document.getElementById("crashMultiplier").style.color="red"
-
-document.getElementById("rocket").innerText="💥"
-
-document.getElementById("takeProfitBtn").style.display="none"
-
-showLose("💥 Rocket crashed!");
-    
-setTimeout(()=>{
-
-document.getElementById("rocket").innerText="🚀"
-
-resetCrash()
-
-},2000)
-
-}
-
-
-// TAKE PROFIT
-function takeProfit(){
-
-if(isCrashed) return
-
-clearInterval(crashInterval)
-
-let winAmount = Math.floor(crashBet * crashValue)
-
-winAmount = applyRewardLimit(winAmount)
-
-showBigWin(winAmount);
-
-claimGameReward(winAmount)
-
-addWinner(userAddress,winAmount)
-
-gameRunning = false
-
-resetCrash()
-
-}
-
-
-// RESET GAME
-function resetCrash(){
-
-isCrashed = false
-crashValue = 1.0
-crashBet = 0
-
-document.getElementById("crashMultiplier").innerText="1.00x"
-document.getElementById("crashMultiplier").style.color="#22c55e"
-
-document.getElementById("rocket").style.bottom="10px"
-document.getElementById("rocket").style.left="10px"
-
-document.getElementById("rocket").innerText="🚀"
-
-document.getElementById("launchBtn").style.display="block"
-document.getElementById("takeProfitBtn").style.display="none"
-
-}
-
-    
-// ===============================
-// GAME 5 — CARD FLIP (3D)
-// ===============================
-
-let winningCard = Math.floor(Math.random()*3)
-
-async function pickCard(index){
-
-if(gameRunning) return
-
-let bet = processBet()
-
-if(!bet) return
-
-gameRunning=true
-
-const cards=document.querySelectorAll(".card-pro")
-
-cards[index].classList.add("flipped")
-
-let reward=0
-
-if(index===winningCard){
-
-reward = bet * 2
-
-document.getElementById("cardBack"+index).innerText="💰"
-
-setTimeout(()=>{
-
-showBigWin(reward);
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-resetCardGame()
-
-},800)
-
-}
-else{
-
-document.getElementById("cardBack"+index).innerText="❌"
-
-setTimeout(()=>{
-
-showLose("❌ Wrong Card!");
-
-resetCardGame()
-
-},800)
-
-}
-
-}
-
-function resetCardGame(){
-
-const cards=document.querySelectorAll(".card-pro")
-
-cards.forEach(c=>c.classList.remove("flipped"))
-
-winningCard=Math.floor(Math.random()*3)
-
-gameRunning=false
-
-}
-
-    
-
-async function shootTargetAnimation(){
-
-if(gameRunning) return
-
-let bet = processBet()
-if(!bet) return
-
-if (!(await checkGameCooldown())) return
-
-gameRunning=true
-
-const projectile=document.getElementById("projectile")
-const board=document.getElementById("targetBoard")
-const status=document.getElementById("targetStatus")
-
-projectile.classList.remove("is-shooting")
-board.classList.remove("board-hit")
-
-projectile.style.opacity="1"
-
-void projectile.offsetWidth
-
-status.innerText="Shooting..."
-
-projectile.classList.add("is-shooting")
-
-playSound(dice)
-
-setTimeout(()=>{
-
-board.classList.add("board-hit")
-
-let chance=Math.random()
-
-let reward=0
-let resultText=""
-
-if(chance < 0.2){
-
-reward = bet * 5
-resultText="🎯 BULLSEYE!"
-
-}
-else if(chance < 0.5){
-
-reward = bet * 3
-resultText="🎯 Inner Ring!"
-
-}
-else if(chance < 0.8){
-
-reward = bet * 2
-resultText="🎯 Outer Ring!"
-
-}
-else{
-
-playSound(lose)
-
-status.innerText="❌ Missed Target!"
-
-showLose("❌ Missed Target!");
-
-gameRunning=false
-return
-
-}
-
-reward = applyRewardLimit(reward)
-
-status.innerText=resultText
-
-playSound(win)
-
-setTimeout(()=>{
-
-showBigWin(reward);
-
-claimGameReward(reward)
-
-addWinner(userAddress,reward)
-
-gameRunning=false
-
-},500)
-
-},1200)
-
-}
-
-        async function spinSlot(){
-
-if(gameRunning) return;
+if(crashRunning) return;
 
 let bet = processBet();
 if(!bet) return;
 
-gameRunning = true;
+crashRunning = true;
+crashed = false;
+crashMultiplier = 1;
 
-playSound(spin);
+playSound("crash");
 
-const symbols = ["7️⃣","🍒","⭐","💎","🔔"];
+document.getElementById("launchBtn").style.display = "none";
+document.getElementById("takeProfitBtn").style.display = "inline-block";
 
-const reels = [
-document.getElementById("reel1"),
-document.getElementById("reel2"),
-document.getElementById("reel3")
-];
+const display = document.getElementById("crashMultiplier");
+const rocket = document.getElementById("rocket");
 
-// random results
-const resultA = symbols[Math.floor(Math.random()*symbols.length)];
-const resultB = symbols[Math.floor(Math.random()*symbols.length)];
-const resultC = symbols[Math.floor(Math.random()*symbols.length)];
+// 🎯 random crash point (1.5x – 5x)
+let crashPoint = (Math.random()*3.5 + 1.5).toFixed(2);
 
-const results = [resultA,resultB,resultC];
+// 📈 multiplier increase
+crashInterval = setInterval(()=>{
 
-// spin reels
-reels.forEach((reel,index)=>{
+crashMultiplier += 0.05;
 
-const randomSpins = 10 + Math.floor(Math.random()*5);
-const symbolIndex = symbols.indexOf(results[index]);
+display.innerText = crashMultiplier.toFixed(2) + "x";
 
-const moveY = -(symbolIndex*80 + randomSpins*80);
+// rocket move
+rocket.style.transform = `translateY(-${crashMultiplier*20}px)`;
 
-reel.style.transition = "transform 2.5s ease-out";
-reel.style.transform = `translateY(${moveY}px)`;
+// 💥 crash check
+if(crashMultiplier >= crashPoint){
 
-});
+clearInterval(crashInterval);
 
-// stop reels and show result
-setTimeout(()=>{
+crashed = true;
+crashRunning = false;
 
-reels.forEach((reel,index)=>{
+playSound("lose");
 
-const symbolIndex = symbols.indexOf(results[index]);
+showLose("💥 Rocket Crashed!");
 
-const finalPos = -(symbolIndex*80);
-
-reel.style.transition = "transform 0.3s ease-out";
-reel.style.transform = `translateY(${finalPos}px)`;
-
-});
-
-setTimeout(()=>{
-
-checkSlotResult(resultA,resultB,resultC,bet);
-gameRunning = false;
-
-},400);
-
-},2600);
+resetCrash();
 
 }
+
+},100);
+
+    } 
+
+function takeProfit(){
+
+if(!crashRunning || crashed) return;
+
+clearInterval(crashInterval);
+
+let reward = currentBet * crashMultiplier;
+
+reward = applyRewardLimit(reward);
+
+playSound("win");
+
+showBigWin(Math.floor(reward));
+
+claimGameReward(Math.floor(reward));
+
+addWinner(userAddress, Math.floor(reward));
+
+crashRunning = false;
+
+resetCrash();
+
+    }  
+
+function resetCrash(){
+
+setTimeout(()=>{
+
+document.getElementById("launchBtn").style.display = "inline-block";
+document.getElementById("takeProfitBtn").style.display = "none";
+
+document.getElementById("crashMultiplier").innerText = "1.00x";
+
+document.getElementById("rocket").style.transform = "translateY(0px)";
+
+},1500);
+
+    }    
     
-function checkSlotResult(a,b,c,bet){
 
-let reward = 0;
-
-// JACKPOT
-if(a===b && b===c){
-
-reward = bet * 5;
-
-reward = applyRewardLimit(reward);
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-
-// SMALL WIN
-else if(a===b || b===c || a===c){
-
-reward = bet * 2;
-
-reward = applyRewardLimit(reward);
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-
-// LOSE
-else{
-
-playSound(lose);
-
-showLose("❌ No Match!");
-
-}
-
- }    
+    
+    
 
 
-        async function pickColor(userColor){
+    
 
-if(gameRunning) return
 
-let bet = processBet()
-if(!bet) return
 
-gameRunning=true
 
-const pods=["green","red","purple"]
 
-pods.forEach(p=>{
-document.getElementById(`pod-${p}`).classList.remove("pod-selected")
-})
 
-document.getElementById(`pod-${userColor}`).classList.add("pod-selected")
 
-const orb=document.getElementById("resultOrb")
-const status=document.getElementById("colorStatus")
 
-orb.classList.remove("orb-active")
-void orb.offsetWidth
-orb.classList.add("orb-active")
 
-orb.style.background="#475569"
 
-status.innerText="Choosing color..."
 
-playSound(spin)
-
-setTimeout(()=>{
-
-let random=Math.random()
-let result
-
-if(random < 0.4){
-result="green"
-}
-else if(random < 0.8){
-result="red"
-}
-else{
-result="purple"
-}
-
-const colorMap={
-green:"#22c55e",
-red:"#ef4444",
-purple:"#a855f7"
-}
-
-orb.style.background=colorMap[result]
-orb.style.boxShadow=`0 0 30px ${colorMap[result]}`
-
-setTimeout(()=>{
-
-if(userColor===result){
-
-let reward
-
-if(result==="purple"){
-reward = bet * 5
-}
-else{
-reward = bet * 2
-}
-
-reward = applyRewardLimit(reward)
-
-playSound(win)
-
-showBigWin(reward);
-claimGameReward(reward)
-addWinner(userAddress,reward)
-
-status.innerText="You won "+reward+" DMX"
-
-}
-else{
-
-playSound(lose)
-
-showLose("❌ Wrong Color!");
-
-status.innerText="Better luck next time"
-
-}
-
-gameRunning=false
-
-},500)
-
-},2000)
-
-}
 
 function showBigWin(amount){
 
