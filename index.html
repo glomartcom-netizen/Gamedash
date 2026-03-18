@@ -3949,17 +3949,61 @@ setInterval(()=>{
     updateJackpot();
 },1000);
 
+
 // ===============================
-// 🔒 FINAL UNIVERSAL GAME CONTROL (FIXED)
+// 🔐 SECURE BALANCE SYSTEM
+// ===============================
+
+const SECRET_KEY = "DMX@2026_SECURE_KEY";
+
+function saveBalance(val){
+
+    if(isNaN(val) || val < 0){
+        val = 0;
+    }
+
+    val = Math.floor(val);
+
+    const salt = Date.now().toString();
+    const hash = btoa(val + SECRET_KEY + salt);
+
+    localStorage.setItem("claimBalance", val.toString());
+    localStorage.setItem("balanceHash", hash);
+    localStorage.setItem("balanceSalt", salt);
+}
+
+function loadBalance(){
+
+    let val = Number(localStorage.getItem("claimBalance")) || 0;
+    let hash = localStorage.getItem("balanceHash");
+    let salt = localStorage.getItem("balanceSalt");
+
+    if(!hash || !salt){
+        saveBalance(0);
+        return 0;
+    }
+
+    const verify = btoa(val + SECRET_KEY + salt);
+
+    if(verify !== hash){
+        console.warn("🚨 Balance tampering detected!");
+        val = 0;
+        saveBalance(val);
+    }
+
+    return val;
+}
+
+// ===============================
+// 🔒 GAME CONTROL SYSTEM
 // ===============================
 
 let gameRunning = false;
 let gameLocked = false;
-let cooldownInterval = null; // ✅ FIX
+let cooldownInterval = null;
 
 function startGame(){
 
-    // ✅ Added cooldown check
     if(gameRunning || gameLocked) return false;
 
     gameRunning = true;
@@ -3973,18 +4017,16 @@ function endGame(delay = 1500){
         gameLocked = true;
         startCooldown(3);
     }, delay);
-
 }
 
 function startCooldown(seconds){
 
     let count = seconds;
 
-    const el = document.getElementById("cooldownTimer");  
+    const el = document.getElementById("cooldownTimer");
 
     if(el) el.style.display = "block";
 
-    // ✅ CLEAR OLD INTERVAL (IMPORTANT)
     if(cooldownInterval){
         clearInterval(cooldownInterval);
     }
@@ -4008,13 +4050,16 @@ function startCooldown(seconds){
         }
 
     },1000);
-
 }
 
+// ===============================
+// 🎮 GAME SELECTOR
+// ===============================
 function playSelectedGame(){
 
-    if(gameCooldown){
-        showLose("⏱ Wait for timer");
+    // 🔒 unified control
+    if(!startGame()){
+        showLose("⏱ Wait...");
         return;
     }
 
@@ -4038,15 +4083,15 @@ function playSelectedGame(){
         case "Crash Game": startCrash(); break;
 
         default:
-        showLose("Game not found");
+            showLose("Game not found");
     }
 }
-    
+
 // ===============================
-// 🔒 CORE GAME STATE (FINAL FIXED)
+// 🔒 CORE GAME STATE
 // ===============================
 
-// ✅ USER ADDRESS (persistent)
+// USER ID
 let userAddress = localStorage.getItem("walletAddress");
 
 if(!userAddress){
@@ -4055,7 +4100,7 @@ if(!userAddress){
 }
 
 // ===============================
-// 💰 BALANCE (SECURE)
+// 💰 BALANCE
 // ===============================
 let claimBalance = loadBalance();
 
@@ -4074,7 +4119,9 @@ if (localStorage.getItem("isNewPlayer") === null) {
 // ===============================
 let currentBet = 0;
 
-// ✅ SAFE LOAD FUNCTION
+// ===============================
+// 🏆 JACKPOT SAFE LOAD
+// ===============================
 function safeNumber(key, defaultVal = 0){
 
     let val = Number(localStorage.getItem(key));
@@ -4087,9 +4134,6 @@ function safeNumber(key, defaultVal = 0){
     return val;
 }
 
-// ===============================
-// 🏆 JACKPOT + STATS
-// ===============================
 let jackpotPool = safeNumber("jackpotPool", 5000);
 
 const MAX_WIN_PROTECTION = 100000;
@@ -4098,7 +4142,7 @@ let totalBet = safeNumber("totalBet", 0);
 let totalPayout = safeNumber("totalPayout", 0);
 
 // ===============================
-// ⚠️ ANTI REFRESH PROTECTION
+// ⚠️ REFRESH PROTECTION
 // ===============================
 window.onbeforeunload = function(){
 
@@ -4109,7 +4153,7 @@ window.onbeforeunload = function(){
 };
 
 // ===============================
-// 3. SMART WIN ENGINE
+// 🎯 SMART WIN ENGINE
 // ===============================
 function getWinChance(){
 
@@ -4119,7 +4163,6 @@ function getWinChance(){
 
     let percent = totalBet > 0 ? (profit / totalBet) * 100 : 0;
 
-    // ✅ Smooth curve instead of jumps
     let base = 0.30;
 
     if(percent < 10){
@@ -4132,9 +4175,9 @@ function getWinChance(){
         base = 0.42;
     }
 
-    // 🔥 add slight randomness (anti-pattern)
     return base + (Math.random() * 0.05 - 0.025);
-}
+    }
+
 
 // ===============================
 // 4. ANTI BOT PROTECTION
@@ -4208,17 +4251,14 @@ function updateJackpot(){
 
     const el = document.getElementById("jackpotValue");
 
-    // ✅ Safety check
     if(isNaN(jackpotPool) || jackpotPool < 0){
         jackpotPool = 0;
     }
 
-    // ✅ Format display
     if(el){
         el.innerText = jackpotPool.toLocaleString() + " DMX";
     }
 
-    // ✅ Safe save
     localStorage.setItem("jackpotPool", jackpotPool.toString());
 }
 // ===============================
