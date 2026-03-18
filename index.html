@@ -2935,7 +2935,6 @@ Cashout at 2.00x → Win 20 DMX
 <script>
 
 
-
 // ===============================
 // DMX PRO SOUND ENGINE
 // ===============================
@@ -2995,15 +2994,11 @@ sound.currentTime=0
 // LOAD ALL SOUNDS
 // ===============================
 
-// Background music
 SoundEngine.load("bg","https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3",0.2)
-
-// Common
 SoundEngine.load("click","https://cdn.pixabay.com/download/audio/2022/03/15/audio_4f9f2f8a4a.mp3")
 SoundEngine.load("win","https://cdn.pixabay.com/download/audio/2022/03/15/audio_7a2b8b8b6b.mp3")
 SoundEngine.load("lose","https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e2e2c2f.mp3")
 
-// Game sounds
 SoundEngine.load("spin","https://cdn.pixabay.com/download/audio/2022/03/15/audio_9c2d9e9c7b.mp3")
 SoundEngine.load("dice","https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg")
 SoundEngine.load("slot","https://actions.google.com/sounds/v1/science_fiction/digital_beeps.ogg")
@@ -3018,11 +3013,16 @@ SoundEngine.load("race","https://actions.google.com/sounds/v1/vehicles/car_accel
 // AUTO START MUSIC AFTER CLICK
 // ===============================
 
+let musicStarted = false;
+
 document.body.addEventListener("click",function(){
 
+if(!musicStarted){
 SoundEngine.loop("bg")
+musicStarted = true
+}
 
-},{once:true})
+})
 
 
 // ===============================
@@ -3032,9 +3032,7 @@ SoundEngine.loop("bg")
 document.body.addEventListener("click",function(e){
 
 if(e.target.tagName==="BUTTON"){
-
 SoundEngine.play("click")
-
 }
 
 })
@@ -3047,30 +3045,23 @@ SoundEngine.play("click")
 function toggleMusic(){
 
 const music=SoundEngine.sounds["bg"]
+if(!music) return
 
 if(music.paused){
-
 music.play()
-
 }else{
-
 music.pause()
-
 }
 
 }
 
-function playSound(sound){
+function playSound(name){
 
-if(!sound) return;
-
-if(typeof sound === "string"){
-SoundEngine.play(sound);
-}
+if(!name) return
+SoundEngine.play(name)
 
 }
-    
-    
+
 
 // ===============================
 // 1. CORE GAME STATE & SECURITY
@@ -3079,7 +3070,6 @@ let gameRunning = false;
 let userAddress = localStorage.getItem("walletAddress") || ("GUEST_" + Math.floor(Math.random()*100000));
 let currentBet = 0;    
 
-// New Player Bonus
 let claimBalance = Number(localStorage.getItem("claimBalance")) || 0;
 
 if (localStorage.getItem("isNewPlayer") === null) {
@@ -3088,13 +3078,10 @@ if (localStorage.getItem("isNewPlayer") === null) {
     localStorage.setItem("isNewPlayer", "true");
 }
 
-// Jackpot
 let jackpotPool = Number(localStorage.getItem("jackpotPool")) || 5000;
 
-// Max win protection
 const MAX_WIN_PROTECTION = 100000;
 
-// House edge tracking
 let totalBet = Number(localStorage.getItem("totalBet")) || 0;
 let totalPayout = Number(localStorage.getItem("totalPayout")) || 0;
 
@@ -3114,18 +3101,17 @@ window.onbeforeunload = function(){
 // ===============================
 function getWinChance(){
 
-    if(totalBet < 500) return 0.38;
+if(totalBet < 500) return 0.38;
 
-    let profit = totalBet - totalPayout;
+let profit = totalBet - totalPayout;
 
-    let profitPercent = (totalBet > 0)
-        ? (profit / totalBet) * 100
-        : 0;
+let percent = totalBet>0 ? (profit/totalBet)*100 : 0;
 
-    if(profitPercent < 10) return 0.25;
-    if(profitPercent < 20) return 0.35;
+if(percent < 10) return 0.25;
+if(percent < 20) return 0.35;
 
-    return 0.45;
+return 0.45;
+
 }
 
 
@@ -3137,24 +3123,25 @@ let betCounter = 0;
 
 function antiExploitCheck(){
 
-    let now = Date.now();
+let now = Date.now();
 
-    if(now - lastClickTime < 400){
-        alert("Too fast! Bot activity detected.");
-        return false;
-    }
+if(now - lastClickTime < 400){
+alert("Too fast!");
+return false;
+}
 
-    lastClickTime = now;
+lastClickTime = now;
 
-    betCounter++;
+betCounter++;
 
-    if(betCounter > 25){
-        alert("Security Lock: Too many bets detected.");
-        location.reload();
-        return false;
-    }
+if(betCounter > 25){
+alert("Too many bets");
+location.reload();
+return false;
+}
 
-    return true;
+return true;
+
 }
 
 
@@ -3163,13 +3150,14 @@ function antiExploitCheck(){
 // ===============================
 function updateBalance(){
 
-    let el = document.getElementById("balanceValue");
+let el = document.getElementById("balanceValue");
 
-    if(el){
-        el.innerText = claimBalance.toFixed(0);
-    }
+if(el){
+el.innerText = claimBalance.toFixed(0);
+}
 
-    localStorage.setItem("claimBalance", claimBalance);
+localStorage.setItem("claimBalance", claimBalance);
+
 }
 
 
@@ -3181,9 +3169,7 @@ function updateJackpot(){
 const el = document.getElementById("jackpotValue");
 
 if(el){
-
 el.innerText = jackpotPool.toLocaleString() + " DMX";
-
 }
 
 localStorage.setItem("jackpotPool", jackpotPool);
@@ -3200,9 +3186,7 @@ if(!antiExploitCheck()) return false;
 
 let entry = Number(document.getElementById("betAmount").value);
 
-const MIN_BET = 10;
-
-if(entry < MIN_BET){
+if(entry < 10){
 alert("Minimum bet is 10 DMX");
 return false;
 }
@@ -3213,20 +3197,18 @@ return false;
 }
 
 claimBalance -= entry;
-
 currentBet = entry;
-
 totalBet += entry;
 
 updateBalance();
 
 jackpotPool += Math.floor(entry * 0.05);
-
 updateJackpot();
 
 return entry;
 
-    }
+}
+
 
 // ===============================
 // 8. GAME PLAY BUTTON
@@ -3234,81 +3216,54 @@ return entry;
 function playGame(){
 
 let bet = processBet();
-
 if(!bet) return;
+
+// ❌ REMOVE LOCK (IMPORTANT)
+// gameRunning = true;
 
 alert("Bet locked! Now choose a game.");
 
 }
+
 
 // ===============================
 // 9. RESULT ENGINE
 // ===============================
 function resolveGame(gameName, manualResult, entry){
 
-let isWinner =
-(manualResult !== null)
-? manualResult
-: (Math.random() < getWinChance());
-
-let randomDelay = 900 + Math.random()*600;
+let isWinner = manualResult!==null ? manualResult : (Math.random()<getWinChance());
 
 setTimeout(()=>{
 
 if(isWinner){
 
-let reward = entry * 2;
-
-reward = Math.min(reward, MAX_WIN_PROTECTION);
-
-reward = Math.min(reward, jackpotPool);
+let reward = Math.min(entry*2, MAX_WIN_PROTECTION, jackpotPool);
 
 claimBalance += reward;
-
 totalPayout += reward;
 
 localStorage.setItem("claimBalance", claimBalance);
-
 localStorage.setItem("totalPayout", totalPayout);
 
-// jackpot reduce
-jackpotPool =
-Math.max(0, jackpotPool - Math.floor(reward * 0.5));
+jackpotPool = Math.max(0, jackpotPool - Math.floor(reward*0.5));
 
-// WIN SOUND
-playSound(win);
-
-// POPUP WIN
+playSound("win");
 showBigWin(reward);
-
 jackpotEffect();
+addWinner(userAddress,reward);
 
-addWinner(userAddress, reward);
+}else{
 
-}
-else{
-
-// LOSE SOUND
-playSound(lose);
-
-// POPUP LOSE
+playSound("lose");
 showLose("Better luck next time");
 
 }
 
-if(betCounter >= 20){
-betCounter = 0;
-}
-
-localStorage.removeItem("gameRunning");
-
-gameRunning = false;
-
+gameRunning=false;
 updateBalance();
-
 updateJackpot();
 
-}, randomDelay);
+},1000);
 
 }
 
@@ -3319,72 +3274,46 @@ updateJackpot();
 function addWinner(address, reward){
 
 const board = document.getElementById("winnerBoard");
-
 if(!board) return;
 
-const shortAddr = address.substring(0,6) + "...";
-
 const span = document.createElement("span");
-
-span.innerText = `${shortAddr} won ${reward} DMX 🔥`;
-
-span.style.marginRight = "20px";
-span.style.color = "#22c55e";
-span.style.fontWeight = "bold";
+span.innerText = address.substring(0,6)+"... won "+reward+" DMX 🔥";
+span.style.marginRight="20px";
 
 board.prepend(span);
 
-// limit winners
-if(board.children.length > 20){
+if(board.children.length>20){
 board.removeChild(board.lastChild);
 }
 
 }
+
 
 // ===============================
 // 11. WIN EFFECT
 // ===============================
 function jackpotEffect(){
 
-playSound(win);
+playSound("win");
 
-// screen flash
 document.body.classList.add("win-flash");
 
 setTimeout(()=>{
 document.body.classList.remove("win-flash");
 },1200);
 
-
-// spark particles
-for(let i=0;i<15;i++){
-
-let spark=document.createElement("div");
-
-spark.className="spark";
-
-spark.style.left=Math.random()*100+"vw";
-spark.style.top=Math.random()*100+"vh";
-
-document.body.appendChild(spark);
-
-setTimeout(()=>{
-spark.remove();
-},800);
-
 }
 
-}
 
 // ===============================
 // 12. RULES POPUP
 // ===============================
 function openGameInfo(){
-    document.getElementById("gameInfoPopup").style.display="block";
+document.getElementById("gameInfoPopup").style.display="block";
 }
 
 function closeGameInfo(){
-    document.getElementById("gameInfoPopup").style.display="none";
+document.getElementById("gameInfoPopup").style.display="none";
 }
 
 
@@ -3393,16 +3322,12 @@ function closeGameInfo(){
 // ===============================
 setInterval(()=>{
 
-    let saved =
-        Number(localStorage.getItem("claimBalance")) || 0;
+let saved = Number(localStorage.getItem("claimBalance")) || 0;
 
-    if(claimBalance !== saved){
-
-        claimBalance = saved;
-
-        updateBalance();
-
-    }
+if(claimBalance !== saved){
+claimBalance = saved;
+updateBalance();
+}
 
 },2000);
 
@@ -3411,13 +3336,9 @@ setInterval(()=>{
 // 14. MULTI TAB PROTECTION
 // ===============================
 window.addEventListener("storage",function(e){
-
-    if(e.key === "claimBalance"){
-
-        location.reload();
-
-    }
-
+if(e.key === "claimBalance"){
+location.reload();
+}
 });
 
 
@@ -3427,34 +3348,23 @@ window.addEventListener("storage",function(e){
 window.onload=function(){
 
 updateBalance();
-
 updateJackpot();
 
+if(typeof startRoundTimer === "function"){
 startRoundTimer();
+}
 
 if(typeof resetTilesGame === "function"){
 resetTilesGame();
 }
 
-document.body.addEventListener("click",function(e){
-
-if(e.target.tagName === "BUTTON"){    
-
-    if(typeof clickSound !== "undefined"){    
-        playSound(click);    
-    }    
-
-}    
-
-if(typeof bgMusic !== "undefined" && bgMusic.paused){    
-
-    bgMusic.play().catch(()=>{});    
-
-}
-
-});
-
 };
+
+
+// 🔥 GLOBAL SAFETY
+window.onerror = function(){
+gameRunning = false;
+}
 
 function applyRewardLimit(reward){
 
