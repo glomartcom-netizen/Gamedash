@@ -4479,43 +4479,42 @@ function openGamePage(gameName){
     if(page) page.style.display = "block";
     if(title) title.innerText = gameName;
 
-    const map = {  
-        "Coin Game": ".coin-scene",  
-        "Battle Game": ".battle-scene",  
-        "Door Game": ".door-scene",  
-        "Lucky Box": ".box-scene",  
-        "Card Game": ".card-scene",  
-        "Slot": ".slot-machine-container",  
-        "Magic Tiles": "#magicTilesPanel",  
-        "Color Game": ".color-game-container",  
-        "Lucky Number": "#luckyNumberGame",  
-        "Lucky 7": "#luckySevenGame",  
-        "Odd Even": "#oddEvenGame",  
-        "Horse Race": "#horseRaceGame",  
-        "Car Race": "#carRaceGame",  
-        "Crash Game": "#crashGamePanel"  
-    };
-
-    const selector = map[gameName];
-
-    if(!selector){
-        console.error("Invalid game:", gameName);
-        return;
-    }
-
-    // 🔥 IMPORTANT FIX
-    const allGames = document.querySelectorAll(
+    // 🎯 ALL GAMES HIDE
+    document.querySelectorAll(
         ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
-    );
+    ).forEach(g=>{
+        g.style.display = "none";
+    });
 
-    allGames.forEach(g => g.style.display = "none");
+    // 🎯 SHOW SELECTED GAME
+    let selector = "";
+
+    switch(gameName){
+        case "Coin Game": selector = ".coin-scene"; break;
+        case "Battle Game": selector = ".battle-scene"; break;
+        case "Door Game": selector = ".door-scene"; break;
+        case "Lucky Box": selector = ".box-scene"; break;
+        case "Card Game": selector = ".card-scene"; break;
+        case "Slot": selector = ".slot-machine-container"; break;
+        case "Magic Tiles": selector = "#magicTilesPanel"; break;
+        case "Color Game": selector = ".color-game-container"; break;
+        case "Lucky Number": selector = "#luckyNumberGame"; break;
+        case "Lucky 7": selector = "#luckySevenGame"; break;
+        case "Odd Even": selector = "#oddEvenGame"; break;
+        case "Horse Race": selector = "#horseRaceGame"; break;
+        case "Car Race": selector = "#carRaceGame"; break;
+        case "Crash Game": selector = "#crashGamePanel"; break;
+    }
 
     const game = document.querySelector(selector);
 
     if(game){
         game.style.display = "block";
+    }else{
+        console.error("Game not found:", gameName);
     }
 
+    // ⏱ TIMER START
     startGamePageTimer();
 }
 
