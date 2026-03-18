@@ -2681,11 +2681,10 @@ margin-top:10px;
 </head>
 <body>
 
-    <!-- SOUND BUTTON -->
+<!-- SOUND BUTTON -->
 <button onclick="toggleMusic()" id="soundBtn" class="sound-btn">
 🔊 Sound ON
 </button>
-
 
 <!-- GAME PANEL -->
 <div class="game-zone">
@@ -2720,7 +2719,6 @@ font-weight:bold;
 
 </div>
 
-
 <!-- GAME MENU -->
 <div class="game-container">
 
@@ -2741,7 +2739,6 @@ font-weight:bold;
 
 </div>
 
-
 <!-- FULL SCREEN GAME PAGE -->
 <div id="gamePage" style="
 display:none;
@@ -2758,12 +2755,7 @@ overflow:auto;
 ">
 
 <!-- HEADER -->
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-">
+<div style="display:flex;justify-content:space-between;align-items:center;">
 <h2 id="gamePageTitle" style="color:#22c55e;"></h2>
 
 <button onclick="closeGamePage()" style="
@@ -2804,9 +2796,7 @@ font-size:16px;
 font-weight:bold;
 cursor:pointer;
 ">
-
 🎮 Play
-
 </button>
 
 </div>
@@ -2832,16 +2822,6 @@ background:rgba(255,255,255,0.05);
 
 </div>
 
-
-<div id="gameResult" style="
-margin-top:20px;
-text-align:center;
-font-size:22px;
-padding:15px;
-border-radius:12px;
-background:rgba(255,255,255,0.05);
-"></div>
-
 <!-- RULES BUTTON -->
 <div style="margin-top:20px;text-align:center;">
 <button onclick="openGameInfo()" style="
@@ -2852,82 +2832,9 @@ background:#3b82f6;
 color:white;
 font-weight:bold;
 cursor:pointer;
-box-shadow:0 0 10px rgba(59,130,246,0.5);
 ">
 📜 Game Rules
 </button>
-</div>
-
-<!-- RULES POPUP -->
-<div id="gameInfoPopup" style="
-display:none;
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:linear-gradient(135deg,#020617,#0f172a);
-color:white;
-padding:25px;
-width:350px;
-max-height:80vh;
-overflow:auto;
-border-radius:16px;
-box-shadow:0 0 30px rgba(0,0,0,0.7);
-z-index:9999;
-">
-
-<h2 style="color:#22c55e;">🎮 Game Information</h2>
-<hr style="opacity:0.2;">
-
-<h3>🆕 New Player Bonus</h3>
-<p>
-• New users receive <b>100 Game Points</b><br>
-• Bonus is for gameplay only
-</p>
-
-<h3>👥 Referral Rewards</h3>
-<p>
-• Invite friends using your link<br>
-• Earn <b>5%</b> of their gameplay
-</p>
-
-<h3>💰 Staking Bonus</h3>
-<p>
-• When you deposit or stake funds<br>
-• You receive <b>2.5% of your deposit amount</b><br>
-• This bonus can be used for playing games
-</p>
-
-<h3>🎮 Game Rules</h3>
-<p>
-• Enter bet before playing<br>
-• Minimum bet: <b>10 DMX</b><br>
-• Win → up to <b>2x reward</b><br>
-• Lose → bet deducted
-</p>
-
-<h3>⚠️ Important</h3>
-<p>
-• Play responsibly<br>
-• Results are random<br>
-• Cooldown required before next play
-</p>
-
-<br>
-
-<button onclick="closeGameInfo()" style="
-width:100%;
-padding:10px;
-border:none;
-border-radius:10px;
-background:#ef4444;
-color:white;
-font-weight:bold;
-cursor:pointer;
-">
-❌ Close
-</button>
-
 </div>
 
 <!-- LIVE WINNERS -->
@@ -2937,20 +2844,10 @@ cursor:pointer;
 </marquee>
 </div>
 
-
-
 <!-- JACKPOT -->
-
 <div style="margin-top:20px;font-size:18px">
-
 🏆 Jackpot Pool:
-
-<span id="jackpotValue" style="color:#22c55e;font-weight:bold">
-
-5000
-
-</span> DMX
-
+<span id="jackpotValue" style="color:#22c55e;font-weight:bold">5000</span> DMX
 </div>
 
 
@@ -4606,19 +4503,18 @@ function openGamePage(gameName){
         return;
     }
 
-    // 🔥 FIX START
-    const allGames = page.querySelectorAll(
+    // 🔥 IMPORTANT FIX
+    const allGames = document.querySelectorAll(
         ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
     );
 
     allGames.forEach(g => g.style.display = "none");
 
-    const game = page.querySelector(selector);
+    const game = document.querySelector(selector);
 
     if(game){
         game.style.display = "block";
     }
-    // 🔥 FIX END
 
     startGamePageTimer();
 }
@@ -4630,13 +4526,16 @@ function closeGamePage(){
 
     if(page) page.style.display = "none";
 
-    // 🔥 STOP TIMER
-    clearInterval(gamePageTimer);
+    // 🔥 SAFE TIMER STOP
+    if(typeof gamePageTimer !== "undefined"){
+        clearInterval(gamePageTimer);
+    }
+
     gameCooldown = false;
 
-    // 🔥 RESET GAME STATE (IMPORTANT)
-    gameRunning = false;
-    gameLocked = false;
+    // 🔥 RESET GAME STATE
+    if(typeof gameRunning !== "undefined") gameRunning = false;
+    if(typeof gameLocked !== "undefined") gameLocked = false;
 
     // 🔥 HIDE ALL GAMES
     document.querySelectorAll(
@@ -4650,6 +4549,9 @@ function closeGamePage(){
 // ===============================
 // ⏱ GAME TIMER SYSTEM
 // ===============================
+let gamePageTimer;
+let gameCooldown = false;
+
 function startGamePageTimer(){
 
     let time = 10;
@@ -4657,6 +4559,7 @@ function startGamePageTimer(){
 
     const el = document.getElementById("gameTimer");
 
+    // 🔥 CLEAN CLEAR
     clearInterval(gamePageTimer);
 
     gamePageTimer = setInterval(()=>{
@@ -4691,33 +4594,52 @@ function openGame(selector){
         return;
     }
 
+    // ✅ DEFINE GAMES
+    const games = [
+        ".coin-scene",
+        ".battle-scene",
+        ".door-scene",
+        ".box-scene",
+        ".card-scene",
+        ".slot-machine-container",
+        "#magicTilesPanel",
+        ".color-game-container",
+        "#luckyNumberGame",
+        "#luckySevenGame",
+        "#oddEvenGame",
+        "#horseRaceGame",
+        "#carRaceGame",
+        "#crashGamePanel"
+    ];
+
     // 🔥 HIDE ALL
     games.forEach(g=>{
-        let el = document.querySelector(g)
+        let el = document.querySelector(g);
         if(el){
-            el.style.display = "none"
-            el.classList.remove("game-open")
+            el.style.display = "none";
+            el.classList.remove("game-open");
         }
-    })
+    });
 
     // 🔥 SHOW ONE
-    let game = document.querySelector(selector)
+    let game = document.querySelector(selector);
 
     if(game){
-        game.style.display = "block"
-        game.classList.add("game-open")
+        game.style.display = "block";
+        game.classList.add("game-open");
 
-        // ✅ smoother scroll
         requestAnimationFrame(()=>{
             game.scrollIntoView({
                 behavior:"smooth",
                 block:"center"
-            })
-        })
+            });
+        });
+
     }else{
-        console.warn("Game not found:", selector)
+        console.warn("Game not found:", selector);
     }
-}
+
+} // ✅ THIS WAS MISSING
 
 
 // ===============================
