@@ -3839,7 +3839,7 @@ if(!bet) return;
 
 gameRunning = true;
 
-playSound(spinSound);
+playSound(spin);
 
 const horses = [1,2,3,4];
 
@@ -3872,7 +3872,7 @@ let reward = bet*4;
 
 reward = applyRewardLimit(reward);
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -3883,7 +3883,7 @@ addWinner(userAddress,reward);
 }
 else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Horse "+winner+" wins!");
 
@@ -3916,7 +3916,7 @@ if(!bet) return;
 
 gameRunning = true;
 
-playSound(spinSound);
+playSound(spin);
 
 const cars=[1,2,3,4];
 
@@ -3949,7 +3949,7 @@ let reward=bet*4;
 
 reward = applyRewardLimit(reward);    
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -3960,7 +3960,7 @@ addWinner(userAddress,reward);
 }
 else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Car "+winner+" wins!");
     
@@ -4039,7 +4039,7 @@ const display=document.getElementById("oddEvenNumber");
 
 display.classList.add("spin-number");
 
-playSound(spinSound);
+playSound(spin);
 
 setTimeout(()=>{
 
@@ -4063,7 +4063,7 @@ if(reward>0){
 
 reward=applyRewardLimit(reward);
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -4076,7 +4076,7 @@ updateOddEvenHistory(result);
 }
 else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Wrong Choice");
 
@@ -4134,7 +4134,7 @@ const dice=document.getElementById("lucky7Dice");
 
 dice.classList.add("roll");
 
-playSound(diceSound);
+playSound(dice);
 
 setTimeout(()=>{
 
@@ -4168,7 +4168,7 @@ if(reward>0){
 
 reward = applyRewardLimit(reward);
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -4179,7 +4179,7 @@ addWinner(userAddress,reward);
 }
 else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Dice: "+result);
 
@@ -4223,7 +4223,7 @@ const display = document.getElementById("luckyDisplay");
 
 display.classList.add("spin");
 
-playSound(spinSound);
+playSound(spin);
 
 setTimeout(()=>{
 
@@ -4239,7 +4239,7 @@ let reward = bet * 5;
 
 reward = applyRewardLimit(reward);
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -4250,7 +4250,7 @@ addWinner(userAddress,reward);
 }
 else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Result: "+result);
 
@@ -4297,7 +4297,7 @@ return;
 
 gameRunning = true;
 
-playSound(spinSound);
+playSound(spin);
 
 const coin = document.getElementById("coinElement");
 
@@ -4325,7 +4325,7 @@ if(result === selectedCoin){
 
 let reward = result === "edge" ? currentBet * 4 : currentBet * 2;
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -4335,7 +4335,7 @@ addWinner(userAddress,reward);
 
 }else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Result: "+result.toUpperCase());
 
@@ -4380,7 +4380,7 @@ return;
 
 gameRunning = true;
 
-playSound(spinSound);
+playSound(spin);
 
 const outcomes = ["lose","win","rare"];
 
@@ -4406,7 +4406,7 @@ setTimeout(()=>{
 
 if(result === "lose"){
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("Battle lost");
 
@@ -4416,7 +4416,7 @@ else if(result === "win"){
 
 let reward = currentBet * 2;
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -4430,7 +4430,7 @@ else{
 
 let reward = currentBet * 4;
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -4454,7 +4454,7 @@ if (!(await checkGameCooldown())) return
 
 gameRunning = true
 
-playSound(spinSound)
+playSound(spin)
 
 let result
 
@@ -4484,7 +4484,7 @@ let reward = 20
 
 reward = applyRewardLimit(reward)
 
-playSound(winSound)
+playSound(win)
 
 showBigWin(reward)
 
@@ -4500,7 +4500,7 @@ let reward = 50
 
 reward = applyRewardLimit(reward)
 
-playSound(winSound)
+playSound(win)
 
 showBigWin(reward)
 
@@ -4512,7 +4512,7 @@ addWinner(userAddress,reward)
 
 else{
 
-playSound(loseSound)
+playSound(lose)
 
 showLose("Bomb door exploded")
 
@@ -4549,7 +4549,7 @@ if(!box) return
 
 box.classList.add("box-shaking")
 
-playSound(boxSound)
+playSound(box)
 
 setTimeout(()=>{
 
@@ -4585,7 +4585,7 @@ setTimeout(()=>{
 
 if(reward>0){
 
-playSound(winSound)
+playSound(win)
 
 reward = applyRewardLimit(reward)
 
@@ -4598,7 +4598,7 @@ addWinner(userAddress,reward)
 }
 else{
 
-playSound(loseSound)
+playSound(lose)
 
 showLose("Empty box! You lost your bet.");
 
@@ -4642,7 +4642,7 @@ tile.innerHTML="💣"
 
 document.getElementById("tilesGrid").classList.add("grid-shake")
 
-playSound(loseSound)
+playSound(lose)
 
 setTimeout(()=>{
 
@@ -4670,7 +4670,7 @@ document.getElementById("tilesScore").innerText=
 
 document.getElementById("cashoutBtn").style.display="block"
 
-playSound(winSound)
+playSound(win)
 
 gameRunning=false
 
@@ -4722,7 +4722,7 @@ activeTilesGame = false
 
 tileReward = applyRewardLimit(tileReward)
 
-playSound(winSound)
+playSound(win)
 
 showBigWin(tileReward);
 
@@ -4801,7 +4801,7 @@ clearInterval(crashInterval)
 isCrashed = true
 gameRunning = false
 
-playSound(loseSound)
+playSound(lose)
 
 document.getElementById("crashMultiplier").innerText="CRASHED!"
 document.getElementById("crashMultiplier").style.color="red"
@@ -4965,7 +4965,7 @@ status.innerText="Shooting..."
 
 projectile.classList.add("is-shooting")
 
-playSound(diceSound)
+playSound(dice)
 
 setTimeout(()=>{
 
@@ -4996,7 +4996,7 @@ resultText="🎯 Outer Ring!"
 }
 else{
 
-playSound(loseSound)
+playSound(lose)
 
 status.innerText="❌ Missed Target!"
 
@@ -5011,7 +5011,7 @@ reward = applyRewardLimit(reward)
 
 status.innerText=resultText
 
-playSound(winSound)
+playSound(win)
 
 setTimeout(()=>{
 
@@ -5038,7 +5038,7 @@ if(!bet) return;
 
 gameRunning = true;
 
-playSound(spinSound);
+playSound(spin);
 
 const symbols = ["7️⃣","🍒","⭐","💎","🔔"];
 
@@ -5104,7 +5104,7 @@ reward = bet * 5;
 
 reward = applyRewardLimit(reward);
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -5121,7 +5121,7 @@ reward = bet * 2;
 
 reward = applyRewardLimit(reward);
 
-playSound(winSound);
+playSound(win);
 
 showBigWin(reward);
 
@@ -5134,7 +5134,7 @@ addWinner(userAddress,reward);
 // LOSE
 else{
 
-playSound(loseSound);
+playSound(lose);
 
 showLose("❌ No Match!");
 
@@ -5171,7 +5171,7 @@ orb.style.background="#475569"
 
 status.innerText="Choosing color..."
 
-playSound(spinSound)
+playSound(spin)
 
 setTimeout(()=>{
 
@@ -5212,7 +5212,7 @@ reward = bet * 2
 
 reward = applyRewardLimit(reward)
 
-playSound(winSound)
+playSound(win)
 
 showBigWin(reward);
 claimGameReward(reward)
@@ -5223,7 +5223,7 @@ status.innerText="You won "+reward+" DMX"
 }
 else{
 
-playSound(loseSound)
+playSound(lose)
 
 showLose("❌ Wrong Color!");
 
@@ -5245,7 +5245,7 @@ document.getElementById("bigWinPopup").style.display="flex";
 
 document.getElementById("bigWinAmount").innerText="+"+amount+" DMX";
 
-playSound(winSound);
+playSound(win);
 
 for(let i=0;i<25;i++){
 
@@ -5287,7 +5287,7 @@ document.getElementById("losePopup").style.display="flex";
 
 document.getElementById("loseText").innerText=text;
 
-playSound(loseSound);
+playSound(lose);
 
 }
 
