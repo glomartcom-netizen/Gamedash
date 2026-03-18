@@ -1805,19 +1805,6 @@ transform:scale(0.9);
 </button>
 
 
-<!-- LIVE WINNER BOARD -->
-
-<div class="winner-container">
-
-<div class="winner-title">
-🔥 Live Winners
-</div>
-
-<div id="winnerBoard" class="winner-board"></div>
-
-</div>
-
-
 <!-- GAME PANEL -->
 
 <div class="game-zone">
@@ -3073,15 +3060,15 @@ music.pause()
 
 }
 
-function playSound(name){
+function playSound(sound){
 
-if(!name) return
+if(!sound) return;
 
-if(typeof name === "string"){
-SoundEngine.play(name)
+if(typeof sound === "string"){
+SoundEngine.play(sound);
 }
 
-    }
+}
     
     
 
@@ -3496,9 +3483,9 @@ return true
     }  
     
 
-function closeAllGames(){
+function openGame(selector){
 
-const games=[
+const games = [
 
 ".coin-scene",
 ".battle-scene",
@@ -3522,6 +3509,13 @@ games.forEach(g=>{
 let el=document.querySelector(g)
 if(el) el.style.display="none"
 })
+
+let game=document.querySelector(selector)
+
+if(game){
+game.style.display="block"
+game.classList.add("game-open")
+}
 
 }
     
@@ -3772,65 +3766,21 @@ addCrashHistory(crashValue)
 // GAME OPEN FUNCTIONS
 // ===============================
 
-function openCoinGame(){
-showGame(".coin-scene",clickSound)
-}
-
-function openBattleGame(){
-showGame(".battle-scene",clickSound)
-    }
-
-function openDoorGame(){
-showGame(".door-scene",spinSound)
-}    
-
-function openLuckyBox(){
-showGame(".box-scene",boxSound)
-}
-
-function openCardGame(){
-showGame(".card-scene",cardSound)
-}
-
-function openTargetGame(){
-showGame(".target-scene",targetSound)
-}
-
-function startSlot(){
-showGame(".slot-machine-container",slotSound)
-}
-
-function openColorGame(){
-showGame(".color-game-container",colorSound)
-}
-
-function openMagicTiles(){
-showGame("#magicTilesPanel",tilesSound)
-}
-
-function openCrashGame(){
-showGame("#crashGamePanel",crashSound)
-}
-
-function openLuckyNumber(){
-showGame("#luckyNumberGame")
-}
-
-function openLuckySeven(){
-showGame("#luckySevenGame")
-}
-
-function openOddEven(){
-showGame("#oddEvenGame")
-}
-
-function openHorseRace(){
-showGame("#horseRaceGame")
-}
-
-function openCarRace(){
-showGame("#carRaceGame")
-    }    
+function openCoinGame(){openGame('.coin-scene')}
+function openBattleGame(){openGame('.battle-scene')}
+function openDoorGame(){openGame('.door-scene')}
+function openLuckyBox(){openGame('.box-scene')}
+function openCardGame(){openGame('.card-scene')}
+function openTargetGame(){openGame('.target-scene')}
+function startSlot(){openGame('.slot-machine-container')}
+function openColorGame(){openGame('.color-game-container')}
+function openMagicTiles(){openGame('#magicTilesPanel')}
+function openCrashGame(){openGame('#crashGamePanel')}
+function openLuckyNumber(){openGame('#luckyNumberGame')}
+function openLuckySeven(){openGame('#luckySevenGame')}
+function openOddEven(){openGame('#oddEvenGame')}
+function openHorseRace(){openGame('#horseRaceGame')}
+function openCarRace(){openGame('#carRaceGame')}
 
 // ============================
 // RACE SYSTEM (HORSE + CAR)
