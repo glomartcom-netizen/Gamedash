@@ -4011,9 +4011,37 @@ function startCooldown(seconds){
 
 }
 
-// ===============================
-// 1. CORE GAME STATE & SECURITY
-// ===============================
+function playSelectedGame(){
+
+    if(gameCooldown){
+        showLose("⏱ Wait for timer");
+        return;
+    }
+
+    const title = document.getElementById("gamePageTitle").innerText;
+
+    switch(title){
+
+        case "Coin Game": flipCoin(); break;
+        case "Battle Game": startBattle(); break;
+        case "Door Game": openDoor(Math.floor(Math.random()*3)+1); break;
+        case "Lucky Box": openBoxAnimation(); break;
+        case "Card Game": pickCard(Math.floor(Math.random()*3)); break;
+        case "Slot": spinSlot(); break;
+        case "Magic Tiles": startTilesGame(); break;
+        case "Color Game": playColorGame(); break;
+        case "Lucky Number": playLuckyNumber(); break;
+        case "Lucky 7": playLucky7(); break;
+        case "Odd Even": playOddEven(); break;
+        case "Horse Race": startHorseRace(); break;
+        case "Car Race": startCarRace(); break;
+        case "Crash Game": startCrash(); break;
+
+        default:
+        showLose("Game not found");
+    }
+}
+    
 // ===============================
 // 🔒 CORE GAME STATE (FINAL FIXED)
 // ===============================
