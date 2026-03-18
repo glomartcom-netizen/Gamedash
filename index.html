@@ -362,6 +362,21 @@ margin:8px 0;
 border-radius:6px;
 }
 
+@keyframes horseRun {
+
+0%   { transform: translateY(0); }
+25%  { transform: translateY(-6px); }
+50%  { transform: translateY(0); }
+75%  { transform: translateY(-4px); }
+100% { transform: translateY(0); }
+
+}
+
+.horse-running{
+animation: horseRun 0.3s infinite;
+transition: left 2s linear;
+    }    
+
 .horse-btn{
 
 padding:12px 16px;
@@ -451,6 +466,21 @@ background:#f97316;
 border-radius:50%;
 transition:2s linear;
     }
+
+@keyframes carBounce {
+
+0%   { transform: translateY(0); }
+25%  { transform: translateY(-3px); }
+50%  { transform: translateY(0); }
+75%  { transform: translateY(-2px); }
+100% { transform: translateY(0); }
+
+}
+
+.car-running{
+animation: carBounce 0.2s infinite;
+transition: left 2s linear;
+    }    
     
 /* LUCKY BOX 3D STYLES */
 
@@ -3366,6 +3396,10 @@ window.onerror = function(){
 gameRunning = false;
 }
 
+
+// ===============================
+// FIX 1: function syntax (IMPORTANT)
+// ===============================
 function applyRewardLimit(reward){
 
 if(reward > jackpotPool){
@@ -3377,7 +3411,12 @@ return reward
 }
 
 
+// ===============================
+// FIX 2: SAFE CLAIM (no bug)
+// ===============================
 function claimGameReward(amount){
+
+if(!amount || amount <= 0) return
 
 claimBalance += amount
 
@@ -3386,13 +3425,19 @@ updateBalance()
 }
 
 
+// ===============================
+// FIX 3: GAME COOLDOWN (future ready)
+// ===============================
 async function checkGameCooldown(){
 
 return true
 
-    }  
-    
+}
 
+
+// ===============================
+// FIX 4: SAFE GAME SWITCH (IMPORTANT FIX)
+// ===============================
 function openGame(selector){
 
 const games = [
@@ -3415,168 +3460,95 @@ const games = [
 
 ]
 
+// 🔥 HIDE ALL
 games.forEach(g=>{
 let el=document.querySelector(g)
-if(el) el.style.display="none"
+if(el){
+el.style.display="none"
+el.classList.remove("game-open") // FIX
+}
 })
 
+// 🔥 SHOW ONE
 let game=document.querySelector(selector)
 
 if(game){
 game.style.display="block"
 game.classList.add("game-open")
-}
 
-}
-    
-
-function showGame(selector,sound){
-
-closeAllGames()
-
-const el=document.querySelector(selector)
-
-if(!el) return
-
-el.style.display="block"
-
-el.classList.add("game-open")
-
-if(sound) playSound(sound)
-
+// 🔥 AUTO SCROLL (ADD)
 setTimeout(()=>{
-el.scrollIntoView({
+game.scrollIntoView({
 behavior:"smooth",
 block:"center"
 })
 },100)
 
-}    
-
-function addColorHistory(result){
-
-const history=document.getElementById("colorHistory");
-
-const item=document.createElement("span");
-
-item.innerText=result;
-
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
 }
 
-    }
-
-function addCrashHistory(multiplier){
-
-const history=document.getElementById("crashHistory");
-
-const item=document.createElement("span");
-
-item.innerText=multiplier+"x";
-
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
 }
-
-    }
-
-
- function addLuckyNumberHistory(num){
-
-const history=document.getElementById("luckyNumberHistory");
-
-const item=document.createElement("span");
-
-item.innerText=num;
-
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
-}
-
-    }
     
 
-  function addLuckySevenHistory(num){
+// ===============================
+// FIX 5: showGame() error fix
+// ===============================
+function showGame(selector,sound){
 
-const history=document.getElementById("luckySevenHistory");
+// ❌ closeAllGames() not defined
+// 🔥 replace with openGame logic
 
-const item=document.createElement("span");
+openGame(selector)
 
-item.innerText="🎲"+num;
+if(sound) playSound(sound)
 
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
 }
-
-    }  
-
-
-function addOddEvenHistory(result){
-
-const history=document.getElementById("oddEvenHistory");
-
-const item=document.createElement("span");
-
-item.innerText=result;
-
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
-}
-
-    }
-
-function addHorseHistory(horse){
-
-const history=document.getElementById("horseHistory");
-
-const item=document.createElement("span");
-
-item.innerText="🐎"+horse;
-
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
-}
-
-    }
-
-
-function addCarHistory(car){
-
-const history=document.getElementById("carHistory");
-
-const item=document.createElement("span");
-
-item.innerText="🏎"+car;
-
-history.prepend(item);
-
-if(history.children.length>12){
-history.removeChild(history.lastChild);
-}
-
-    }
     
+
+// ===============================
+// FIX 6: SAFE HISTORY (NO ERROR)
+// ===============================
+function safeAdd(historyId,text){
+
+const history=document.getElementById(historyId)
+if(!history) return
+
+const item=document.createElement("span")
+item.innerText=text
+
+history.prepend(item)
+
+if(history.children.length>12){
+history.removeChild(history.lastChild)
+}
+
+}
+
+// ===============================
+// REPLACE HISTORY FUNCTIONS
+// ===============================
+function addColorHistory(r){ safeAdd("colorHistory",r) }
+function addCrashHistory(m){ safeAdd("crashHistory",m+"x") }
+function addLuckyNumberHistory(n){ safeAdd("luckyNumberHistory",n) }
+function addLuckySevenHistory(n){ safeAdd("luckySevenHistory","🎲"+n) }
+function addOddEvenHistory(r){ safeAdd("oddEvenHistory",r) }
+function addHorseHistory(h){ safeAdd("horseHistory","🐎"+h) }
+function addCarHistory(c){ safeAdd("carHistory","🏎"+c) }
+
+
+// ===============================
+// FIX 7: TIMER SAFE (NO MULTIPLE INTERVAL BUG)
+// ===============================
 let roundId = 1001
 let roundTime = 10
-
 let globalResults = {}
+
+let roundInterval = null
 
 function startRoundTimer(){
 
-setInterval(()=>{
+if(roundInterval) return // 🔥 prevent duplicate
+
+roundInterval = setInterval(()=>{
 
 roundTime--
 
@@ -3585,18 +3557,14 @@ if(timerEl) timerEl.innerText = roundTime
 
 if(roundTime <= 0){
 
-// RESULT GENERATE
 generateResults()
 
-// NEXT ROUND
 roundId++
 roundTime = 10
 
-// UPDATE UI
 let roundEl = document.getElementById("roundId")
 if(roundEl) roundEl.innerText = roundId
 
-// RESET UNIVERSAL GAMES
 resetUniversalGames()
 
 }
@@ -3605,77 +3573,60 @@ resetUniversalGames()
 
 }
 
+
+// ===============================
+// FIX 8: SAFE RESET (NO ERROR)
+// ===============================
 function resetUniversalGames(){
 
-// reset selections
-oddEvenChoice = null
-lucky7Choice = null
-selectedLucky = null
+if(typeof oddEvenChoice !== "undefined") oddEvenChoice = null
+if(typeof lucky7Choice !== "undefined") lucky7Choice = null
+if(typeof selectedLucky !== "undefined") selectedLucky = null
 
-// reset UI numbers
 let oddDisplay = document.getElementById("oddEvenNumber")
 if(oddDisplay) oddDisplay.innerText = "?"
 
 let luckyDisplay = document.getElementById("luckyNumberDisplay")
 if(luckyDisplay) luckyDisplay.innerText = "?"
 
-    }    
+}
 
+
+// ===============================
+// FIX 9: GENERATE RESULTS SAFE
+// ===============================
 function generateResults(){
 
-// COLOR RESULT
 const colors=["green","red","purple"]
 globalResults.color = colors[Math.floor(Math.random()*3)]
-
 addColorHistory(globalResults.color)
 
-
-// LUCKY NUMBER
 globalResults.luckyNumber = Math.floor(Math.random()*5)+1
-
 addLuckyNumberHistory(globalResults.luckyNumber)
 
-
-// LUCKY 7
 globalResults.lucky7 = Math.floor(Math.random()*6)+1
-
 addLuckySevenHistory(globalResults.lucky7)
 
-
-// ODD EVEN
 let num=Math.floor(Math.random()*10)+1
-
 globalResults.oddEven = num%2===0 ? "even":"odd"
-
 addOddEvenHistory(globalResults.oddEven)
 
-
-// HORSE
 globalResults.horse = Math.floor(Math.random()*4)+1
-
 addHorseHistory(globalResults.horse)
 
-
-// CAR
 globalResults.car = Math.floor(Math.random()*4)+1
-
 addCarHistory(globalResults.car)
 
-
-// CRASH RESULT
 let crashValue = (Math.random()*5+1).toFixed(2)
-
 globalResults.crash = crashValue
-
 addCrashHistory(crashValue)
 
 }
     
 
 // ===============================
-// GAME OPEN FUNCTIONS
+// GAME OPEN FUNCTIONS (NO CHANGE)
 // ===============================
-
 function openCoinGame(){openGame('.coin-scene')}
 function openBattleGame(){openGame('.battle-scene')}
 function openDoorGame(){openGame('.door-scene')}
@@ -3687,6 +3638,10 @@ function openColorGame(){openGame('.color-game-container')}
 function openMagicTiles(){openGame('#magicTilesPanel')}
 function openCrashGame(){openGame('#crashGamePanel')}
 function openLuckyNumber(){openGame('#luckyNumberGame')}
+function openLuckySeven(){openGame('#luckySevenGame')}
+function openOddEven(){openGame('#oddEvenGame')}
+function openHorseRace(){openGame('#horseRaceGame')}
+function openCarRace(){openGame('#carRaceGame')}
 function openLuckySeven(){openGame('#luckySevenGame')}
 function openOddEven(){openGame('#oddEvenGame')}
 function openHorseRace(){openGame('#horseRaceGame')}
@@ -3737,9 +3692,6 @@ document.querySelectorAll(".car-btn")[num-1].classList.add("selected-btn");
 }
 
 
-// ----------------------------
-// HORSE RACE
-// ----------------------------
 async function startHorseRace(){
 
 if(gameRunning) return;
@@ -3747,76 +3699,77 @@ if(gameRunning) return;
 let bet = processBet();
 if(!bet) return;
 
+if(selectedHorse === null){
+alert("Select Horse");
+return;
+}
+
 gameRunning = true;
 
-playSound(spin);
+playSound("race");
 
 const horses = [1,2,3,4];
-
 const winner = Math.floor(Math.random()*4)+1;
 
 
-// move horses
+// START RUN ANIMATION
 horses.forEach(i=>{
+let el = document.getElementById("horse"+i);
+if(!el) return;
 
-if(i === winner){
-
-document.getElementById("horse"+i).style.left="90%";
-
-}else{
-
-let distance = Math.random()*60 + 10;
-
-document.getElementById("horse"+i).style.left=distance+"%";
-
-}
-
+el.classList.add("horse-running");
 });
 
 
 setTimeout(()=>{
 
-if(selectedHorse === winner){
+// MOVE HORSES
+horses.forEach(i=>{
 
-let reward = bet*4;
+let el = document.getElementById("horse"+i);
+if(!el) return;
 
-reward = applyRewardLimit(reward);
-
-playSound(win);
-
-showBigWin(reward);
-
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-else{
-
-playSound(lose);
-
-showLose("Horse "+winner+" wins!");
-
+if(i === winner){
+el.style.left="90%";
+}else{
+let distance = Math.random()*60 + 10;
+el.style.left=distance+"%";
 }
 
-// reset race
+});
+
+},100);
+
+
+// STOP + RESULT
 setTimeout(()=>{
 
+// STOP RUN ANIMATION
+horses.forEach(i=>{
+let el = document.getElementById("horse"+i);
+if(el) el.classList.remove("horse-running");
+});
+
+let win = (selectedHorse === winner);
+
+resolveGame("Horse Race", win, bet);
+
+addHorseHistory(winner);
+
+// RESET
+setTimeout(()=>{
 resetRace();
-
-gameRunning=false;
-
 },2000);
 
-},2000);
+},2200);
 
 }
-
 
 
 // ----------------------------
 // CAR RACE
 // ----------------------------
+
 async function startCarRace(){
 
 if(gameRunning) return;
@@ -3824,68 +3777,69 @@ if(gameRunning) return;
 let bet = processBet();
 if(!bet) return;
 
+if(selectedCar === null){
+alert("Select Car");
+return;
+}
+
 gameRunning = true;
 
-playSound(spin);
+playSound("race");
 
 const cars=[1,2,3,4];
-
 const winner=Math.floor(Math.random()*4)+1;
 
 
-// move cars
+// 🚗 START RUN ANIMATION
+cars.forEach(i=>{
+let el=document.getElementById("car"+i);
+if(el) el.classList.add("car-running");
+});
+
+
+// 🚗 MOVE AFTER SMALL DELAY
+setTimeout(()=>{
+
 cars.forEach(i=>{
 
+let el=document.getElementById("car"+i);
+if(!el) return;
+
 if(i===winner){
-
-document.getElementById("car"+i).style.left="90%";
-
+el.style.left="90%";
 }else{
-
 let distance=Math.random()*60+10;
-
-document.getElementById("car"+i).style.left=distance+"%";
-
+el.style.left=distance+"%";
 }
 
 });
 
+},100);
 
+
+// 🏁 STOP + RESULT
 setTimeout(()=>{
 
-if(selectedCar===winner){
+// STOP ANIMATION
+cars.forEach(i=>{
+let el=document.getElementById("car"+i);
+if(el) el.classList.remove("car-running");
+});
 
-let reward=bet*4;
+let win = (selectedCar===winner);
 
-reward = applyRewardLimit(reward);    
+// ✅ ENGINE CALL
+resolveGame("Car Race", win, bet);
 
-playSound(win);
+addCarHistory(winner);
 
-showBigWin(reward);
 
-claimGameReward(reward);
-
-addWinner(userAddress,reward);
-
-}
-else{
-
-playSound(lose);
-
-showLose("Car "+winner+" wins!");
-    
-}
-
-// reset race
+// 🔁 RESET AFTER RESULT
 setTimeout(()=>{
-
 resetRace();
-
-gameRunning=false;
-
 },2000);
 
-},2000);
+},2200);
 
 }
 
@@ -3900,22 +3854,23 @@ for(let i=1;i<=4;i++){
 
 let horse=document.getElementById("horse"+i);
 if(horse){
-horse.style.transition="none";
 horse.style.left="30px";
+horse.classList.remove("horse-running");
 }
 
 let car=document.getElementById("car"+i);
 if(car){
-car.style.transition="none";
 car.style.left="30px";
+car.classList.remove("car-running");
 }
 
 }
 
-selectedHorse = null;
-selectedCar = null;
+gameRunning = false;
 
 }
+
+    
     
 
 let oddEvenChoice=null;
