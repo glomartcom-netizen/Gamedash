@@ -4485,7 +4485,6 @@ function openBattleGame(){openGame('.battle-scene')}
 function openDoorGame(){openGame('.door-scene')}
 function openLuckyBox(){openGame('.box-scene')}
 function openCardGame(){openGame('.card-scene')}
-function openTargetGame(){openGame('.target-scene')}
 function startSlot(){openGame('.slot-machine-container')}
 function openColorGame(){openGame('.color-game-container')}
 function openMagicTiles(){openGame('#magicTilesPanel')}
@@ -4495,10 +4494,7 @@ function openLuckySeven(){openGame('#luckySevenGame')}
 function openOddEven(){openGame('#oddEvenGame')}
 function openHorseRace(){openGame('#horseRaceGame')}
 function openCarRace(){openGame('#carRaceGame')}
-function openLuckySeven(){openGame('#luckySevenGame')}
-function openOddEven(){openGame('#oddEvenGame')}
-function openHorseRace(){openGame('#horseRaceGame')}
-function openCarRace(){openGame('#carRaceGame')}
+
 
 // ===============================
 // HORSE RACE (FINAL SYNC)
@@ -4882,7 +4878,7 @@ function playLuckyNumber(){
 
     playSound("spin");
 
-    display.classList.add("spin");
+    display.classList.add("spin-number");
 
     // ===============================
     // 🎯 USE UNIVERSAL RESULT
@@ -5001,19 +4997,23 @@ function playLucky7(){
         // CHECK RESULT
         // ===============================
 
-        if(lucky7Choice === "low" && result >= 1 && result <= 3){
-            win = true;
-            reward = bet * 2;
-        }
-        else if(lucky7Choice === "high" && result >= 5 && result <= 6){
-            win = true;
-            reward = bet * 2;
-        }
-        else if(lucky7Choice === "seven" && result === 4){
-            // 🔥 center value = jackpot (simulate 7)
-            win = true;
-            reward = bet * 6;
-        }
+        let result = Math.floor(Math.random()*7)+1;
+
+if(lucky7Choice === "low" && result >= 1 && result <= 3){
+    win = true;
+    reward = bet * 2;
+}
+else if(lucky7Choice === "high" && result >= 5 && result <= 6){
+    win = true;
+    reward = bet * 2;
+}
+else if(lucky7Choice === "seven" && result === 7){
+    win = true;
+    reward = bet * 6;
+}
+else{
+    win = false;
+}
 
         // ===============================
         // WIN / LOSE
@@ -5021,23 +5021,45 @@ function playLucky7(){
 
         if(win){
 
-            reward = applyRewardLimit(reward);
+    reward = applyRewardLimit(reward);
 
-            playSound("win");
+    playSound("win");
 
-            showBigWin(reward);
+    // 🔥 JACKPOT EFFECT (ONLY FOR 7)
+    if(result === 7){
 
-            claimGameReward(reward);
+        document.body.classList.add("win-flash");
 
-            addWinner(userAddress, reward);
+        setTimeout(()=>{
+            document.body.classList.remove("win-flash");
+        },1200);
 
-        }else{
+        // spark effect
+        for(let i=0;i<10;i++){
+            let spark=document.createElement("div");
+            spark.className="spark";
+            spark.style.left=Math.random()*100+"vw";
+            spark.style.top=Math.random()*100+"vh";
+            document.body.appendChild(spark);
 
-            playSound("lose");
-
-            showLose("Result: " + result);
-
+            setTimeout(()=>spark.remove(),800);
         }
+
+    }
+
+    showBigWin(reward);
+
+    claimGameReward(reward);
+
+    addWinner(userAddress, reward);
+
+}else{
+
+    playSound("lose");
+
+    showLose("Result: " + result);
+
+}
 
         // ===============================
         // RESET + COOLDOWN
@@ -5170,12 +5192,10 @@ function pickColor(color){
     selectedColor = color;
 
     document.querySelectorAll(".color-pod").forEach(p=>{
-        p.classList.remove("pod-selected");
-    });
+    p.classList.remove("active");
+});
 
-    document.getElementById("pod-"+color).classList.add("pod-selected");
-
-}
+document.getElementById("pod-"+color).classList.add("active");
 
 
 // PLAY GAME
@@ -6288,7 +6308,7 @@ function showBigWin(amount){
     playSound("win");
 
     // 💰 COIN ANIMATION
-    for(let i=0;i<20;i++){
+    for(let i=0;i<10;i++){
 
         let coin = document.createElement("div");
 
