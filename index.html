@@ -3958,19 +3958,22 @@ function startCooldown(seconds){
 // ===============================
 // 🎮 GAME SELECTOR
 // ===============================
-function playSelectedGame() {
+function playSelectedGame(){
 
-    const gameTitleElement = document.getElementById("gamePageTitle");
-    if (!gameTitleElement) return;
+    if(gameCooldown){
+        showLose("⏱ Wait...");
+        return;
+    }
 
-    const activeGameTitle = gameTitleElement.innerText.trim();
+    const title = document.getElementById("gamePageTitle").innerText;
 
-    switch (activeGameTitle) {
+    switch(title){
+
         case "Coin Game": flipCoin(); break;
         case "Battle Game": startBattle(); break;
-        case "Door Game": openDoor(Math.floor(Math.random() * 3) + 1); break;
+        case "Door Game": openDoor(Math.floor(Math.random()*3)+1); break;
         case "Lucky Box": openBoxAnimation(); break;
-        case "Card Game": pickCard(Math.floor(Math.random() * 3)); break;
+        case "Card Game": pickCard(Math.floor(Math.random()*3)); break;
         case "Slot": spinSlot(); break;
         case "Magic Tiles": startTilesGame(); break;
         case "Color Game": playColorGame(); break;
@@ -3982,10 +3985,9 @@ function playSelectedGame() {
         case "Crash Game": startCrash(); break;
 
         default:
-            console.error("Game handler not found for: " + activeGameTitle);
+            showLose("Game not found");
     }
 }
-
 // ===============================
 // 🔒 CORE GAME STATE
 // ===============================
@@ -4468,53 +4470,40 @@ async function checkGameCooldown(){
 }
 
 
-function openGamePage(gameName){
+function openGamePage(name){
 
-    const page = document.getElementById("gamePage");
-    const title = document.getElementById("gamePageTitle");
+    document.getElementById("gamePage").style.display = "block";
+    document.getElementById("gamePageTitle").innerText = name;
 
-    if(page) page.style.display = "block";
-    if(title) title.innerText = gameName;
-
-    // 🎯 ALL GAMES HIDE
+    // hide all
     document.querySelectorAll(
         ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
-    ).forEach(g=>{
-        g.style.display = "none";
-    });
+    ).forEach(g => g.style.display = "none");
 
-    // 🎯 SHOW SELECTED GAME
-    let selector = "";
+    // show selected
+    const map = {
+        "Coin Game": ".coin-scene",
+        "Battle Game": ".battle-scene",
+        "Door Game": ".door-scene",
+        "Lucky Box": ".box-scene",
+        "Card Game": ".card-scene",
+        "Slot": ".slot-machine-container",
+        "Magic Tiles": "#magicTilesPanel",
+        "Color Game": ".color-game-container",
+        "Lucky Number": "#luckyNumberGame",
+        "Lucky 7": "#luckySevenGame",
+        "Odd Even": "#oddEvenGame",
+        "Horse Race": "#horseRaceGame",
+        "Car Race": "#carRaceGame",
+        "Crash Game": "#crashGamePanel"
+    };
 
-    switch(gameName){
-        case "Coin Game": selector = ".coin-scene"; break;
-        case "Battle Game": selector = ".battle-scene"; break;
-        case "Door Game": selector = ".door-scene"; break;
-        case "Lucky Box": selector = ".box-scene"; break;
-        case "Card Game": selector = ".card-scene"; break;
-        case "Slot": selector = ".slot-machine-container"; break;
-        case "Magic Tiles": selector = "#magicTilesPanel"; break;
-        case "Color Game": selector = ".color-game-container"; break;
-        case "Lucky Number": selector = "#luckyNumberGame"; break;
-        case "Lucky 7": selector = "#luckySevenGame"; break;
-        case "Odd Even": selector = "#oddEvenGame"; break;
-        case "Horse Race": selector = "#horseRaceGame"; break;
-        case "Car Race": selector = "#carRaceGame"; break;
-        case "Crash Game": selector = "#crashGamePanel"; break;
-    }
-
-    const game = document.querySelector(selector);
+    let game = document.querySelector(map[name]);
 
     if(game){
         game.style.display = "block";
-    }else{
-        console.error("Game not found:", gameName);
     }
-
-    // ⏱ TIMER START
-    startGamePageTimer();
 }
-
 
 function closeGamePage(){
 
