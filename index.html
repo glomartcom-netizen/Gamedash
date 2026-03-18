@@ -3958,28 +3958,19 @@ function startCooldown(seconds){
 // ===============================
 // 🎮 GAME SELECTOR
 // ===============================
-function playSelectedGame(){
+function playSelectedGame() {
 
-    // 🔥 ADD THIS FIRST
-    if(gameCooldown){
-        showLose("⏱ Wait...");
-        return;
-    }
+    const gameTitleElement = document.getElementById("gamePageTitle");
+    if (!gameTitleElement) return;
 
-    if(!startGame()){
-        showLose("⏱ Wait...");
-        return;
-    }
+    const activeGameTitle = gameTitleElement.innerText.trim();
 
-    const title = document.getElementById("gamePageTitle").innerText;
-
-    switch(title){
-
+    switch (activeGameTitle) {
         case "Coin Game": flipCoin(); break;
         case "Battle Game": startBattle(); break;
-        case "Door Game": openDoor(Math.floor(Math.random()*3)+1); break;
+        case "Door Game": openDoor(Math.floor(Math.random() * 3) + 1); break;
         case "Lucky Box": openBoxAnimation(); break;
-        case "Card Game": pickCard(Math.floor(Math.random()*3)); break;
+        case "Card Game": pickCard(Math.floor(Math.random() * 3)); break;
         case "Slot": spinSlot(); break;
         case "Magic Tiles": startTilesGame(); break;
         case "Color Game": playColorGame(); break;
@@ -3991,7 +3982,7 @@ function playSelectedGame(){
         case "Crash Game": startCrash(); break;
 
         default:
-            showLose("Game not found");
+            console.error("Game handler not found for: " + activeGameTitle);
     }
 }
 
