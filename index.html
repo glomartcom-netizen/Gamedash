@@ -362,20 +362,42 @@ margin:8px 0;
 border-radius:6px;
 }
 
-@keyframes horseRun {
-
-0%   { transform: translateY(0); }
-25%  { transform: translateY(-6px); }
-50%  { transform: translateY(0); }
-75%  { transform: translateY(-4px); }
-100% { transform: translateY(0); }
-
+/* HORSE RUN */
+@keyframes horseRun{
+0%{transform:translateY(0);}
+25%{transform:translateY(-6px);}
+50%{transform:translateY(0);}
+75%{transform:translateY(-4px);}
+100%{transform:translateY(0);}
 }
 
 .horse-running{
-animation: horseRun 0.3s infinite;
+animation: horseRun 0.25s infinite;
 transition: left 2s linear;
-    }    
+}
+
+/* HORSE DUST */
+.horse-dust{
+position:absolute;
+width:8px;
+height:8px;
+background:rgba(150,150,150,0.6);
+border-radius:50%;
+bottom:0;
+left:0;
+animation: dustMove 1s linear forwards;
+}
+
+@keyframes dustMove{
+0%{transform:translate(0,0) scale(1);opacity:1;}
+100%{transform:translate(-20px,-10px) scale(2);opacity:0;}
+}
+
+/* HORSE WINNER */
+.horse-winner{
+box-shadow:0 0 20px gold;
+border:2px solid gold;
+}
 
 .horse-btn{
 
@@ -467,20 +489,85 @@ border-radius:50%;
 transition:2s linear;
     }
 
-@keyframes carBounce {
+/* ===============================
+CAR RACE ULTRA PRO STYLE
+=============================== */
 
-0%   { transform: translateY(0); }
-25%  { transform: translateY(-3px); }
-50%  { transform: translateY(0); }
-75%  { transform: translateY(-2px); }
-100% { transform: translateY(0); }
+.finish-line{
+position:absolute;
+right:5%;
+top:0;
+width:6px;
+height:100%;
+background: repeating-linear-gradient(
+0deg,
+white 0px,
+white 10px,
+black 10px,
+black 20px
+);
+z-index:1;
+}
 
+@keyframes carBounce{
+0%{transform:translateY(0);}
+50%{transform:translateY(-3px);}
+100%{transform:translateY(0);}
 }
 
 .car-running{
 animation: carBounce 0.2s infinite;
 transition: left 2s linear;
-    }    
+}
+
+/* SMOKE */
+.smoke{
+position:absolute;
+width:10px;
+height:10px;
+background:rgba(200,200,200,0.6);
+border-radius:50%;
+bottom:0;
+left:0;
+animation: smokeMove 1s linear forwards;
+}
+
+@keyframes smokeMove{
+0%{transform:translate(0,0) scale(1);opacity:1;}
+100%{transform:translate(-30px,-20px) scale(2);opacity:0;}
+}
+
+/* WINNER */
+.winner{
+box-shadow:0 0 20px gold;
+border:2px solid gold;
+}
+
+/* ZOOM */
+body.zoom-effect{
+animation: zoomIn 0.5s ease;
+}
+
+@keyframes zoomIn{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+
+/* MEGA WIN */
+.mega-win{
+animation: megaFlash 0.5s infinite alternate;
+}
+
+@keyframes megaFlash{
+0%{box-shadow:0 0 10px gold;}
+100%{box-shadow:0 0 30px gold;}
+}
+
+/* SLOW FINISH */
+.slow-finish{
+transition: left 3s cubic-bezier(0.2,0.8,0.2,1);
+}
     
 /* LUCKY BOX 3D STYLES */
 
@@ -3708,31 +3795,63 @@ gameRunning = true;
 
 playSound("race");
 
+// 🔥 ZOOM
+document.body.classList.add("zoom-effect");
+setTimeout(()=>{
+document.body.classList.remove("zoom-effect");
+},500);
+
+
+// 🔥 SOUND BOOST
+let sound = SoundEngine.sounds["race"];
+if(sound){
+sound.volume = 1;
+setTimeout(()=>{ sound.volume = 0.5; },2000);
+}
+
+
 const horses = [1,2,3,4];
 const winner = Math.floor(Math.random()*4)+1;
 
 
-// START RUN ANIMATION
+// 🐎 START RUN
 horses.forEach(i=>{
-let el = document.getElementById("horse"+i);
-if(!el) return;
-
-el.classList.add("horse-running");
+let el=document.getElementById("horse"+i);
+if(el) el.classList.add("horse-running");
 });
 
 
+// 💨 DUST EFFECT
+let dustInterval = setInterval(()=>{
+
+horses.forEach(i=>{
+let horse=document.getElementById("horse"+i);
+if(!horse) return;
+
+let dust=document.createElement("div");
+dust.className="horse-dust";
+
+horse.appendChild(dust);
+
+setTimeout(()=>dust.remove(),1000);
+
+});
+
+},200);
+
+
+// 🐎 MOVE
 setTimeout(()=>{
 
-// MOVE HORSES
 horses.forEach(i=>{
 
-let el = document.getElementById("horse"+i);
+let el=document.getElementById("horse"+i);
 if(!el) return;
 
-if(i === winner){
+if(i===winner){
 el.style.left="90%";
 }else{
-let distance = Math.random()*60 + 10;
+let distance=Math.random()*60+10;
 el.style.left=distance+"%";
 }
 
@@ -3741,25 +3860,46 @@ el.style.left=distance+"%";
 },100);
 
 
-// STOP + RESULT
+// 🏁 FINISH
 setTimeout(()=>{
 
-// STOP RUN ANIMATION
+clearInterval(dustInterval);
+
+// STOP RUN
 horses.forEach(i=>{
-let el = document.getElementById("horse"+i);
+let el=document.getElementById("horse"+i);
 if(el) el.classList.remove("horse-running");
 });
 
+// 🌟 WINNER EFFECT
+let winHorse = document.getElementById("horse"+winner);
+
+if(winHorse){
+winHorse.classList.add("horse-winner");
+winHorse.classList.add("mega-win");
+winHorse.classList.add("slow-finish");
+}
+
 let win = (selectedHorse === winner);
 
+// ENGINE
 resolveGame("Horse Race", win, bet);
 
 addHorseHistory(winner);
 
+
 // RESET
 setTimeout(()=>{
+
 resetRace();
-},2000);
+
+if(winHorse){
+winHorse.classList.remove("horse-winner");
+winHorse.classList.remove("mega-win");
+winHorse.classList.remove("slow-finish");
+}
+
+},2500);
 
 },2200);
 
@@ -3769,6 +3909,7 @@ resetRace();
 // ----------------------------
 // CAR RACE
 // ----------------------------
+
 
 async function startCarRace(){
 
@@ -3786,18 +3927,52 @@ gameRunning = true;
 
 playSound("race");
 
+// 🔥 ZOOM EFFECT
+document.body.classList.add("zoom-effect");
+setTimeout(()=>{
+document.body.classList.remove("zoom-effect");
+},500);
+
+
+// 🔥 SOUND BOOST
+let sound = SoundEngine.sounds["race"];
+if(sound){
+sound.volume = 1;
+setTimeout(()=>{ sound.volume = 0.5; },2000);
+}
+
+
 const cars=[1,2,3,4];
 const winner=Math.floor(Math.random()*4)+1;
 
 
-// 🚗 START RUN ANIMATION
+// 🚗 START RUN
 cars.forEach(i=>{
 let el=document.getElementById("car"+i);
 if(el) el.classList.add("car-running");
 });
 
 
-// 🚗 MOVE AFTER SMALL DELAY
+// 💨 SMOKE
+let smokeInterval = setInterval(()=>{
+
+cars.forEach(i=>{
+let car=document.getElementById("car"+i);
+if(!car) return;
+
+let smoke=document.createElement("div");
+smoke.className="smoke";
+
+car.appendChild(smoke);
+
+setTimeout(()=>smoke.remove(),1000);
+
+});
+
+},200);
+
+
+// 🚗 MOVE
 setTimeout(()=>{
 
 cars.forEach(i=>{
@@ -3817,27 +3992,46 @@ el.style.left=distance+"%";
 },100);
 
 
-// 🏁 STOP + RESULT
+// 🏁 FINISH
 setTimeout(()=>{
 
-// STOP ANIMATION
+clearInterval(smokeInterval);
+
+// STOP
 cars.forEach(i=>{
 let el=document.getElementById("car"+i);
 if(el) el.classList.remove("car-running");
 });
 
+// 🌟 WINNER EFFECT
+let winCar = document.getElementById("car"+winner);
+
+if(winCar){
+winCar.classList.add("winner");
+winCar.classList.add("mega-win");
+winCar.classList.add("slow-finish");
+}
+
 let win = (selectedCar===winner);
 
-// ✅ ENGINE CALL
+// ENGINE
 resolveGame("Car Race", win, bet);
 
 addCarHistory(winner);
 
 
-// 🔁 RESET AFTER RESULT
+// RESET
 setTimeout(()=>{
+
 resetRace();
-},2000);
+
+if(winCar){
+winCar.classList.remove("winner");
+winCar.classList.remove("mega-win");
+winCar.classList.remove("slow-finish");
+}
+
+},2500);
 
 },2200);
 
@@ -3856,12 +4050,18 @@ let horse=document.getElementById("horse"+i);
 if(horse){
 horse.style.left="30px";
 horse.classList.remove("horse-running");
+horse.classList.remove("horse-winner");
+horse.classList.remove("mega-win");
+horse.classList.remove("slow-finish");
 }
 
 let car=document.getElementById("car"+i);
 if(car){
 car.style.left="30px";
 car.classList.remove("car-running");
+car.classList.remove("winner");
+car.classList.remove("mega-win");
+car.classList.remove("slow-finish");
 }
 
 }
