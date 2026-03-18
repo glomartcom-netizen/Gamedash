@@ -2679,8 +2679,8 @@ margin-top:10px;
 
     <!-- SOUND BUTTON -->
 
-<button onclick="toggleMusic()" class="sound-btn">
-🔊 Sound
+<button onclick="toggleMusic()" id="soundBtn" class="sound-btn">
+🔊 Sound ON
 </button>
 
 
@@ -2688,11 +2688,26 @@ margin-top:10px;
 
 <div class="game-zone">
 
-<h2>🎮 DMX Game Zone</h2>
+<h2 style="font-size:26px;color:#22c55e;">
+🎮 DMX Game Zone
+</h2>
 
 <p style="color:#94a3b8">
 Play games and win DMX rewards
 </p>
+
+<!-- 🔥 COOLDOWN TIMER (UPGRADED UI) -->
+<div id="cooldownTimer" style="
+display:none;
+margin-top:10px;
+padding:8px;
+background:#0f172a;
+border:1px solid #facc15;
+border-radius:8px;
+color:#facc15;
+font-weight:bold;
+">
+</div>
 
 
 <!-- PLAYER BALANCE -->
@@ -2700,7 +2715,11 @@ Play games and win DMX rewards
 <div style="margin-top:20px;font-size:18px">
 
 💰 Balance:
-<span id="balanceValue" style="color:#22c55e;font-weight:bold">
+<span id="balanceValue" style="
+color:#22c55e;
+font-weight:bold;
+font-size:20px;
+">
 0
 </span> DMX
 
@@ -3885,15 +3904,18 @@ SoundEngine.play("click")
 
 function toggleMusic(){
 
-const music=SoundEngine.sounds["bg"]
-if(!music) return
+    const music = SoundEngine.sounds["bg"];
+    const btn = document.getElementById("soundBtn");
 
-if(music.paused){
-music.play()
-}else{
-music.pause()
-}
+    if(!music) return;
 
+    if(music.paused){
+        music.play();
+        if(btn) btn.innerText = "🔊 Sound ON";
+    }else{
+        music.pause();
+        if(btn) btn.innerText = "🔇 Sound OFF";
+    }
 }
 
 function playSound(name){
@@ -4033,16 +4055,21 @@ return true;
 // ===============================
 function updateBalance(){
 
-let el = document.getElementById("balanceValue");
+    let el = document.getElementById("balanceValue");
 
-if(el){
-el.innerText = claimBalance.toFixed(0);
+    if(el){
+        el.innerText = claimBalance.toFixed(0);
+
+        // 🔥 glow animation
+        el.classList.add("win-flash");
+
+        setTimeout(()=>{
+            el.classList.remove("win-flash");
+        },500);
+    }
+
+    localStorage.setItem("claimBalance", claimBalance);
 }
-
-localStorage.setItem("claimBalance", claimBalance);
-
-}
-
 
 // ===============================
 // 6. JACKPOT SYSTEM
