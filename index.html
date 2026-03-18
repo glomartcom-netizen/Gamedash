@@ -3264,52 +3264,6 @@ Lose → -10 DMX
 
 </div>
     
-<div class="target-scene">
-
-<h3>🎯 Target Shot</h3>
-
-<div class="target-board" id="targetBoard">
-
-<div class="ring ring-outer"></div>
-<div class="ring ring-middle"></div>
-<div class="ring ring-inner"></div>
-
-<div class="bullseye"></div>
-
-<div class="projectile" id="projectile"></div>
-
-</div>
-
-<div id="targetStatus"
-style="margin-top:15px;font-weight:bold;color:#06b6d4;">
-Ready to Shoot
-</div>
-
-<button class="btn-bonus" onclick="shootTargetAnimation()">
-🎯 FIRE
-</button>
-
-<p style="color:#94a3b8;font-size:14px;margin-top:10px;">
-Shoot the arrow and hit the target!
-</p>
-
-<!-- RULES -->
-
-<div class="target-rules">
-
-<b>Target Game Rules</b>
-
-<p>
-🎯 Bullseye → 5x reward<br>
-🎯 Inner Ring → 3x reward<br>
-🎯 Outer Ring → 2x reward<br>
-❌ Miss → Lose your bet
-</p>
-
-</div>
-
-</div>
-
 
 <div class="slot-machine-container">
 
@@ -3941,6 +3895,49 @@ SoundEngine.play(name)
 
 }
 
+// ===============================
+// 🔒 FINAL UNIVERSAL GAME CONTROL
+// ===============================
+
+let gameRunning = false;
+let gameLocked = false;
+
+function startGame(){
+    if(gameRunning || gameLocked) return false;
+    gameRunning = true;
+    return true;
+}
+
+function endGame(delay = 1500){
+    setTimeout(()=>{
+        gameRunning = false;
+        gameLocked = true;
+        startCooldown(3);
+    }, delay);
+}
+
+function startCooldown(seconds){
+    let count = seconds;
+
+    const el = document.getElementById("cooldownTimer");
+
+    if(el) el.style.display = "block";
+
+    let interval = setInterval(()=>{
+
+        if(el) el.innerText = "Next Game in " + count + "s";
+
+        count--;
+
+        if(count < 0){
+            clearInterval(interval);
+            gameLocked = false;
+            if(el) el.style.display = "none";
+        }
+
+    },1000);
+}
+    
 
 // ===============================
 // 1. CORE GAME STATE & SECURITY
@@ -4833,465 +4830,840 @@ gameRunning = false;
 }
     
 
-let lucky7Choice = null;
 
-function selectLucky7(choice){
 
-lucky7Choice = choice;
 
-// remove old selection
-document.querySelectorAll(".bet-btn").forEach(btn=>{
-btn.classList.remove("active");
-});
 
-// highlight selected
-event.target.classList.add("active");
+
+// ===============================
+// COIN GAME (FINAL PRO VERSION)
+// ===============================
+
+let selectedCoin = null;
+
+// SELECT
+function chooseCoin(choice){
+    selectedCoin = choice;
+
+    document.querySelectorAll(".btn-bonus").forEach(btn=>{
+        btn.classList.remove("selected-btn");
+    });
+
+    event.target.classList.add("selected-btn");
+}
+
+
+// FLIP
+async function flipCoin(){
+
+    if(!startGame()) return;
+
+    if(!selectedCoin){
+        showLose("Select Heads / Tails / Edge");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    const coin = document.getElementById("coinElement");
+
+    playSound("spin");
+
+    // spin animation
+    coin.style.transform = "rotateY(1440deg)";
+
+    // ===============================
+    // 🎯 RTP SAFE LOGIC
+    // ===============================
+
+    let rand = Math.random();
+    let result;
+
+    if(rand < 0.35){
+        result = "heads";
+    }
+    else if(rand < 0.70){
+        result = "tails";
+    }
+    else if(rand < 0.75){
+        result = "edge"; // rare
+    }
+    else{
+        // force lose
+        if(selectedCoin === "heads") result = "tails";
+        else if(selectedCoin === "tails") result = "heads";
+        else result = "heads";
+    }
+
+    // ===============================
+    // RESULT SHOW
+    // ===============================
+
+    setTimeout(()=>{
+
+        if(result === "heads"){
+            coin.style.transform = "rotateY(0deg)";
+        }
+        else if(result === "tails"){
+            coin.style.transform = "rotateY(180deg)";
+        }
+        else{
+            coin.style.transform = "rotateY(90deg)";
+        }
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(selectedCoin === result){
+
+            let reward;
+
+            if(result === "edge"){
+                reward = bet * 4;
+            }else{
+                reward = bet * 2;
+            }
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("Result: " + result.toUpperCase());
+
+        }
+
+        // ===============================
+        // AUTO RESET + COOLDOWN
+        // ===============================
+
+        selectedCoin = null;
+
+        endGame(); // 🔥 universal reset
+
+    },1500);
+
+}
+
+// ===============================
+// BATTLE GAME (FINAL PRO VERSION)
+// ===============================
+
+let selectedBattle = null;
+
+// SELECT
+function chooseBattle(choice){
+
+    selectedBattle = choice;
+
+    document.querySelectorAll(".battle-btn").forEach(btn=>{
+        btn.classList.remove("selected-btn");
+    });
+
+    event.target.classList.add("selected-btn");
+
+}
+
+
+// START BATTLE
+async function startBattle(){
+
+    if(!startGame()) return;
+
+    if(!selectedBattle){
+        showLose("Select your weapon");
+        return;
+    }
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    playSound("spin");
+
+    // ===============================
+    // 🎯 RTP SAFE LOGIC
+    // ===============================
+
+    let rand = Math.random();
+    let result;
+
+    if(rand < 0.35){
+        result = "sword";
+    }
+    else if(rand < 0.70){
+        result = "shield";
+    }
+    else if(rand < 0.75){
+        result = "fire"; // rare
+    }
+    else{
+        // force lose
+        const options = ["sword","shield"];
+        result = options[Math.floor(Math.random()*2)];
+
+        if(result === selectedBattle){
+            result = (selectedBattle === "sword") ? "shield" : "sword";
+        }
+    }
+
+    // ===============================
+    // RESULT DELAY
+    // ===============================
+
+    setTimeout(()=>{
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(selectedBattle === result){
+
+            let reward;
+
+            if(result === "fire"){
+                reward = bet * 4;
+            }else{
+                reward = bet * 2;
+            }
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("Enemy used: " + result.toUpperCase());
+
+        }
+
+        // ===============================
+        // AUTO RESET + COOLDOWN
+        // ===============================
+
+        selectedBattle = null;
+
+        endGame(); // 🔥 universal reset
+
+    },1200);
+
+}
+
+// ===============================
+// DOOR GAME (FINAL PRO VERSION)
+// ===============================
+
+let doorSelected = null;
+
+// CLICK DOOR
+async function openDoor(door){
+
+    if(!startGame()) return;
+
+    doorSelected = door;
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    playSound("box");
+
+    // ===============================
+    // 🎯 RTP SAFE LOGIC
+    // ===============================
+
+    let rand = Math.random();
+    let result;
+
+    if(rand < 0.45){
+        result = "gold"; // normal win
+    }
+    else if(rand < 0.55){
+        result = "diamond"; // rare
+    }
+    else{
+        result = "bomb"; // lose
+    }
+
+    // ===============================
+    // RESULT DELAY
+    // ===============================
+
+    setTimeout(()=>{
+
+        // ===============================
+        // WIN / LOSE
+        // ===============================
+
+        if(result === "gold"){
+
+            let reward = bet * 2;
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }
+        else if(result === "diamond"){
+
+            let reward = bet * 5;
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }
+        else{
+
+            playSound("lose");
+
+            showLose("💣 Bomb! Try again");
+
+        }
+
+        // ===============================
+        // AUTO RESET + COOLDOWN
+        // ===============================
+
+        doorSelected = null;
+
+        endGame(); // 🔥 universal reset
+
+    },1200);
+
+}
+
+// ===============================
+// LUCKY BOX GAME (FINAL PRO)
+// ===============================
+
+async function openBoxAnimation(){
+
+    if(!startGame()) return;
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    const box = document.getElementById("boxElement");
+
+    playSound("box");
+
+    // ===============================
+    // 🎁 BOX SHAKE + OPEN
+    // ===============================
+
+    box.classList.add("box-shaking");
+
+    setTimeout(()=>{
+        box.classList.remove("box-shaking");
+        box.classList.add("box-open");
+    },600);
+
+    // ===============================
+    // 🎯 RTP SAFE LOGIC
+    // ===============================
+
+    let rand = Math.random();
+    let reward = 0;
+    let resultType = "lose";
+
+    if(rand < 0.40){
+        reward = bet * 2;
+        resultType = "2x";
+    }
+    else if(rand < 0.65){
+        reward = bet * 3;
+        resultType = "3x";
+    }
+    else if(rand < 0.75){
+        reward = bet * 5;
+        resultType = "5x";
+    }
+    else{
+        reward = 0; // lose
+    }
+
+    // ===============================
+    // RESULT
+    // ===============================
+
+    setTimeout(()=>{
+
+        if(reward > 0){
+
+            reward = applyRewardLimit(reward);
+
+            playSound("win");
+
+            showBigWin(reward);
+
+            claimGameReward(reward);
+
+            addWinner(userAddress, reward);
+
+        }else{
+
+            playSound("lose");
+
+            showLose("❌ Empty Box!");
+
+        }
+
+        // ===============================
+        // RESET BOX UI
+        // ===============================
+
+        setTimeout(()=>{
+            box.classList.remove("box-open");
+        },800);
+
+        // ===============================
+        // AUTO RESET + COOLDOWN
+        // ===============================
+
+        endGame(); // 🔥 universal reset
+
+    },1200);
+
+}
+
+// ===============================
+// MAGIC TILES (FINAL PRO VERSION)
+// ===============================
+
+let tilesData = [];
+let tilesProfit = 0;
+let tilesActive = false;
+
+// START GAME
+function startTilesGame(){
+
+    if(!startGame()) return;
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
+    }
+
+    tilesProfit = 0;
+    tilesActive = true;
+
+    document.getElementById("tilesScore").innerText =
+        "Current Profit: 0 DMX";
+
+    document.getElementById("cashoutBtn").style.display = "block";
+
+    generateTiles();
+
+}
+
+
+// CREATE GRID
+function generateTiles(){
+
+    const grid = document.getElementById("tilesGrid");
+
+    grid.innerHTML = "";
+    tilesData = [];
+
+    // 🔥 2 bombs for profit safety
+    let bomb1 = Math.floor(Math.random()*9);
+    let bomb2;
+
+    do{
+        bomb2 = Math.floor(Math.random()*9);
+    }while(bomb2 === bomb1);
+
+    for(let i=0;i<9;i++){
+
+        let tile = document.createElement("div");
+        tile.className = "tile";
+
+        if(i === bomb1 || i === bomb2){
+            tilesData[i] = "bomb";
+        }else{
+            tilesData[i] = "gold";
+        }
+
+        tile.onclick = () => revealTile(tile,i);
+
+        grid.appendChild(tile);
+    }
+
+}
+
+
+// CLICK TILE
+function revealTile(tile,index){
+
+    if(!tilesActive) return;
+
+    let result = tilesData[index];
+
+    tile.classList.add("revealed-"+result);
+
+    playSound("tiles");
+
+    // ===============================
+    // GOLD
+    // ===============================
+    if(result === "gold"){
+
+        // profit ladder
+        if(tilesProfit === 0) tilesProfit = 10;
+        else if(tilesProfit === 10) tilesProfit = 20;
+        else if(tilesProfit === 20) tilesProfit = 40;
+        else if(tilesProfit === 40) tilesProfit = 80;
+        else tilesProfit = 150;
+
+        document.getElementById("tilesScore").innerText =
+            "Current Profit: " + tilesProfit + " DMX";
 
     }
 
-async function playLucky7(){
+    // ===============================
+    // BOMB
+    // ===============================
+    else{
 
-if(gameRunning) return;
+        playSound("lose");
 
-let bet = processBet();
-if(!bet) return;
+        showLose("💣 Bomb! You lost everything");
 
-if(!lucky7Choice){
-showLose("Select an option");
-return;
-}
-
-gameRunning = true;
-
-playSound("dice");
-
-const dice = document.getElementById("lucky7Dice");
-
-dice.classList.add("rolling");
-
-setTimeout(()=>{
-
-dice.classList.remove("rolling");
-
-// 🎯 RANDOM RESULT (1–6)
-let result = Math.floor(Math.random()*6)+1;
-
-// 🎯 RARE JACKPOT (7 simulate)
-let isJackpot = Math.random() < 0.05; // 5% chance
-
-if(isJackpot){
-result = 7;
-}
-
-dice.innerText = result;
-
-let win = false;
-let multiplier = 0;
-
-// LOW
-if(result >=1 && result <=3 && lucky7Choice==="low"){
-win = true;
-multiplier = 2;
-}
-
-// HIGH
-else if(result >=5 && result <=6 && lucky7Choice==="high"){
-win = true;
-multiplier = 2;
-}
-
-// JACKPOT
-else if(result === 7 && lucky7Choice==="seven"){
-win = true;
-multiplier = 6;
-}
-
-// 🎯 UNIVERSAL ENGINE
-resolveGame("Lucky 7", win, bet, multiplier || 2);
-
-// history
-addLuckySevenHistory(result);
-
-// reset
-setTimeout(()=>{
-resetLucky7();
-},1500);
-
-},2000);
+        endTilesGame(); // 🔥 end
 
     }
 
-function resetLucky7(){
+}
 
-lucky7Choice = null;
 
-document.querySelectorAll(".bet-btn").forEach(btn=>{
-btn.classList.remove("active");
-});
+// CASHOUT
+function tilesCashout(){
 
-let dice = document.getElementById("lucky7Dice");
-if(dice) dice.innerText = "?";
+    if(!tilesActive) return;
 
+    let reward = tilesProfit;
+
+    reward = applyRewardLimit(reward);
+
+    playSound("win");
+
+    showBigWin(reward);
+
+    claimGameReward(reward);
+
+    addWinner(userAddress, reward);
+
+    endTilesGame(); // 🔥 end
+
+}
+
+
+// END GAME
+function endTilesGame(){
+
+    tilesActive = false;
+
+    // reveal all tiles
+    document.querySelectorAll(".tile").forEach((tile,i)=>{
+        tile.classList.add("revealed-"+tilesData[i]);
+    });
+
+    document.getElementById("cashoutBtn").style.display = "none";
+
+    endGame(); // 🔥 universal reset + cooldown
+
+}
+
+// ===============================
+// CARD GAME (FINAL PRO VERSION)
+// ===============================
+
+let cardPlayed = false;
+
+// PICK CARD
+async function pickCard(index){
+
+    if(!startGame()) return;
+
+    if(cardPlayed) return;
+
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
     }
 
-let selectedLucky = null;
+    cardPlayed = true;
 
-function selectLuckyNumber(num){
+    playSound("click");
 
-selectedLucky = num;
+    // ===============================
+    // 🎯 RTP SAFE LOGIC
+    // ===============================
 
-// remove old selection
-document.querySelectorAll(".num-choice").forEach(btn=>{
-btn.classList.remove("active");
-});
+    let rand = Math.random();
 
-// highlight selected
-event.target.classList.add("active");
+    let winningIndex;
 
+    if(rand < 0.40){
+        // player win
+        winningIndex = index;
+    }else{
+        // force lose
+        let options = [0,1,2].filter(i => i !== index);
+        winningIndex = options[Math.floor(Math.random()*2)];
     }
 
-async function playLuckyNumber(){
+    // ===============================
+    // REVEAL ALL CARDS
+    // ===============================
 
-if(gameRunning) return;
+    for(let i=0;i<3;i++){
 
-let bet = processBet();
-if(!bet) return;
+        let back = document.getElementById("cardBack"+i);
+        let card = back.parentElement.parentElement;
 
-if(selectedLucky === null){
-showLose("Select a number");
-return;
-}
+        if(i === winningIndex){
+            back.innerText = "💰";
+        }else{
+            back.innerText = "❌";
+        }
 
-gameRunning = true;
-
-playSound("spin");
-
-const display = document.getElementById("luckyDisplay");
-
-display.classList.add("spin-number");
-
-setTimeout(()=>{
-
-display.classList.remove("spin-number");
-
-// 🎯 random result
-const result = Math.floor(Math.random()*5)+1;
-
-display.innerText = result;
-
-let win = (result === selectedLucky);
-
-// 🎯 universal engine
-resolveGame("Lucky Number", win, bet, 5);
-
-// history
-addLuckyNumberHistory(result);
-
-// reset
-setTimeout(()=>{
-resetLuckyNumber();
-},1500);
-
-},2000);
-
+        setTimeout(()=>{
+            card.classList.add("flipped");
+        }, i * 200);
     }
 
-function resetLuckyNumber(){
+    // ===============================
+    // RESULT
+    // ===============================
 
-selectedLucky = null;
+    setTimeout(()=>{
 
-document.querySelectorAll(".num-choice").forEach(btn=>{
-btn.classList.remove("active");
-});
+        if(index === winningIndex){
 
-let display = document.getElementById("luckyDisplay");
-if(display) display.innerText = "?";
+            let reward = bet * 2;
 
-    } 
+            reward = applyRewardLimit(reward);
 
- let oddEvenChoice = null;
+            playSound("win");
 
-function selectOddEven(choice){
+            showBigWin(reward);
 
-oddEvenChoice = choice;
+            claimGameReward(reward);
 
-// remove old selection
-document.querySelectorAll(".bet-btn").forEach(btn=>{
-btn.classList.remove("active");
-});
+            addWinner(userAddress, reward);
 
-// highlight selected
-event.target.classList.add("active");
+        }else{
 
-    }   
+            playSound("lose");
 
-async function playOddEven(){
+            showLose("❌ Wrong Card!");
 
-if(gameRunning) return;
+        }
 
-let bet = processBet();
-if(!bet) return;
+        // ===============================
+        // RESET
+        // ===============================
 
-if(!oddEvenChoice){
-showLose("Select Odd or Even");
-return;
+        setTimeout(()=>{
+
+            document.querySelectorAll(".card-pro").forEach(card=>{
+                card.classList.remove("flipped");
+            });
+
+            cardPlayed = false;
+
+            endGame(); // 🔥 universal reset
+
+        },1000);
+
+    },1200);
+
 }
 
-gameRunning = true;
+// ===============================
+// SLOT MACHINE (FINAL PRO VERSION)
+// ===============================
 
-const display = document.getElementById("oddEvenNumber");
+async function spinSlot(){
 
-display.classList.add("spin-number");
+    if(!startGame()) return;
 
-playSound("spin");
-
-setTimeout(()=>{
-
-display.classList.remove("spin-number");
-
-// 🎯 random number (1–9)
-const result = Math.floor(Math.random()*9)+1;
-
-display.innerText = result;
-
-let win = false;
-
-if(result % 2 === 0 && oddEvenChoice === "even") win = true;
-if(result % 2 === 1 && oddEvenChoice === "odd") win = true;
-
-// 🎯 universal engine
-resolveGame("Odd Even", win, bet, 2);
-
-// history update
-addOddEvenHistory(result);
-
-// reset
-setTimeout(()=>{
-resetOddEven();
-},1500);
-
-},2000);
-
-    } 
-
-function resetOddEven(){
-
-oddEvenChoice = null;
-
-document.querySelectorAll(".bet-btn").forEach(btn=>{
-btn.classList.remove("active");
-});
-
-let display = document.getElementById("oddEvenNumber");
-if(display) display.innerText = "?";
-
-   } 
-
-let selectedColor = null;
-
-function pickColor(color){
-
-selectedColor = color;
-
-// remove old selection
-document.querySelectorAll(".color-pod").forEach(p=>{
-p.classList.remove("active");
-});
-
-// highlight selected
-document.getElementById("pod-"+color).classList.add("active");
-
+    let bet = processBet();
+    if(!bet){
+        gameRunning = false;
+        return;
     }
 
-async function playColorGame(){
+    const reel1 = document.getElementById("reel1");
+    const reel2 = document.getElementById("reel2");
+    const reel3 = document.getElementById("reel3");
 
-if(gameRunning) return;
+    const symbols = ["7️⃣","🍒","⭐","💎","🔔"];
 
-let bet = processBet();
-if(!bet) return;
+    playSound("slot");
 
-if(!selectedColor){
-showLose("Pick a color first");
-return;
-}
+    // ===============================
+    // 🎰 SPIN ANIMATION
+    // ===============================
 
-gameRunning = true;
+    reel1.style.transform = "translateY(-400px)";
+    reel2.style.transform = "translateY(-500px)";
+    reel3.style.transform = "translateY(-600px)";
 
-playSound("spin");
+    // ===============================
+    // 🎯 RTP SAFE LOGIC
+    // ===============================
 
-const orb = document.getElementById("resultOrb");
-const status = document.getElementById("colorStatus");
+    let rand = Math.random();
 
-// animation
-orb.classList.add("orb-spin");
+    let result = [];
 
-setTimeout(()=>{
+    if(rand < 0.20){
+        // 🔥 JACKPOT (3 match)
+        let sym = symbols[Math.floor(Math.random()*symbols.length)];
+        result = [sym, sym, sym];
+    }
+    else if(rand < 0.45){
+        // 👍 2 match
+        let sym = symbols[Math.floor(Math.random()*symbols.length)];
+        let other = symbols[Math.floor(Math.random()*symbols.length)];
 
-orb.classList.remove("orb-spin");
+        result = [sym, sym, other];
+    }
+    else{
+        // ❌ lose (all different)
+        result = [
+            symbols[Math.floor(Math.random()*symbols.length)],
+            symbols[Math.floor(Math.random()*symbols.length)],
+            symbols[Math.floor(Math.random()*symbols.length)]
+        ];
 
-// 🎯 result logic
-let rand = Math.random();
-let result;
-
-if(rand < 0.4){
-result = "green";
-}
-else if(rand < 0.8){
-result = "red";
-}
-else{
-result = "purple";
-}
-
-// update UI
-orb.className = "result-orb " + result;
-status.innerText = "Result: " + result.toUpperCase();
-
-// 🎯 win logic
-let win = (result === selectedColor);
-
-let multiplier = 2;
-if(result === "purple") multiplier = 5;
-
-// 🎯 universal engine
-resolveGame("Color Game", win, bet, multiplier);
-
-// reset
-setTimeout(()=>{
-resetColorGame();
-},1500);
-
-},2000);
-
+        // ensure all different
+        if(result[0] === result[1] || result[1] === result[2]){
+            result[2] = symbols[(symbols.indexOf(result[0])+2)%symbols.length];
+        }
     }
 
- function resetColorGame(){
+    // ===============================
+    // RESULT DISPLAY
+    // ===============================
 
-selectedColor = null;
+    setTimeout(()=>{
 
-document.querySelectorAll(".color-pod").forEach(p=>{
-p.classList.remove("active");
-});
+        reel1.innerHTML = result[0];
+        reel2.innerHTML = result[1];
+        reel3.innerHTML = result[2];
 
-let orb = document.getElementById("resultOrb");
-orb.className = "result-orb";
+        // ===============================
+        // CHECK RESULT
+        // ===============================
 
-let status = document.getElementById("colorStatus");
-status.innerText = "Pick your color";
+        let reward = 0;
 
-    }   
+        if(result[0] === result[1] && result[1] === result[2]){
+            // JACKPOT
+            reward = bet * 10;
+        }
+        else if(
+            result[0] === result[1] ||
+            result[1] === result[2] ||
+            result[0] === result[2]
+        ){
+            // 2 match
+            reward = bet * 2;
+        }
 
-let crashRunning = false;
-let crashMultiplier = 1;
-let crashInterval;
-let crashed = false;   
+        // ===============================
+        // WIN / LOSE
+        // ===============================
 
- async function startCrash(){
+        if(reward > 0){
 
-if(crashRunning) return;
+            reward = applyRewardLimit(reward);
 
-let bet = processBet();
-if(!bet) return;
+            playSound("win");
 
-crashRunning = true;
-crashed = false;
-crashMultiplier = 1;
+            showBigWin(reward);
 
-playSound("crash");
+            claimGameReward(reward);
 
-document.getElementById("launchBtn").style.display = "none";
-document.getElementById("takeProfitBtn").style.display = "inline-block";
+            addWinner(userAddress, reward);
 
-const display = document.getElementById("crashMultiplier");
-const rocket = document.getElementById("rocket");
+        }else{
 
-// 🎯 random crash point (1.5x – 5x)
-let crashPoint = (Math.random()*3.5 + 1.5).toFixed(2);
+            playSound("lose");
 
-// 📈 multiplier increase
-crashInterval = setInterval(()=>{
+            showLose("❌ No Match!");
 
-crashMultiplier += 0.05;
+        }
 
-display.innerText = crashMultiplier.toFixed(2) + "x";
+        // ===============================
+        // RESET REELS
+        // ===============================
 
-// rocket move
-rocket.style.transform = `translateY(-${crashMultiplier*20}px)`;
+        setTimeout(()=>{
+            reel1.style.transform = "translateY(0)";
+            reel2.style.transform = "translateY(0)";
+            reel3.style.transform = "translateY(0)";
+        },500);
 
-// 💥 crash check
-if(crashMultiplier >= crashPoint){
+        // ===============================
+        // AUTO RESET + COOLDOWN
+        // ===============================
 
-clearInterval(crashInterval);
+        endGame(); // 🔥 universal reset
 
-crashed = true;
-crashRunning = false;
-
-playSound("lose");
-
-showLose("💥 Rocket Crashed!");
-
-resetCrash();
+    },1500);
 
 }
 
-},100);
 
-    } 
-
-function takeProfit(){
-
-if(!crashRunning || crashed) return;
-
-clearInterval(crashInterval);
-
-let reward = currentBet * crashMultiplier;
-
-reward = applyRewardLimit(reward);
-
-playSound("win");
-
-showBigWin(Math.floor(reward));
-
-claimGameReward(Math.floor(reward));
-
-addWinner(userAddress, Math.floor(reward));
-
-crashRunning = false;
-
-resetCrash();
-
-    }  
-
-function resetCrash(){
-
-setTimeout(()=>{
-
-document.getElementById("launchBtn").style.display = "inline-block";
-document.getElementById("takeProfitBtn").style.display = "none";
-
-document.getElementById("crashMultiplier").innerText = "1.00x";
-
-document.getElementById("rocket").style.transform = "translateY(0px)";
-
-},1500);
-
-    }    
     
-
-    
-    
-
-
-    
-
-
-
-
-
-
-
-
-
 
 
 
