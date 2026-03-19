@@ -4671,30 +4671,47 @@ window.addEventListener("click", function(e){
 });
 
 // ===============================
-// 14. MULTI TAB PROTECTION (SAFE)
+// 🔄 MULTI TAB PROTECTION (FINAL)
 // ===============================
 window.addEventListener("storage", function(e){
 
+    // 🔥 BALANCE SYNC
     if(e.key === "claimBalance"){
-
-        console.warn("Balance changed in another tab");
-
-        // ✅ no reload, just sync
         claimBalance = loadBalance();
         updateBalance();
+    }
+
+    // 🔥 JACKPOT SYNC
+    if(e.key === "jackpotPool"){
+        jackpotPool = Number(localStorage.getItem("jackpotPool")) || 0;
+        updateJackpot();
+    }
+
+    // 🔥 STATS SYNC
+    if(e.key === "totalBet"){
+        totalBet = Number(localStorage.getItem("totalBet")) || 0;
+    }
+
+    if(e.key === "totalPayout"){
+        totalPayout = Number(localStorage.getItem("totalPayout")) || 0;
     }
 
 });
 
 
 // ===============================
-// 15. INITIALIZATION (SAFE)
+// 🚀 INITIALIZATION (FINAL)
 // ===============================
-window.addEventListener("load", function(){
+window.addEventListener("DOMContentLoaded", function(){
 
+    // 🔥 SAFE LOAD
+    claimBalance = loadBalance();
     updateBalance();
+
+    jackpotPool = Number(localStorage.getItem("jackpotPool")) || jackpotPool;
     updateJackpot();
 
+    // 🔥 OPTIONAL MODULES
     if(typeof startRoundTimer === "function"){
         startRoundTimer();
     }
@@ -4707,41 +4724,62 @@ window.addEventListener("load", function(){
 
 
 // ===============================
-// 🔥 GLOBAL SAFETY (DEBUG FRIENDLY)
+// 🔥 GLOBAL SAFETY (FINAL)
 // ===============================
-window.onerror = function(msg, src, line){
+window.onerror = function(msg, src, line, col, err){
 
-    console.error("Game Error:", msg, "Line:", line);
+    console.error("🚨 Game Error:", {
+        message: msg,
+        file: src,
+        line: line,
+        column: col,
+        error: err
+    });
 
-    gameRunning = false;
+    // 🔥 RESET GAME SAFE
+    if(typeof gameRunning !== "undefined") gameRunning = false;
+    if(typeof gameLocked !== "undefined") gameLocked = false;
 
-    return true;
+    // 🔥 STOP ANY TIMERS
+    if(typeof gamePageTimer !== "undefined"){
+        clearInterval(gamePageTimer);
+    }
+
+    if(typeof cooldownInterval !== "undefined"){
+        clearInterval(cooldownInterval);
+    }
+
+    // 🔥 OPTIONAL UI FEEDBACK
+    if(typeof showLose === "function"){
+        showLose("⚠ Game error. Try again.");
+    }
+
+    return true; // prevent crash
 };
 
 
 // ===============================
-// 🎮 GAME SELECTORS
+// 🎮 GAME SELECTORS (FINAL CLEAN)
 // ===============================
-const games = [
-".coin-scene",
-".battle-scene",
-".door-scene",
-".box-scene",
-".card-scene",
-".slot-machine-container",
-"#magicTilesPanel",
-".color-game-container",
-"#luckyNumberGame",
-"#luckySevenGame",
-"#oddEvenGame",
-"#horseRaceGame",
-"#carRaceGame",
-"#crashGamePanel"
+const GAME_SELECTORS = [
+    ".coin-scene",
+    ".battle-scene",
+    ".door-scene",
+    ".box-scene",
+    ".card-scene",
+    ".slot-machine-container",
+    "#magicTilesPanel",
+    ".color-game-container",
+    "#luckyNumberGame",
+    "#luckySevenGame",
+    "#oddEvenGame",
+    "#horseRaceGame",
+    "#carRaceGame",
+    "#crashGamePanel"
 ];
 
-
 // ===============================
-// FIX 1: REWARD LIMIT SAFE
+// 🎯 FIX 1: REWARD LIMIT SAFE (FINAL)
 // ===============================
 function applyRewardLimit(reward){
 
@@ -4749,12 +4787,13 @@ function applyRewardLimit(reward){
         return 0;
     }
 
-    return Math.min(reward, jackpotPool);
+    // 🔒 apply all limits
+    return Math.min(reward, jackpotPool, MAX_WIN_PROTECTION);
 }
 
 
 // ===============================
-// FIX 2: SAFE CLAIM (FINAL)
+// 💰 FIX 2: SAFE CLAIM (FINAL)
 // ===============================
 function claimGameReward(amount){
 
@@ -4762,87 +4801,149 @@ function claimGameReward(amount){
 
     amount = applyRewardLimit(amount);
 
+    if(amount <= 0) return;
+
+    // 💰 add reward
     claimBalance += amount;
     totalPayout += amount;
 
+    // 🔒 save
     saveBalance(claimBalance);
     localStorage.setItem("totalPayout", totalPayout);
 
+    // 🏆 jackpot reduce
+    let cut = Math.floor(amount * 0.5);
+    jackpotPool = Math.max(0, jackpotPool - cut);
+
     updateBalance();
+    updateJackpot();
 }
 
 
 // ===============================
-// FIX 3: GAME COOLDOWN
+// ❌ FIX 3 REMOVED (IMPORTANT)
 // ===============================
-async function checkGameCooldown(){
-    return !gameCooldown;
-}
+// REMOVE THIS COMPLETELY:
+// function checkGameCooldown()
+// NOT NEEDED ANYMORE
 
 // ===============================
-// 📜 SAFE HISTORY SYSTEM
+// 📜 SAFE HISTORY SYSTEM (FINAL)
 // ===============================
-function safeAdd(historyId,text){
+function safeAdd(historyId, text){
 
-    const history = document.getElementById(historyId)
-    if(!history || !text) return
+    const history = document.getElementById(historyId);
+    if(!history || !text) return;
 
-    const item = document.createElement("span")
-    item.innerText = text
+    // 🔒 prevent duplicate spam
+    const first = history.firstChild;
+    if(first && first.innerText === text) return;
 
-    history.prepend(item)
+    const item = document.createElement("span");
+    item.innerText = text;
 
-    // ✅ limit items safely
+    // 🎨 style (important)
+    item.style.marginRight = "8px";
+    item.style.padding = "4px 8px";
+    item.style.background = "#020617";
+    item.style.border = "1px solid #334155";
+    item.style.borderRadius = "6px";
+    item.style.fontSize = "12px";
+
+    // ✨ animation
+    item.style.opacity = "0";
+    item.style.transform = "translateY(5px)";
+
+    history.prepend(item);
+
+    // animate in
+    requestAnimationFrame(()=>{
+        item.style.transition = "all 0.3s ease";
+        item.style.opacity = "1";
+        item.style.transform = "translateY(0)";
+    });
+
+    // 🔒 limit items
     while(history.children.length > 12){
-        history.removeChild(history.lastChild)
+        history.removeChild(history.lastChild);
     }
 }
 
-function addColorHistory(r){ safeAdd("colorHistory",r) }
-function addCrashHistory(m){ safeAdd("crashHistory",m+"x") }
-function addLuckyNumberHistory(n){ safeAdd("luckyNumberHistory",n) }
-function addLuckySevenHistory(n){ safeAdd("luckySevenHistory","🎲"+n) }
-function addOddEvenHistory(r){ safeAdd("oddEvenHistory",r) }
-function addHorseHistory(h){ safeAdd("horseHistory","🐎"+h) }
-function addCarHistory(c){ safeAdd("carHistory","🏎"+c) }
+
+// ===============================
+// 🎮 GAME HISTORY HELPERS
+// ===============================
+function addColorHistory(r){ safeAdd("colorHistory", r); }
+function addCrashHistory(m){ safeAdd("crashHistory", m + "x"); }
+function addLuckyNumberHistory(n){ safeAdd("luckyNumberHistory", n); }
+function addLuckySevenHistory(n){ safeAdd("luckySevenHistory", "🎲 " + n); }
+function addOddEvenHistory(r){ safeAdd("oddEvenHistory", r); }
+function addHorseHistory(h){ safeAdd("horseHistory", "🐎 " + h); }
+function addCarHistory(c){ safeAdd("carHistory", "🏎 " + c); }
 
 
 // ===============================
 // ⏱ ROUND TIMER SYSTEM (FINAL)
 // ===============================
-let roundId = 1001
-let roundTime = 10
-let globalResults = {}
+let roundId = 1001;
+let roundTime = 10;
+let globalResults = {};
 
-let roundInterval = null
+let roundInterval = null;
 
 function startRoundTimer(){
 
-    if(roundInterval) return
+    // 🔒 prevent duplicate interval
+    if(roundInterval !== null) return;
 
     roundInterval = setInterval(()=>{
 
-        roundTime--
+        roundTime--;
 
-        let timerEl = document.getElementById("roundTimer")
-        if(timerEl) timerEl.innerText = roundTime
-
-        if(roundTime <= 0){
-
-            generateResults()
-
-            roundId++
-            roundTime = 10
-
-            let roundEl = document.getElementById("roundId")
-            if(roundEl) roundEl.innerText = roundId
-
-            resetUniversalGames()
+        const timerEl = document.getElementById("roundTimer");
+        if(timerEl){
+            timerEl.innerText = roundTime;
         }
 
-    },1000)
+        // 🔥 round end
+        if(roundTime <= 0){
+
+            try{
+                generateResults(); // 🎯 result generate
+            }catch(e){
+                console.error("Result error:", e);
+            }
+
+            roundId++;
+            roundTime = 10;
+
+            const roundEl = document.getElementById("roundId");
+            if(roundEl){
+                roundEl.innerText = roundId;
+            }
+
+            // 🔄 safe reset
+            try{
+                resetUniversalGames();
+            }catch(e){
+                console.warn("Reset error");
+            }
+        }
+
+    },1000);
 }
 
+
+// ===============================
+// 🛑 STOP TIMER (IMPORTANT)
+// ===============================
+function stopRoundTimer(){
+
+    if(roundInterval){
+        clearInterval(roundInterval);
+        roundInterval = null;
+    }
+}
 
 // ===============================
 // 🔄 SAFE RESET SYSTEM
