@@ -4444,24 +4444,40 @@ setInterval(()=>{
 },2000);
     
 // ===============================
-// 6. JACKPOT SYSTEM
+// 💰 JACKPOT SYSTEM (FINAL)
 // ===============================
 function updateJackpot(){
 
     const el = document.getElementById("jackpotValue");
 
+    // ✅ safety
     if(isNaN(jackpotPool) || jackpotPool < 0){
         jackpotPool = 0;
     }
 
+    jackpotPool = Math.floor(jackpotPool);
+
+    // ✅ UI update மட்டும்
     if(el){
         el.innerText = jackpotPool.toLocaleString() + " DMX";
+    }
+}
+
+
+// ===============================
+// 💾 SAVE JACKPOT (SEPARATE)
+// ===============================
+function saveJackpot(){
+
+    if(isNaN(jackpotPool) || jackpotPool < 0){
+        jackpotPool = 0;
     }
 
     localStorage.setItem("jackpotPool", jackpotPool.toString());
 }
+    
 // ===============================
-// 7. BET ENGINE (FULL FIXED ✅)
+// 💸 BET ENGINE (FINAL PRO)
 // ===============================
 function processBet(){
 
@@ -4471,35 +4487,35 @@ function processBet(){
     const inputEl = document.getElementById("gameBet");
 
     if(!inputEl){
-        alert("Bet input not found");
+        showLose("⚠ Bet input missing");
         return false;
     }
 
     let rawValue = inputEl.value.trim();
 
-    // ❌ Empty or invalid
+    // ❌ invalid input
     if(rawValue === "" || isNaN(rawValue)){
-        alert("Enter a valid bet");
+        showLose("Enter valid bet");
         return false;
     }
 
-    let entry = Math.floor(Number(rawValue)); // ✅ remove decimals
+    let entry = Math.floor(Number(rawValue));
 
-    // ❌ Invalid number
+    // ❌ invalid number
     if(entry <= 0){
-        alert("Invalid bet amount");
+        showLose("Invalid bet");
         return false;
     }
 
-    // ❌ Minimum bet
+    // ❌ minimum bet
     if(entry < 10){
-        alert("Minimum bet is 10 DMX");
+        showLose("Min bet: 10 DMX");
         return false;
     }
 
-    // ❌ Balance check
+    // ❌ balance check
     if(entry > claimBalance){
-        alert("Not enough balance");
+        showLose("Not enough balance");
         return false;
     }
 
@@ -4511,27 +4527,34 @@ function processBet(){
     currentBet = entry;
     totalBet += entry;
 
+    // 🔥 SAVE IMPORTANT
+    saveBalance(claimBalance);
+    localStorage.setItem("totalBet", totalBet);
+
     updateBalance();
 
     // 💰 Jackpot contribution (5%)
-    jackpotPool += Math.floor(entry * 0.05);
-    updateJackpot();
+    let jp = Math.floor(entry * 0.05);
+
+    if(jp > 0){
+        jackpotPool += jp;
+        updateJackpot();
+    }
 
     return entry;
 }
 
 // ===============================
-// 9. RESULT ENGINE
+// 🎯 RESULT ENGINE (FINAL)
 // ===============================
 function resolveGame(gameName, manualResult, entry){
 
-    // ✅ validate entry
     if(!entry || isNaN(entry) || entry <= 0){
         console.error("Invalid bet entry");
+        endGame(); // 🔥 important
         return;
     }
 
-    // ✅ safe manual result check
     let isWinner = (typeof manualResult === "boolean")
         ? manualResult
         : (Math.random() < getWinChance());
@@ -4540,29 +4563,28 @@ function resolveGame(gameName, manualResult, entry){
 
         if(isWinner){
 
-            // 🎯 reward calculation
             let reward = entry * 2;
 
-            // 🔒 apply limits
+            // 🔒 limit safe
             reward = Math.min(reward, MAX_WIN_PROTECTION, jackpotPool);
 
-            // ❌ safety check
             if(isNaN(reward) || reward <= 0){
                 reward = 0;
             }
 
-            // 💰 apply reward
             claimBalance += reward;
             totalPayout += reward;
 
-            // ✅ secure save
             saveBalance(claimBalance);
             localStorage.setItem("totalPayout", totalPayout);
 
-            // 🏆 jackpot deduction
-            jackpotPool = Math.max(0, jackpotPool - Math.floor(reward * 0.5));
+            // 🏆 jackpot safe reduce
+            let deduction = Math.floor(reward * 0.5);
+            if(deduction > jackpotPool){
+                deduction = jackpotPool;
+            }
+            jackpotPool -= deduction;
 
-            // 🔊 effects
             playSound("win");
             showBigWin(reward);
             jackpotEffect();
@@ -4574,50 +4596,47 @@ function resolveGame(gameName, manualResult, entry){
             showLose("Better luck next time");
         }
 
-        // 🔄 reset state
-        gameRunning = false;
-
         updateBalance();
         updateJackpot();
+
+        // 🔥 MUST (fix freeze bug)
+        endGame();
 
     },1000);
 }
 
 // ===============================
-// 10. WINNER BOARD
+// 🏆 WINNER BOARD (FINAL)
 // ===============================
 function addWinner(address, reward){
 
     const board = document.getElementById("winnerBoard");
     if(!board) return;
 
-    // ✅ safety checks
     if(!address || isNaN(reward) || reward <= 0) return;
 
     const span = document.createElement("span");
 
     let shortAddr = address.toString().slice(0,6);
 
-    span.innerText = `${shortAddr}... won ${reward.toLocaleString()} DMX 🔥`;
+    span.innerText = `${shortAddr}... won ${Math.floor(reward).toLocaleString()} DMX 🔥`;
     span.style.marginRight = "20px";
 
     board.prepend(span);
 
-    // ✅ limit items
-    while(board.children.length > 20){
+    // 🔥 limit to 15 (better performance)
+    while(board.children.length > 15){
         board.removeChild(board.lastChild);
     }
 }
 
 // ===============================
-// 11. WIN EFFECT
+// ✨ WIN EFFECT (FINAL)
 // ===============================
 function jackpotEffect(){
 
-    playSound("win");
-
-    document.body.classList.remove("win-flash"); // reset
-    void document.body.offsetWidth; // force reflow
+    document.body.classList.remove("win-flash");
+    void document.body.offsetWidth;
 
     document.body.classList.add("win-flash");
 
