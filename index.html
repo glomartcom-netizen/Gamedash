@@ -1523,6 +1523,26 @@ height:90px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
+/* 🎨 HISTORY COLORS */
+/* 🎨 HISTORY COLORS */
+#colorGame .history-row span.green{
+    color:#22c55e;
+}
+
+#colorGame .history-row span.red{
+    color:#ef4444;
+}
+
+#colorGame .history-row span.purple{
+    color:#a855f7;
+}
+
+/* 🎯 ACTIVE POD */
+.color-pod.active{
+    transform:scale(1.1);
+    box-shadow:0 0 15px rgba(255,255,255,0.2);
+}
+    
 /* COLORS */
 
 .color-pod.green {
@@ -3702,9 +3722,25 @@ Choose your horse
 </div>
     
 
-<div class="color-game-container">
+<div id="colorGame" class="color-game-container">
 
 <h3>🎨 Color Pick Game</h3>
+
+<!-- 📜 HISTORY -->
+<div class="game-history">
+<h4>Last Results</h4>
+<div id="colorHistory" class="history-row"></div>
+</div>
+
+<!-- 📊 STATS -->
+<div id="colorStats" style="
+margin-top:10px;
+font-size:14px;
+text-align:center;
+color:#cbd5f5;
+">
+📊 Stats loading...
+</div>
 
 <p style="color:#94a3b8">
 Choose your color
@@ -3714,15 +3750,15 @@ Choose your color
 <div class="color-selection-zone">
 
 <div class="color-pod green" onclick="pickColor('green')" id="pod-green">
-<span>GREEN (2x)</span>
+<span>🟢 GREEN (2x)</span>
 </div>
 
 <div class="color-pod red" onclick="pickColor('red')" id="pod-red">
-<span>RED (2x)</span>
+<span>🔴 RED (2x)</span>
 </div>
 
 <div class="color-pod purple" onclick="pickColor('purple')" id="pod-purple">
-<span>PURPLE (5x Rare)</span>
+<span>🟣 PURPLE (5x Rare)</span>
 </div>
 
 </div>
@@ -3736,7 +3772,7 @@ Choose your color
 Pick your color
 </p>
 
-<!-- 🔥 PLAY BUTTON (IMPORTANT) -->
+<!-- 🎮 PLAY -->
 <button class="btn-bonus" onclick="playColorGame()">
 🎨 Play Color Game
 </button>
@@ -5877,34 +5913,73 @@ function playLucky7(){
             
 
 // ===============================
-// ⚖️ ODD EVEN (ULTRA FINAL)
+// ⚖️ ODD EVEN FINAL SYSTEM
 // ===============================
 
 let oddEvenChoice = null;
+let oddCount = 0;
+let evenCount = 0;
 
-// ===============================
-// 🎯 SELECT (FIXED)
-// ===============================
+// SELECT
 function selectOddEven(choice){
 
     oddEvenChoice = choice;
 
-    document.querySelectorAll(".bet-btn").forEach((btn, i)=>{
+    document.querySelectorAll("#oddEvenGame .bet-btn").forEach(btn=>{
         btn.classList.remove("active");
-
-        if(
-            (choice==="odd" && i===0) ||
-            (choice==="even" && i===1)
-        ){
-            btn.classList.add("active");
-        }
     });
+
+    event.target.classList.add("active");
 }
 
 
-// ===============================
-// 🎮 PLAY GAME
-// ===============================
+// 📜 HISTORY (COLOR FIXED)
+function addOddEvenHistory(result){
+
+    const history = document.getElementById("oddEvenHistory");
+    if(!history) return;
+
+    const span = document.createElement("span");
+
+    span.innerText = result.toUpperCase();
+
+    // 🎨 COLOR CLASS
+    span.classList.add(result); // odd / even
+
+    history.prepend(span);
+
+    while(history.children.length > 10){
+        history.removeChild(history.lastChild);
+    }
+}
+
+
+// 📊 STATS
+function updateOddEvenStats(result){
+
+    if(result === "odd"){
+        oddCount++;
+    }else{
+        evenCount++;
+    }
+
+    let total = oddCount + evenCount;
+
+    let oddPercent = total ? ((oddCount/total)*100).toFixed(0) : 0;
+    let evenPercent = total ? ((evenCount/total)*100).toFixed(0) : 0;
+
+    const el = document.getElementById("oddEvenStats");
+
+    if(el){
+        el.innerHTML =
+        "🔴 Odd: " + oddPercent + "% (" + oddCount + ")" +
+        "<br>" +
+        "🟢 Even: " + evenPercent + "% (" + evenCount + ")";
+    }
+}
+
+
+// PLAY
 function playOddEven(){
 
     if(!startGame()) return;
@@ -5922,21 +5997,14 @@ function playOddEven(){
 
     const display = document.getElementById("oddEvenNumber");
 
-    if(!display){
-        console.error("Display not found");
-        return;
-    }
-
     playSound("spin");
 
     display.classList.add("spin-number");
 
-    // 🎯 UNIVERSAL RESULT
     let resultType = globalResults.oddEven;
 
     let number;
 
-    // ✅ SAFE NUMBER GENERATION
     if(resultType === "odd"){
         const odds = [1,3,5,7,9];
         number = odds[Math.floor(Math.random()*odds.length)];
@@ -5950,12 +6018,22 @@ function playOddEven(){
         display.classList.remove("spin-number");
         display.innerText = number;
 
-        // 🔥 ADD HISTORY
+        // 🎨 COLOR RESULT
+        display.classList.remove("odd-color","even-color");
+
+        if(resultType === "odd"){
+            display.classList.add("odd-color");
+        }else{
+            display.classList.add("even-color");
+        }
+
+        // 📜 HISTORY
         addOddEvenHistory(resultType);
 
-        // ===============================
-        // 🎉 WIN / LOSE
-        // ===============================
+        // 📊 STATS
+        updateOddEvenStats(resultType);
+
+        // RESULT
         if(oddEvenChoice === resultType){
 
             let reward = bet * 2;
@@ -5975,12 +6053,9 @@ function playOddEven(){
 
         }
 
-        // ===============================
-        // 🔄 RESET
-        // ===============================
         oddEvenChoice = null;
 
-        document.querySelectorAll(".bet-btn").forEach(btn=>{
+        document.querySelectorAll("#oddEvenGame .bet-btn").forEach(btn=>{
             btn.classList.remove("active");
         });
 
@@ -5990,13 +6065,14 @@ function playOddEven(){
 }
     
 // ===============================
-// COLOR GAME (FINAL FIXED VERSION)
+// 🎨 COLOR GAME (ULTRA FINAL)
 // ===============================
 
 let selectedColor = null;
 
+
 // ===============================
-// SELECT COLOR
+// 🎯 SELECT COLOR
 // ===============================
 function pickColor(color){
 
@@ -6006,12 +6082,36 @@ function pickColor(color){
         p.classList.remove("active");
     });
 
-    document.getElementById("pod-"+color).classList.add("active");
+    const el = document.getElementById("pod-"+color);
+    if(el) el.classList.add("active");
 }
 
 
 // ===============================
-// PLAY GAME
+// 📜 HISTORY
+// ===============================
+function addColorHistoryStyled(result){
+
+    const history = document.getElementById("colorHistory");
+    if(!history) return;
+
+    const span = document.createElement("span");
+
+    span.innerText = result.toUpperCase();
+
+    // 🎨 COLOR CLASS
+    span.classList.add(result); // green / red / purple
+
+    history.prepend(span);
+
+    while(history.children.length > 10){
+        history.removeChild(history.lastChild);
+    }
+}
+
+
+// ===============================
+// 🎮 PLAY GAME
 // ===============================
 function playColorGame(){
 
@@ -6031,9 +6131,13 @@ function playColorGame(){
     const orb = document.getElementById("resultOrb");
     const status = document.getElementById("colorStatus");
 
+    if(!orb || !status){
+        console.error("Color game UI missing");
+        return;
+    }
+
     playSound("spin");
 
-    // 🎯 UNIVERSAL RESULT
     let result = globalResults.color;
 
     // ORB START
@@ -6045,29 +6149,31 @@ function playColorGame(){
     setTimeout(()=>{
 
         // 🎨 APPLY COLOR
+        orb.classList.remove("green","red","purple");
+
         if(result === "green"){
             orb.style.background = "#22c55e";
+            orb.classList.add("green");
         }
         else if(result === "red"){
             orb.style.background = "#ef4444";
+            orb.classList.add("red");
         }
         else{
             orb.style.background = "#a855f7";
+            orb.classList.add("purple");
         }
 
-        // ===============================
-        // WIN / LOSE
-        // ===============================
+        // 📜 HISTORY ADD
+        addColorHistoryStyled(result);
+        updateColorStats(result);
 
+        // ===============================
+        // 🎉 WIN / LOSE
+        // ===============================
         if(selectedColor === result){
 
-            let reward;
-
-            if(result === "purple"){
-                reward = bet * 5;
-            }else{
-                reward = bet * 2;
-            }
+            let reward = (result === "purple") ? bet * 5 : bet * 2;
 
             reward = applyRewardLimit(reward);
 
@@ -6090,17 +6196,16 @@ function playColorGame(){
         }
 
         // ===============================
-        // RESET UI
+        // 🔄 RESET UI
         // ===============================
-
         setTimeout(()=>{
 
-            orb.classList.remove("orb-active","orb-win");
+            orb.classList.remove("orb-active","orb-win","green","red","purple");
 
             selectedColor = null;
 
             document.querySelectorAll(".color-pod").forEach(p=>{
-                p.classList.remove("active"); // ✅ FIXED
+                p.classList.remove("active");
             });
 
         },800);
@@ -6109,7 +6214,6 @@ function playColorGame(){
 
     },1000);
 }
-
 
 // ===============================
 // CRASH GAME (FINAL)
