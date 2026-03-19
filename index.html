@@ -3990,6 +3990,180 @@ function playSelectedGame(){
             showLose("Game not found");
     }
 }
+
+
+function openGamePage(name){
+
+    document.getElementById("gamePage").style.display = "block";
+    document.getElementById("gamePageTitle").innerText = name;
+
+    // hide all
+    document.querySelectorAll(
+        ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
+    ).forEach(g => g.style.display = "none");
+
+    // show selected
+    const map = {
+        "Coin Game": ".coin-scene",
+        "Battle Game": ".battle-scene",
+        "Door Game": ".door-scene",
+        "Lucky Box": ".box-scene",
+        "Card Game": ".card-scene",
+        "Slot": ".slot-machine-container",
+        "Magic Tiles": "#magicTilesPanel",
+        "Color Game": ".color-game-container",
+        "Lucky Number": "#luckyNumberGame",
+        "Lucky 7": "#luckySevenGame",
+        "Odd Even": "#oddEvenGame",
+        "Horse Race": "#horseRaceGame",
+        "Car Race": "#carRaceGame",
+        "Crash Game": "#crashGamePanel"
+    };
+
+    let game = document.querySelector(map[name]);
+
+    if(game){
+        game.style.display = "block";
+    }
+}
+
+function closeGamePage(){
+
+    const page = document.getElementById("gamePage");
+
+    if(page) page.style.display = "none";
+
+    // 🔥 SAFE TIMER STOP
+    if(typeof gamePageTimer !== "undefined"){
+        clearInterval(gamePageTimer);
+    }
+
+    gameCooldown = false;
+
+    // 🔥 RESET GAME STATE
+    if(typeof gameRunning !== "undefined") gameRunning = false;
+    if(typeof gameLocked !== "undefined") gameLocked = false;
+
+    // 🔥 HIDE ALL GAMES
+    document.querySelectorAll(
+        ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
+    ).forEach(g=>{
+        g.style.display = "none";
+    });
+
+}
+
+// ===============================
+// ⏱ GAME TIMER SYSTEM
+// ===============================
+
+function startGamePageTimer(){
+
+    let time = 10;
+    gameCooldown = true;
+
+    const el = document.getElementById("gameTimer");
+
+    // 🔥 CLEAN CLEAR
+    clearInterval(gamePageTimer);
+
+    gamePageTimer = setInterval(()=>{
+
+        if(el){
+            el.innerText = "Next Game in: " + time + "s";
+        }
+
+        time--;
+
+        if(time < 0){
+
+            clearInterval(gamePageTimer);
+
+            if(el){
+                el.innerText = "✅ You can play now";
+            }
+
+            gameCooldown = false;
+        }
+
+    },1000);
+}
+
+// ===============================
+// 🎮 GAME SWITCH SYSTEM (FINAL)
+// ===============================
+function openGame(selector){
+
+    if(!selector){
+        console.error("Invalid selector");
+        return;
+    }
+
+    // ✅ DEFINE GAMES
+    const games = [
+        ".coin-scene",
+        ".battle-scene",
+        ".door-scene",
+        ".box-scene",
+        ".card-scene",
+        ".slot-machine-container",
+        "#magicTilesPanel",
+        ".color-game-container",
+        "#luckyNumberGame",
+        "#luckySevenGame",
+        "#oddEvenGame",
+        "#horseRaceGame",
+        "#carRaceGame",
+        "#crashGamePanel"
+    ];
+
+    // 🔥 HIDE ALL
+    games.forEach(g=>{
+        let el = document.querySelector(g);
+        if(el){
+            el.style.display = "none";
+            el.classList.remove("game-open");
+        }
+    });
+
+    // 🔥 SHOW ONE
+    let game = document.querySelector(selector);
+
+    if(game){
+        game.style.display = "block";
+        game.classList.add("game-open");
+
+        requestAnimationFrame(()=>{
+            game.scrollIntoView({
+                behavior:"smooth",
+                block:"center"
+            });
+        });
+
+    }else{
+        console.warn("Game not found:", selector);
+    }
+
+} // ✅ THIS WAS MISSING
+
+
+// ===============================
+// 🔊 SHOW GAME (SAFE)
+// ===============================
+function showGame(selector,sound){
+
+    openGame(selector)
+
+    if(sound){
+        try{
+            playSound(sound)
+        }catch(e){
+            console.warn("Sound error")
+        }
+    }
+    }   
+
+    
 // ===============================
 // 🔒 CORE GAME STATE
 // ===============================
@@ -4470,181 +4644,6 @@ function claimGameReward(amount){
 async function checkGameCooldown(){
     return !gameCooldown;
 }
-
-
-function openGamePage(name){
-
-    document.getElementById("gamePage").style.display = "block";
-    document.getElementById("gamePageTitle").innerText = name;
-
-    // hide all
-    document.querySelectorAll(
-        ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
-    ).forEach(g => g.style.display = "none");
-
-    // show selected
-    const map = {
-        "Coin Game": ".coin-scene",
-        "Battle Game": ".battle-scene",
-        "Door Game": ".door-scene",
-        "Lucky Box": ".box-scene",
-        "Card Game": ".card-scene",
-        "Slot": ".slot-machine-container",
-        "Magic Tiles": "#magicTilesPanel",
-        "Color Game": ".color-game-container",
-        "Lucky Number": "#luckyNumberGame",
-        "Lucky 7": "#luckySevenGame",
-        "Odd Even": "#oddEvenGame",
-        "Horse Race": "#horseRaceGame",
-        "Car Race": "#carRaceGame",
-        "Crash Game": "#crashGamePanel"
-    };
-
-    let game = document.querySelector(map[name]);
-
-    if(game){
-        game.style.display = "block";
-    }
-}
-
-function closeGamePage(){
-
-    const page = document.getElementById("gamePage");
-
-    if(page) page.style.display = "none";
-
-    // 🔥 SAFE TIMER STOP
-    if(typeof gamePageTimer !== "undefined"){
-        clearInterval(gamePageTimer);
-    }
-
-    gameCooldown = false;
-
-    // 🔥 RESET GAME STATE
-    if(typeof gameRunning !== "undefined") gameRunning = false;
-    if(typeof gameLocked !== "undefined") gameLocked = false;
-
-    // 🔥 HIDE ALL GAMES
-    document.querySelectorAll(
-        ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
-    ).forEach(g=>{
-        g.style.display = "none";
-    });
-
-}
-
-// ===============================
-// ⏱ GAME TIMER SYSTEM
-// ===============================
-let gamePageTimer;
-let gameCooldown = false;
-
-function startGamePageTimer(){
-
-    let time = 10;
-    gameCooldown = true;
-
-    const el = document.getElementById("gameTimer");
-
-    // 🔥 CLEAN CLEAR
-    clearInterval(gamePageTimer);
-
-    gamePageTimer = setInterval(()=>{
-
-        if(el){
-            el.innerText = "Next Game in: " + time + "s";
-        }
-
-        time--;
-
-        if(time < 0){
-
-            clearInterval(gamePageTimer);
-
-            if(el){
-                el.innerText = "✅ You can play now";
-            }
-
-            gameCooldown = false;
-        }
-
-    },1000);
-}
-
-// ===============================
-// 🎮 GAME SWITCH SYSTEM (FINAL)
-// ===============================
-function openGame(selector){
-
-    if(!selector){
-        console.error("Invalid selector");
-        return;
-    }
-
-    // ✅ DEFINE GAMES
-    const games = [
-        ".coin-scene",
-        ".battle-scene",
-        ".door-scene",
-        ".box-scene",
-        ".card-scene",
-        ".slot-machine-container",
-        "#magicTilesPanel",
-        ".color-game-container",
-        "#luckyNumberGame",
-        "#luckySevenGame",
-        "#oddEvenGame",
-        "#horseRaceGame",
-        "#carRaceGame",
-        "#crashGamePanel"
-    ];
-
-    // 🔥 HIDE ALL
-    games.forEach(g=>{
-        let el = document.querySelector(g);
-        if(el){
-            el.style.display = "none";
-            el.classList.remove("game-open");
-        }
-    });
-
-    // 🔥 SHOW ONE
-    let game = document.querySelector(selector);
-
-    if(game){
-        game.style.display = "block";
-        game.classList.add("game-open");
-
-        requestAnimationFrame(()=>{
-            game.scrollIntoView({
-                behavior:"smooth",
-                block:"center"
-            });
-        });
-
-    }else{
-        console.warn("Game not found:", selector);
-    }
-
-} // ✅ THIS WAS MISSING
-
-
-// ===============================
-// 🔊 SHOW GAME (SAFE)
-// ===============================
-function showGame(selector,sound){
-
-    openGame(selector)
-
-    if(sound){
-        try{
-            playSound(sound)
-        }catch(e){
-            console.warn("Sound error")
-        }
-    }
-}
-
 
 // ===============================
 // 📜 SAFE HISTORY SYSTEM
