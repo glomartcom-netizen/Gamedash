@@ -4946,19 +4946,19 @@ function stopRoundTimer(){
 }
 
 // ===============================
-// 🔄 SAFE RESET SYSTEM
+// 🔄 SAFE RESET SYSTEM (FINAL)
 // ===============================
 function resetUniversalGames(){
 
-    if(typeof oddEvenChoice !== "undefined") oddEvenChoice = null
-    if(typeof lucky7Choice !== "undefined") lucky7Choice = null
-    if(typeof selectedLucky !== "undefined") selectedLucky = null
+    if(typeof oddEvenChoice !== "undefined") oddEvenChoice = null;
+    if(typeof lucky7Choice !== "undefined") lucky7Choice = null;
+    if(typeof selectedLucky !== "undefined") selectedLucky = null;
 
-    let oddDisplay = document.getElementById("oddEvenNumber")
-    if(oddDisplay) oddDisplay.innerText = "?"
+    let oddDisplay = document.getElementById("oddEvenNumber");
+    if(oddDisplay) oddDisplay.innerText = "?";
 
-    let luckyDisplay = document.getElementById("luckyDisplay")
-    if(luckyDisplay) luckyDisplay.innerText = "?"
+    let luckyDisplay = document.getElementById("luckyDisplay");
+    if(luckyDisplay) luckyDisplay.innerText = "?";
 }
 
 
@@ -4967,53 +4967,72 @@ function resetUniversalGames(){
 // ===============================
 function generateResults(){
 
-    const colors=["green","red","purple"]
+    function getRandom(max, last){
+        let val;
+        do{
+            val = Math.floor(Math.random()*max)+1;
+        }while(val === last);
+        return val;
+    }
 
-    globalResults.color = colors[Math.floor(Math.random()*3)]
-    addColorHistory(globalResults.color)
+    // 🎨 COLOR
+    const colors = ["green","red","purple"];
+    let lastColor = globalResults.color;
 
-    globalResults.luckyNumber = Math.floor(Math.random()*5)+1
-    addLuckyNumberHistory(globalResults.luckyNumber)
+    do{
+        globalResults.color = colors[Math.floor(Math.random()*colors.length)];
+    }while(globalResults.color === lastColor);
 
-    globalResults.lucky7 = Math.floor(Math.random()*7)+1
-    addLuckySevenHistory(globalResults.lucky7)
+    addColorHistory(globalResults.color);
 
-    let num = Math.floor(Math.random()*10)+1
-    globalResults.oddEven = num%2===0 ? "even":"odd"
-    addOddEvenHistory(globalResults.oddEven)
+    // 🎯 LUCKY NUMBER (1–10) ✅ FIX
+    globalResults.luckyNumber = getRandom(10, globalResults.luckyNumber);
+    addLuckyNumberHistory(globalResults.luckyNumber);
 
-    globalResults.horse = Math.floor(Math.random()*4)+1
-    addHorseHistory(globalResults.horse)
+    // 🎲 LUCKY 7 (1–7)
+    globalResults.lucky7 = getRandom(7, globalResults.lucky7);
+    addLuckySevenHistory(globalResults.lucky7);
 
-    globalResults.car = Math.floor(Math.random()*4)+1
-    addCarHistory(globalResults.car)
+    // ⚖ ODD EVEN (1–10)
+    let num = getRandom(10, globalResults._lastOE);
+    globalResults._lastOE = num;
+    globalResults.oddEven = num % 2 === 0 ? "even" : "odd";
+    addOddEvenHistory(globalResults.oddEven);
 
-    let crashValue = (Math.random()*5+1).toFixed(2)
-    globalResults.crash = crashValue
-    addCrashHistory(crashValue)
+    // 🐎 HORSE (1–6) ✅ FIX
+    globalResults.horse = getRandom(6, globalResults.horse);
+    addHorseHistory(globalResults.horse);
+
+    // 🏎 CAR (1–6) ✅ FIX
+    globalResults.car = getRandom(6, globalResults.car);
+    addCarHistory(globalResults.car);
+
+    // 🚀 CRASH
+    let crash = (Math.random()*5+1).toFixed(2);
+    globalResults.crash = crash;
+    addCrashHistory(crash);
 }
 
 
 // ===============================
-// 🎮 GAME OPEN SHORTCUTS
+// 🎮 GAME OPEN SHORTCUTS (FINAL)
 // ===============================
-function openCoinGame(){ openGame('.coin-scene') }
-function openBattleGame(){ openGame('.battle-scene') }
-function openDoorGame(){ openGame('.door-scene') }
-function openLuckyBox(){ openGame('.box-scene') }
-function openCardGame(){ openGame('.card-scene') }
-function startSlot(){ openGame('.slot-machine-container') }
-function openColorGame(){ openGame('.color-game-container') }
-function openMagicTiles(){ openGame('#magicTilesPanel') }
-function openCrashGame(){ openGame('#crashGamePanel') }
-function openLuckyNumber(){ openGame('#luckyNumberGame') }
-function openLuckySeven(){ openGame('#luckySevenGame') }
-function openOddEven(){ openGame('#oddEvenGame') }
-function openHorseRace(){ openGame('#horseRaceGame') }
-function openCarRace(){ openGame('#carRaceGame') }    
+function openCoinGame(){ openGamePage("Coin Game") }
+function openBattleGame(){ openGamePage("Battle Game") }
+function openDoorGame(){ openGamePage("Door Game") }
+function openLuckyBox(){ openGamePage("Lucky Box") }
+function openCardGame(){ openGamePage("Card Game") }
+function startSlot(){ openGamePage("Slot") }
+function openColorGame(){ openGamePage("Color Game") }
+function openMagicTiles(){ openGamePage("Magic Tiles") }
+function openCrashGame(){ openGamePage("Crash Game") }
+function openLuckyNumber(){ openGamePage("Lucky Number") }
+function openLuckySeven(){ openGamePage("Lucky 7") }
+function openOddEven(){ openGamePage("Odd Even") }
+function openHorseRace(){ openGamePage("Horse Race") }
+function openCarRace(){ openGamePage("Car Race") }
 
-        
-
+    
 // ===============================
 // HORSE RACE (FINAL SYNC)
 // ===============================
