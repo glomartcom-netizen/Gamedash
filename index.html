@@ -5012,7 +5012,6 @@ function safeAdd(historyId, text){
 // ===============================
 // 🎮 GAME HISTORY HELPERS
 // ===============================
-function addColorHistory(r){ safeAdd("colorHistory", r); }
 function addCrashHistory(m){ safeAdd("crashHistory", m + "x"); }
 function addLuckyNumberHistory(n){ safeAdd("luckyNumberHistory", n); }
 function addLuckySevenHistory(n){ safeAdd("luckySevenHistory", "🎲 " + n); }
@@ -5044,7 +5043,30 @@ function addOddEvenHistory(result){
     while(history.children.length > 10){
         history.removeChild(history.lastChild);
     }
-}    
+} 
+
+ // ===============================
+// 🎨 COLOR HISTORY (FINAL FIX)
+// ===============================
+function addColorHistory(r){
+
+    const history = document.getElementById("colorHistory");
+    if(!history) return;
+
+    const span = document.createElement("span");
+
+    span.innerText = r.toUpperCase();
+
+    // 🎨 IMPORTANT: color class add
+    span.classList.add(r); // green / red / purple
+
+    history.prepend(span);
+
+    // limit
+    while(history.children.length > 10){
+        history.removeChild(history.lastChild);
+    }
+    }   
 
 
 // ===============================
@@ -6064,157 +6086,189 @@ function playOddEven(){
     },1000);
 }
     
-// ===============================
-// 🎨 COLOR GAME (ULTRA FINAL)
-// ===============================
+// ===============================  
+// 🎨 COLOR GAME (ULTRA FINAL FIXED)  
+// ===============================  
 
-let selectedColor = null;
+let selectedColor = null;  
 
-
-// ===============================
-// 🎯 SELECT COLOR
-// ===============================
-function pickColor(color){
-
-    selectedColor = color;
-
-    document.querySelectorAll(".color-pod").forEach(p=>{
-        p.classList.remove("active");
-    });
-
-    const el = document.getElementById("pod-"+color);
-    if(el) el.classList.add("active");
-}
+let greenCount = 0;  
+let redCount = 0;  
+let purpleCount = 0;  
 
 
 // ===============================
-// 📜 HISTORY
+// 📊 UPDATE STATS (SAFE)
 // ===============================
-function addColorHistoryStyled(result){
+function updateColorStats(result){  
 
-    const history = document.getElementById("colorHistory");
-    if(!history) return;
+    if(result === "green") greenCount++;  
+    else if(result === "red") redCount++;  
+    else if(result === "purple") purpleCount++;  
 
-    const span = document.createElement("span");
+    let total = greenCount + redCount + purpleCount;  
 
-    span.innerText = result.toUpperCase();
+    if(total === 0) return; // 🔥 safety
 
-    // 🎨 COLOR CLASS
-    span.classList.add(result); // green / red / purple
+    let g = ((greenCount/total)*100).toFixed(0);  
+    let r = ((redCount/total)*100).toFixed(0);  
+    let p = ((purpleCount/total)*100).toFixed(0);  
 
-    history.prepend(span);
+    const el = document.getElementById("colorStats");  
 
-    while(history.children.length > 10){
-        history.removeChild(history.lastChild);
-    }
-}
+    if(el){  
+        el.innerHTML =  
+        "🟢 Green: " + g + "% ("+greenCount+")<br>" +  
+        "🔴 Red: " + r + "% ("+redCount+")<br>" +  
+        "🟣 Purple: " + p + "% ("+purpleCount+")";  
+    }  
+}  
 
 
+// ===============================  
+// 🎯 SELECT COLOR  
 // ===============================
-// 🎮 PLAY GAME
+function pickColor(color){  
+
+    selectedColor = color;  
+
+    document.querySelectorAll(".color-pod").forEach(p=>{  
+        p.classList.remove("active");  
+    });  
+
+    const el = document.getElementById("pod-"+color);  
+    if(el) el.classList.add("active");  
+}  
+
+
+// ===============================  
+// 📜 HISTORY  
 // ===============================
-function playColorGame(){
+function addColorHistoryStyled(result){  
 
-    if(!startGame()) return;
+    const history = document.getElementById("colorHistory");  
+    if(!history) return;  
 
-    if(!selectedColor){
-        showLose("Pick a color");
-        return;
-    }
+    const span = document.createElement("span");  
 
-    let bet = processBet();
-    if(!bet){
-        gameRunning = false;
-        return;
-    }
+    span.innerText = result.toUpperCase();  
 
-    const orb = document.getElementById("resultOrb");
-    const status = document.getElementById("colorStatus");
+    span.classList.add(result);  
 
-    if(!orb || !status){
-        console.error("Color game UI missing");
-        return;
-    }
+    history.prepend(span);  
 
-    playSound("spin");
+    while(history.children.length > 10){  
+        history.removeChild(history.lastChild);  
+    }  
+}  
 
-    let result = globalResults.color;
 
-    // ORB START
-    orb.classList.add("orb-active");
-    orb.style.background = "#475569";
+// ===============================  
+// 🎮 PLAY GAME  
+// ===============================
+function playColorGame(){  
 
-    status.innerText = "Spinning...";
+    if(!startGame()) return;  
 
-    setTimeout(()=>{
+    if(!selectedColor){  
+        showLose("Pick a color");  
+        return;  
+    }  
 
-        // 🎨 APPLY COLOR
-        orb.classList.remove("green","red","purple");
+    let bet = processBet();  
+    if(!bet){  
+        gameRunning = false;  
+        return;  
+    }  
 
-        if(result === "green"){
-            orb.style.background = "#22c55e";
-            orb.classList.add("green");
-        }
-        else if(result === "red"){
-            orb.style.background = "#ef4444";
-            orb.classList.add("red");
-        }
-        else{
-            orb.style.background = "#a855f7";
-            orb.classList.add("purple");
-        }
+    const orb = document.getElementById("resultOrb");  
+    const status = document.getElementById("colorStatus");  
 
-        // 📜 HISTORY ADD
-        addColorHistoryStyled(result);
+    if(!orb || !status){  
+        console.error("Color game UI missing");  
+        return;  
+    }  
+
+    playSound("spin");  
+
+    let result = globalResults.color;  
+
+    // START
+    orb.classList.add("orb-active");  
+    orb.style.background = "#475569";  
+
+    status.innerText = "Spinning...";  
+
+    setTimeout(()=>{  
+
+        // 🎨 COLOR APPLY
+        orb.classList.remove("green","red","purple");  
+
+        if(result === "green"){  
+            orb.style.background = "#22c55e";  
+            orb.classList.add("green");  
+        }  
+        else if(result === "red"){  
+            orb.style.background = "#ef4444";  
+            orb.classList.add("red");  
+        }  
+        else{  
+            orb.style.background = "#a855f7";  
+            orb.classList.add("purple");  
+        }  
+
+        // 📜 HISTORY
+        addColorHistoryStyled(result);  
+
+        // 📊 STATS (🔥 MISSING FIX)
         updateColorStats(result);
 
         // ===============================
-        // 🎉 WIN / LOSE
+        // 🎉 RESULT
         // ===============================
-        if(selectedColor === result){
+        if(selectedColor === result){  
 
-            let reward = (result === "purple") ? bet * 5 : bet * 2;
+            let reward = (result === "purple") ? bet * 5 : bet * 2;  
 
-            reward = applyRewardLimit(reward);
+            reward = applyRewardLimit(reward);  
 
-            playSound("win");
+            playSound("win");  
 
-            orb.classList.add("orb-win");
+            orb.classList.add("orb-win");  
 
-            showBigWin(reward);
-            claimGameReward(reward);
-            addWinner(userAddress, reward);
+            showBigWin(reward);  
+            claimGameReward(reward);  
+            addWinner(userAddress, reward);  
 
-            status.innerText = "You WON 🎉";
+            status.innerText = "You WON 🎉";  
 
-        }else{
+        }else{  
 
-            playSound("lose");
+            playSound("lose");  
+            status.innerText = "Result: " + result.toUpperCase();  
 
-            status.innerText = "Result: " + result.toUpperCase();
-
-        }
+        }  
 
         // ===============================
-        // 🔄 RESET UI
+        // 🔄 RESET
         // ===============================
-        setTimeout(()=>{
+        setTimeout(()=>{  
 
-            orb.classList.remove("orb-active","orb-win","green","red","purple");
+            orb.classList.remove("orb-active","orb-win","green","red","purple");  
 
-            selectedColor = null;
+            selectedColor = null;  
 
-            document.querySelectorAll(".color-pod").forEach(p=>{
-                p.classList.remove("active");
-            });
+            document.querySelectorAll(".color-pod").forEach(p=>{  
+                p.classList.remove("active");  
+            });  
 
-        },800);
+        },800);  
 
-        endGame();
+        endGame();  
 
-    },1000);
+    },1000);  
 }
-
+        
 // ===============================
 // CRASH GAME (FINAL)
 // ===============================
