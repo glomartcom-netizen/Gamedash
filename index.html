@@ -3929,71 +3929,7 @@ setInterval(()=>{
 
 
 // ===============================
-// 💰 BALANCE (SECURE)
-// ===============================
-
-const SECRET_KEY = "DMX@2026_SECURE_KEY";
-
-function saveBalance(val){
-
-    if(isNaN(val) || val < 0){
-        val = 0;
-    }
-
-    val = Math.floor(val);
-
-    const salt = Date.now().toString();
-    const hash = btoa(val + SECRET_KEY + salt);
-
-    localStorage.setItem("claimBalance", val.toString());
-    localStorage.setItem("balanceHash", hash);
-    localStorage.setItem("balanceSalt", salt);
-}
-
-function loadBalance(){
-
-    let val = Number(localStorage.getItem("claimBalance")) || 0;
-    let hash = localStorage.getItem("balanceHash");
-    let salt = localStorage.getItem("balanceSalt");
-
-    if(!hash || !salt){
-        saveBalance(0);
-        return 0;
-    }
-
-    const verify = btoa(val + SECRET_KEY + salt);
-
-    if(verify !== hash){
-        console.warn("🚨 Balance tampering detected!");
-        val = 0;
-        saveBalance(val);
-    }
-
-    return val;
-}
-
-setInterval(()=>{
-
-    let stored = loadBalance();
-
-    // ❌ invalid storage → reset
-    if(isNaN(stored) || stored < 0){
-        saveBalance(claimBalance);
-        return;
-    }
-
-    // 🔒 tamper detection
-    if(stored !== claimBalance){
-
-        console.warn("Balance tampering detected");
-
-        saveBalance(claimBalance);
-    }
-
-},2000);    
-
-// ===============================
-// 🔒 GAME CONTROL SYSTEM
+// 🔒 GAME CONTROL SYSTEM (FINAL)
 // ===============================
 
 let gameRunning = false;
@@ -4002,6 +3938,7 @@ let cooldownInterval = null;
 
 function startGame(){
 
+    // 🔥 prevent spam click
     if(gameRunning || gameLocked) return false;
 
     gameRunning = true;
@@ -4013,7 +3950,7 @@ function endGame(delay = 1500){
     setTimeout(()=>{
         gameRunning = false;
         gameLocked = true;
-        startCooldown(3);
+        startCooldown(3); // cooldown 3 sec
     }, delay);
 }
 
@@ -4050,17 +3987,33 @@ function startCooldown(seconds){
     },1000);
 }
 
+
 // ===============================
-// 🎮 GAME SELECTOR
+// 🎮 GAME SELECTOR (FINAL)
 // ===============================
 function playSelectedGame(){
 
-    if(gameCooldown){
+    // 🔥 LOCK CHECK (only one system)
+    if(gameLocked){
         showLose("⏱ Wait...");
         return;
     }
 
-    const title = document.getElementById("gamePageTitle").innerText;
+    // 🔥 START GAME CHECK
+    if(!startGame()){
+        showLose("⏱ Wait...");
+        return;
+    }
+
+    const el = document.getElementById("gamePageTitle");
+
+    if(!el){
+        console.error("Game title missing");
+        gameRunning = false;
+        return;
+    }
+
+    const title = el.innerText.trim();
 
     switch(title){
 
@@ -4081,21 +4034,29 @@ function playSelectedGame(){
 
         default:
             showLose("Game not found");
+            gameRunning = false;
     }
 }
 
 
+
+// ===============================
+// 🎮 OPEN GAME PAGE (FINAL FIX)
+// ===============================
 function openGamePage(name){
 
-    document.getElementById("gamePage").style.display = "block";
-    document.getElementById("gamePageTitle").innerText = name;
+    const page = document.getElementById("gamePage");
+    const title = document.getElementById("gamePageTitle");
 
-    // hide all
+    if(page) page.style.display = "block";
+    if(title) title.innerText = name;
+
+    // 🔥 hide all games
     document.querySelectorAll(
         ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
     ).forEach(g => g.style.display = "none");
 
-    // show selected
+    // 🔥 game map
     const map = {
         "Coin Game": ".coin-scene",
         "Battle Game": ".battle-scene",
@@ -4117,27 +4078,34 @@ function openGamePage(name){
 
     if(game){
         game.style.display = "block";
+    }else{
+        console.warn("Game not found:", name);
     }
+
+    // 🔥 START TIMER (IMPORTANT)
+    startGamePageTimer();
 }
 
+
+// ===============================
+// ❌ CLOSE GAME PAGE (FINAL)
+// ===============================
 function closeGamePage(){
 
     const page = document.getElementById("gamePage");
 
     if(page) page.style.display = "none";
 
-    // 🔥 SAFE TIMER STOP
+    // 🔥 stop timer
     if(typeof gamePageTimer !== "undefined"){
         clearInterval(gamePageTimer);
     }
 
-    gameCooldown = false;
-
-    // 🔥 RESET GAME STATE
+    // 🔥 reset states
     if(typeof gameRunning !== "undefined") gameRunning = false;
     if(typeof gameLocked !== "undefined") gameLocked = false;
 
-    // 🔥 HIDE ALL GAMES
+    // 🔥 hide all games
     document.querySelectorAll(
         ".coin-scene, .battle-scene, .door-scene, .box-scene, .card-scene, .slot-machine-container, #magicTilesPanel, .color-game-container, #luckyNumberGame, #luckySevenGame, #oddEvenGame, #horseRaceGame, #carRaceGame, #crashGamePanel"
     ).forEach(g=>{
@@ -4146,18 +4114,18 @@ function closeGamePage(){
 
 }
 
+
 // ===============================
-// ⏱ GAME TIMER SYSTEM
+// ⏱ GAME PAGE TIMER (FINAL)
 // ===============================
+let gamePageTimer;
 
 function startGamePageTimer(){
 
     let time = 10;
-    gameCooldown = true;
 
     const el = document.getElementById("gameTimer");
 
-    // 🔥 CLEAN CLEAR
     clearInterval(gamePageTimer);
 
     gamePageTimer = setInterval(()=>{
@@ -4176,55 +4144,33 @@ function startGamePageTimer(){
                 el.innerText = "✅ You can play now";
             }
 
-            gameCooldown = false;
         }
 
     },1000);
 }
 
+
+
 // ===============================
-// 🎮 GAME SWITCH SYSTEM (FINAL)
+// 🎮 GAME SHOW SYSTEM (FINAL)
 // ===============================
-function openGame(selector){
+
+// ❌ REMOVED: openGame() duplicate system
+
+// ===============================
+// 🔊 SHOW GAME (FINAL)
+// ===============================
+function showGame(selector, sound){
 
     if(!selector){
         console.error("Invalid selector");
         return;
     }
 
-    // ✅ DEFINE GAMES
-    const games = [
-        ".coin-scene",
-        ".battle-scene",
-        ".door-scene",
-        ".box-scene",
-        ".card-scene",
-        ".slot-machine-container",
-        "#magicTilesPanel",
-        ".color-game-container",
-        "#luckyNumberGame",
-        "#luckySevenGame",
-        "#oddEvenGame",
-        "#horseRaceGame",
-        "#carRaceGame",
-        "#crashGamePanel"
-    ];
-
-    // 🔥 HIDE ALL
-    games.forEach(g=>{
-        let el = document.querySelector(g);
-        if(el){
-            el.style.display = "none";
-            el.classList.remove("game-open");
-        }
-    });
-
-    // 🔥 SHOW ONE
-    let game = document.querySelector(selector);
+    const game = document.querySelector(selector);
 
     if(game){
         game.style.display = "block";
-        game.classList.add("game-open");
 
         requestAnimationFrame(()=>{
             game.scrollIntoView({
@@ -4237,25 +4183,15 @@ function openGame(selector){
         console.warn("Game not found:", selector);
     }
 
-} // ✅ THIS WAS MISSING
-
-
-// ===============================
-// 🔊 SHOW GAME (SAFE)
-// ===============================
-function showGame(selector,sound){
-
-    openGame(selector)
-
+    // 🔊 sound safe
     if(sound){
         try{
-            playSound(sound)
+            playSound(sound);
         }catch(e){
-            console.warn("Sound error")
+            console.warn("Sound error");
         }
     }
-    }   
-
+}
     
 // ===============================
 // 🔒 CORE GAME STATE
@@ -4269,22 +4205,6 @@ if(!userAddress){
     localStorage.setItem("walletAddress", userAddress);
 }
 
-// ===============================
-// 💰 BALANCE
-// ===============================
-let claimBalance = loadBalance();
-
-// 🎁 FIRST TIME BONUS (100 DMX ONLY)
-if(localStorage.getItem("isNewPlayer") === null){
-
-    claimBalance = 100;  // ✅ FIXED (ONLY 100)
-
-    saveBalance(claimBalance);
-
-    localStorage.setItem("isNewPlayer","true");
-
-    updateBalance();
-}
 
 // ===============================
 // 💸 GAME VALUES
@@ -4390,32 +4310,103 @@ function antiExploitCheck(){
 
     return true;
 }
+    
 // ===============================
-// 5. BALANCE UI SYSTEM
+// 💰 BALANCE (SECURE FINAL)
 // ===============================
-function updateBalance(){
 
-    let el = document.getElementById("balanceValue");  
+const SECRET_KEY = "DMX@2026_SECURE_KEY";
 
-    // ✅ Safety check
-    if(isNaN(claimBalance) || claimBalance < 0){
-        claimBalance = 0;
+// SAVE
+function saveBalance(val){
+
+    if(isNaN(val) || val < 0){
+        val = 0;
     }
 
-    if(el){  
-        el.innerText = claimBalance.toFixed(0);  
+    val = Math.floor(val);
 
-        el.classList.add("win-flash");  
+    const salt = Date.now().toString();
+    const hash = btoa(val + SECRET_KEY + salt);
 
-        setTimeout(()=>{  
-            el.classList.remove("win-flash");  
-        },500);  
-    }  
-
-    // ✅ Use secure save
-    saveBalance(claimBalance);
+    localStorage.setItem("claimBalance", val.toString());
+    localStorage.setItem("balanceHash", hash);
+    localStorage.setItem("balanceSalt", salt);
 }
 
+
+// LOAD
+function loadBalance(){
+
+    let val = Number(localStorage.getItem("claimBalance")) || 0;
+    let hash = localStorage.getItem("balanceHash");
+    let salt = localStorage.getItem("balanceSalt");
+
+    // ✅ first time மட்டும்
+    if(!hash || !salt){
+        saveBalance(val); // ❗ 0 fix remove
+        return val;
+    }
+
+    const verify = btoa(val + SECRET_KEY + salt);
+
+    if(verify !== hash){
+        console.warn("🚨 Balance tampering detected!");
+        val = 0;
+        saveBalance(val);
+    }
+
+    return val;
+}
+
+
+// ===============================
+// 🎁 FIRST TIME BONUS (100 DMX)
+// ===============================
+let claimBalance = loadBalance();
+
+if(localStorage.getItem("isNewPlayer") === null){
+
+    claimBalance = 100;
+
+    saveBalance(claimBalance);
+
+    localStorage.setItem("isNewPlayer","true");
+}
+
+
+// ===============================
+// 🔄 UI UPDATE
+// ===============================
+function updateBalance(){
+    const el = document.getElementById("balanceValue");
+    if(el){
+        el.innerText = claimBalance;
+    }
+}
+
+updateBalance();
+
+
+// ===============================
+// 🔒 AUTO PROTECTION
+// ===============================
+setInterval(()=>{
+
+    let stored = loadBalance();
+
+    if(isNaN(stored) || stored < 0){
+        saveBalance(claimBalance);
+        return;
+    }
+
+    if(stored !== claimBalance){
+        console.warn("Balance tampering detected");
+        saveBalance(claimBalance);
+    }
+
+},2000);
+    
 // ===============================
 // 6. JACKPOT SYSTEM
 // ===============================
