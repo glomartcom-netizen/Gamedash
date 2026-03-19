@@ -2206,6 +2206,29 @@ filter:drop-shadow(0 0 5px #06b6d4);
 
 }
 
+ /* multiplier colors */
+.low{
+    color:#22c55e;
+}
+.mid{
+    color:#facc15;
+}
+.high{
+    color:#ef4444;
+    text-shadow:0 0 10px rgba(239,68,68,0.8);
+}
+
+/* history colors */
+#crashGamePanel .history-row span.low{
+    color:#22c55e;
+}
+#crashGamePanel .history-row span.mid{
+    color:#facc15;
+}
+#crashGamePanel .history-row span.high{
+    color:#ef4444;
+    }   
+
 /* ROCKET ACTIVE */
 
 .rocket.active{
@@ -3801,18 +3824,33 @@ Pick your color
 
 <h3>🚀 DMX Crash Game</h3>
 
+<!-- 📜 HISTORY -->
+<div class="game-history">
+<h4>Last Crashes</h4>
+<div id="crashHistory" class="history-row"></div>
+</div>
+
 <div class="crash-area">
 
-<div id="crashMultiplier">1.00x</div>
+<div id="crashMultiplier" style="
+font-size:28px;
+font-weight:bold;
+margin-bottom:10px;
+">
+1.00x
+</div>
 
 <div id="rocket" class="rocket">🚀</div>
 
 </div>
 
-<p id="crashStatus">Launch the rocket and cash out before crash!</p>
+<p id="crashStatus" style="color:#94a3b8;">
+Launch the rocket and cash out before crash!
+</p>
 
 <br>
 
+<!-- 🎮 BUTTONS -->
 <button id="launchBtn" class="btn-bonus" onclick="startCrash()">
 🚀 Launch Rocket
 </button>
@@ -3821,39 +3859,24 @@ Pick your color
 class="btn-bonus"
 style="display:none;background:green;"
 onclick="takeProfit()">
-
 💰 Take Profit
-
 </button>
 
 <!-- RULES -->
-
 <div class="game-rules">
 
 <b>Crash Game Rules</b>
 
 <p>
 
-🚀 Multiplier starts from <b>1.00x</b>  
-📈 Multiplier increases continuously  
+🚀 Multiplier starts from <b>1.00x</b><br>
+📈 Multiplier increases continuously<br><br>
 
-<br><br>
+💰 Cash out before crash to win<br><br>
 
-💰 Cash out before crash to win  
-
-<br><br>
-
-Example  
-
-<br>
-
-Bet 10 DMX  
-
-<br>
-
-Cashout at 2.00x → Win 20 DMX  
-
-<br>
+Example<br>
+Bet Min 10 DMX<br>
+Cashout at 2.00x → Win 20 DMX<br><br>
 
 ❌ If rocket crashes before cashout → Lose bet  
 
@@ -3862,7 +3885,7 @@ Cashout at 2.00x → Win 20 DMX
 </div>
 
 </div>
-
+    
 <!-- BET -->
 <div style="text-align:center;margin-top:20px;">
 
@@ -6270,7 +6293,7 @@ function playColorGame(){
 }
         
 // ===============================
-// CRASH GAME (FINAL)
+// 🚀 CRASH GAME (ULTRA FINAL)
 // ===============================
 
 let crashRunning = false;
@@ -6281,11 +6304,39 @@ let cashedOut = false;
 let crashBet = 0;
 
 
-// START
+// 📜 HISTORY
+function addCrashHistoryStyled(multiplier){
+
+    const history = document.getElementById("crashHistory");
+    if(!history) return;
+
+    const span = document.createElement("span");
+
+    span.innerText = multiplier + "x";
+
+    // 🎨 color levels
+    if(multiplier >= 3){
+        span.classList.add("high");
+    }else if(multiplier >= 2){
+        span.classList.add("mid");
+    }else{
+        span.classList.add("low");
+    }
+
+    history.prepend(span);
+
+    while(history.children.length > 12){
+        history.removeChild(history.lastChild);
+    }
+}
+
+
+// ===============================
+// 🚀 START
+// ===============================
 function startCrash(){
 
     if(!startGame()) return;
-
     if(crashRunning) return;
 
     let bet = processBet();
@@ -6298,7 +6349,6 @@ function startCrash(){
 
     crashRunning = true;
     cashedOut = false;
-
     crashMultiplier = 1;
 
     document.getElementById("launchBtn").style.display = "none";
@@ -6308,29 +6358,39 @@ function startCrash(){
     const display = document.getElementById("crashMultiplier");
     const status = document.getElementById("crashStatus");
 
+    if(!rocket || !display || !status){
+        console.error("Crash UI missing");
+        return;
+    }
+
     playSound("spin");
 
     rocket.classList.add("active");
 
-    // 🎯 RANDOM CRASH POINT (PROFIT SAFE)
-    crashPoint = (Math.random() * 3 + 1.5).toFixed(2); 
-    // 1.5x to 4.5x range → safe RTP
+    // 🎯 SMART CRASH RANGE (balanced)
+    crashPoint = (Math.random() * 3 + 1.5); // 1.5x → 4.5x
+
 
     crashInterval = setInterval(()=>{
 
-        crashMultiplier += 0.02;
+        crashMultiplier += 0.03; // smoother speed
 
         display.innerText = crashMultiplier.toFixed(2) + "x";
 
-        display.classList.add("multiplier-grow");
+        // 🎨 color multiplier
+        display.classList.remove("low","mid","high");
 
-        setTimeout(()=>{
-            display.classList.remove("multiplier-grow");
-        },100);
+        if(crashMultiplier >= 3){
+            display.classList.add("high");
+        }else if(crashMultiplier >= 2){
+            display.classList.add("mid");
+        }else{
+            display.classList.add("low");
+        }
 
         // rocket move
         rocket.style.transform =
-        `translate(-50%, ${-crashMultiplier*30}px)`;
+        `translate(-50%, ${-crashMultiplier*35}px)`;
 
         // 💥 CRASH
         if(crashMultiplier >= crashPoint){
@@ -6346,7 +6406,9 @@ function startCrash(){
 }
 
 
+// ===============================
 // 💰 CASHOUT
+// ===============================
 function takeProfit(){
 
     if(!crashRunning || cashedOut) return;
@@ -6374,7 +6436,9 @@ function takeProfit(){
 }
 
 
+// ===============================
 // 💥 END GAME
+// ===============================
 function crashGameOver(won){
 
     crashRunning = false;
@@ -6385,21 +6449,25 @@ function crashGameOver(won){
 
     rocket.classList.remove("active");
 
+    let finalValue = crashMultiplier.toFixed(2);
+
+    // 📜 ADD HISTORY
+    addCrashHistoryStyled(finalValue);
+
     if(!won){
 
         playSound("lose");
 
         area.classList.add("crash-flash");
 
-        status.innerText = "💥 Crashed at " + crashMultiplier.toFixed(2) + "x";
+        status.innerText = "💥 Crashed at " + finalValue + "x";
 
     }else{
 
-        status.innerText = "💰 Cashed out at " + crashMultiplier.toFixed(2) + "x";
+        status.innerText = "💰 Cashed out at " + finalValue + "x";
 
     }
 
-    // RESET UI AFTER DELAY
     setTimeout(()=>{
 
         document.getElementById("launchBtn").style.display = "inline-block";
@@ -6413,13 +6481,10 @@ function crashGameOver(won){
 
         status.innerText = "Launch the rocket and cash out before crash!";
 
-        endGame(); // 🔥 universal reset
+        endGame();
 
     },2000);
-
 }
-
-
 
 // ===============================
 // COIN GAME (FINAL PRO VERSION)
