@@ -2770,64 +2770,11 @@ font-weight:bold;
 
 <hr style="opacity:0.2;">
 
-<!-- BET -->
-<div style="text-align:center;margin-top:20px;">
-
-<input id="gameBet" type="number" placeholder="Enter Bet" min="10" style="
-padding:12px;
-border-radius:10px;
-border:none;
-width:220px;
-text-align:center;
-font-size:16px;
-background:#020617;
-color:#22c55e;
-">
-
-<br><br>
-
-<button onclick="playSelectedGame()" style="
-padding:12px 25px;
-background:#22c55e;
-border:none;
-border-radius:10px;
-color:white;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-">
-🎮 Play
-</button>
-
-</div>
-
-<!-- TIMER -->
-<div id="gameTimer" style="
-margin-top:15px;
-text-align:center;
-color:#facc15;
-font-weight:bold;
-font-size:18px;
-"></div>
-
-<!-- RESULT -->
-<div id="gameResult" style="
-margin-top:20px;
-text-align:center;
-font-size:22px;
-padding:15px;
-border-radius:12px;
-background:rgba(255,255,255,0.05);
-"></div>
-
-</div>
-
-
-
+<!-- GAME AREA -->
+<div id="gameContent">
 
 <!-- COIN GAME -->
-
-<div class="coin-scene">
+<div class="coin-scene" style="display:none;">
 
 <div class="coin" id="coinElement">
 <div class="coin-face heads">H</div>
@@ -2840,36 +2787,25 @@ Choose Heads or Tails
 
 <div style="display:flex;justify-content:center;gap:10px;margin-top:10px">
 
-<button class="btn-bonus" onclick="chooseCoin('heads')">
-HEADS (2x)
-</button>
+<button class="btn-bonus" onclick="chooseCoin('heads')">HEADS (2x)</button>
+<button class="btn-bonus" onclick="chooseCoin('edge')">EDGE (4x)</button>
+<button class="btn-bonus" onclick="chooseCoin('tails')">TAILS (2x)</button>
 
-<button class="btn-bonus" onclick="chooseCoin('edge')">
-EDGE (4x)
-</button>
-
-<button class="btn-bonus" onclick="chooseCoin('tails')">
-TAILS (2x)
-</button>
 </div>
 
 <button class="btn-bonus" style="margin-top:20px" onclick="flipCoin()">
 🪙 FLIP COIN
 </button>
 
-  <div class="coin-rules">
-
+<div class="coin-rules">
 <b>Game Rules</b>
-
 <p>
 🪙 Heads → Win <b>2x</b><br>
 🪙 Tails → Win <b>2x</b><br>
-🟣 Edge (Rare) → Win <b>4x</b><br><br>
-
-❌ Wrong guess → Lose your bet
+🟣 Edge → Win <b>4x</b><br><br>
+❌ Wrong guess → Lose
 </p>
-
-  </div>  
+</div>
 
 </div>
 
@@ -3652,6 +3588,58 @@ Cashout at 2.00x → Win 20 DMX
 
 </div>
 
+<!-- BET -->
+<div style="text-align:center;margin-top:20px;">
+
+<input id="gameBet" type="number" placeholder="Enter Bet" min="10" style="
+padding:12px;
+border-radius:10px;
+border:none;
+width:220px;
+text-align:center;
+font-size:16px;
+background:#020617;
+color:#22c55e;
+">
+
+<br><br>
+
+<button onclick="playSelectedGame()" style="
+padding:12px 25px;
+background:#22c55e;
+border:none;
+border-radius:10px;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+">
+🎮 Play
+</button>
+
+</div>
+
+<!-- TIMER -->
+<div id="gameTimer" style="
+margin-top:15px;
+text-align:center;
+color:#facc15;
+font-weight:bold;
+font-size:18px;
+"></div>
+
+<!-- RESULT -->
+<div id="gameResult" style="
+margin-top:20px;
+text-align:center;
+font-size:22px;
+padding:15px;
+border-radius:12px;
+background:rgba(255,255,255,0.05);
+"></div>
+
+</div>    
+
   <!-- RULES BUTTON -->
 <div style="margin-top:20px;text-align:center;">
 <button onclick="openGameInfo()" style="
@@ -3679,7 +3667,6 @@ cursor:pointer;
 🏆 Jackpot Pool:
 <span id="jackpotValue" style="color:#22c55e;font-weight:bold">5000</span> DMX
 </div>
-
 
 
 <!-- COMMUNITY LINKS -->
