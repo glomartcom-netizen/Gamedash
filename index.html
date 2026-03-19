@@ -2681,41 +2681,125 @@ margin-top:10px;
 </head>
 <body>
 
-<!-- SOUND BUTTON -->
-<button onclick="toggleMusic()" id="soundBtn" class="sound-btn">
-🔊 Sound ON
-</button>
+<!-- SOUND BUTTON -->  
+<button onclick="toggleMusic()" id="soundBtn" class="sound-btn">  
+🔊 Sound ON  
+</button>  
 
-<!-- GAME PANEL -->
-<div class="game-zone">
+<!-- GAME PANEL -->  
+<div class="game-zone">  
 
-<h2 style="font-size:26px;color:#22c55e;">
-🎮 DMX Game Zone
-</h2>
+<h2 style="font-size:26px;color:#22c55e;">  
+🎮 DMX Game Zone  
+</h2>  
 
-<p style="color:#94a3b8">
-Play games and win DMX rewards
-</p>
+<p style="color:#94a3b8">  
+Play games and win DMX rewards  
+</p>  
 
-<!-- COOLDOWN TIMER -->
-<div id="cooldownTimer" style="
-display:none;
-margin-top:10px;
-padding:8px;
-background:#0f172a;
-border:1px solid #facc15;
-border-radius:8px;
-color:#facc15;
-font-weight:bold;
-"></div>
+<!-- COOLDOWN TIMER -->  
+<div id="cooldownTimer" style="  
+display:none;  
+margin-top:10px;  
+padding:8px;  
+background:#0f172a;  
+border:1px solid #facc15;  
+border-radius:8px;  
+color:#facc15;  
+font-weight:bold;  
+"></div>  
 
-<!-- BALANCE -->
-<div style="margin-top:20px;font-size:18px">
-💰 Balance:
-<span id="balanceValue" style="color:#22c55e;font-weight:bold;font-size:20px;">
-0
-</span> DMX
+<!-- BALANCE -->  
+<div style="margin-top:20px;font-size:18px">  
+💰 Balance:  
+<span id="balanceValue" style="color:#22c55e;font-weight:bold;font-size:20px;">  
+0  
+</span> DMX  
+</div>  
+
+<!-- 📜 GAME RULES (FULL UPDATED) -->  
+<div style="margin-top:25px;padding:15px;background:#020617;border:1px solid #334155;border-radius:12px;">  
+
+<h3 style="color:#3b82f6;margin-bottom:10px;">📜 Game Rules</h3>  
+
+<p style="font-size:14px;color:#cbd5f5;line-height:1.6;">  
+
+🎁 <b>New Player Bonus</b><br>  
+• New users get <b>100 DMX free</b> for gameplay<br>  
+• Bonus is only for playing (cannot withdraw directly)<br><br>  
+
+👥 <b>Referral Income</b><br>  
+• Invite friends using your referral link<br>  
+• Earn <b>5% of their gameplay</b><br><br>  
+
+💰 <b>Deposit Bonus</b><br>  
+• When you deposit funds for games<br>  
+• You receive bonus for gameplay usage<br><br>  
+
+📈 <b>Staking Bonus</b><br>  
+• When you stake in staking program<br>  
+• You earn <b>2.5% extra bonus</b> on deposit<br>  
+• Bonus can be used in games<br><br>  
+
+🎮 <b>Game Rules</b><br>  
+• Minimum Bet: <b>10 DMX</b><br>  
+• Win Rewards: <b>2x to 6x</b><br>  
+• Crash Game → Unlimited multiplier<br>  
+• Lose → Bet deducted<br><br>  
+
+⏱ <b>Cooldown System</b><br>  
+• You must wait before next game<br>  
+• Prevents spam & ensures fairness<br><br>  
+
+⚠️ <b>Important</b><br>  
+• Play responsibly<br>  
+• All results are random<br>  
+• Abuse or cheating may lead to restriction  
+
+</p>  
+
 </div>
+
+<!-- LIVE WINNERS -->  
+<div style="margin-top:20px">  
+<marquee id="winnerBoard" style="color:#06b6d4;font-weight:bold">  
+🔥 Live Winners will appear here 🔥  
+</marquee>  
+</div>  
+
+<!-- JACKPOT -->  
+<div style="margin-top:20px;font-size:18px">  
+🏆 Jackpot Pool:  
+<span id="jackpotValue" style="color:#22c55e;font-weight:bold">5000</span> DMX  
+</div>  
+
+<!-- COMMUNITY LINKS -->  
+<div style="margin-top:30px">  
+
+<a href="https://t.me/YOURGROUP" target="_blank">  
+📢 Join Telegram Community  
+</a>  
+
+<br><br>  
+
+<a href="https://yourwebsite.com" target="_blank">  
+🌐 Visit Official Website  
+</a>  
+
+</div>  
+
+</div>  
+
+<!-- UNIVERSAL ROUND PANEL -->  
+<div class="round-panel">  
+
+<div>  
+Round: <span id="roundId">1001</span>  
+</div>  
+
+<div>  
+Next Result In: <span id="roundTimer">10</span>s  
+</div>  
 
 </div>
 
@@ -3639,69 +3723,6 @@ background:rgba(255,255,255,0.05);
 "></div>
 
 </div>    
-
-  <!-- RULES BUTTON -->
-<div style="margin-top:20px;text-align:center;">
-<button onclick="openGameInfo()" style="
-padding:10px 20px;
-border:none;
-border-radius:10px;
-background:#3b82f6;
-color:white;
-font-weight:bold;
-cursor:pointer;
-">
-📜 Game Rules
-</button>
-</div>
-
-<!-- LIVE WINNERS -->
-<div style="margin-top:20px">
-<marquee id="winnerBoard" style="color:#06b6d4;font-weight:bold">
-🔥 Live Winners will appear here 🔥
-</marquee>
-</div>
-
-<!-- JACKPOT -->
-<div style="margin-top:20px;font-size:18px">
-🏆 Jackpot Pool:
-<span id="jackpotValue" style="color:#22c55e;font-weight:bold">5000</span> DMX
-</div>
-
-
-<!-- COMMUNITY LINKS -->
-
-<div style="margin-top:30px">
-
-<a href="https://t.me/YOURGROUP" target="_blank">
-
-📢 Join Telegram Community
-
-</a>
-
-<br><br>
-
-<a href="https://yourwebsite.com" target="_blank">
-
-🌐 Visit Official Website
-
-</a>
-
-</div>
-
-</div>
-
-<!-- UNIVERSAL ROUND PANEL -->
-
-<div class="round-panel">
-
-<div>
-Round: <span id="roundId">1001</span>
-</div>
-
-<div>
-Next Result In: <span id="roundTimer">10</span>s
-</div>
 
 </div>  
 
