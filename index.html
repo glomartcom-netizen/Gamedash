@@ -2617,6 +2617,16 @@ animation:sparkAnim 0.8s ease-out;
 100%{transform:scale(2);opacity:0;}
 }
 
+<!-- ✨ ANIMATION -->
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+    } 
+
+ #gameInfoPopup{
+animation: fadeIn 0.3s ease;
+    }   
+
 
 /* =========================
 📦 GAME SECTIONS (HIDE)
@@ -2717,12 +2727,41 @@ font-weight:bold;
 </span> DMX  
 </div>  
 
-<!-- 📜 GAME RULES (FULL UPDATED) -->  
-<div style="margin-top:25px;padding:15px;background:#020617;border:1px solid #334155;border-radius:12px;">  
+<!-- RULE BUTTON -->
+<div style="margin-top:20px;text-align:center;">
+<button onclick="openGameInfo()" style="
+padding:10px 20px;
+border:none;
+border-radius:10px;
+background:#3b82f6;
+color:white;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 0 10px rgba(59,130,246,0.6);
+">
+📜 Game Rules
+</button>
+</div>
 
-<h3 style="color:#3b82f6;margin-bottom:10px;">📜 Game Rules</h3>  
+<!-- RULES POPUP -->
+<div id="gameInfoPopup" style="
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#020617;
+padding:20px;
+width:320px;
+border-radius:15px;
+z-index:99999;
+box-shadow:0 0 30px rgba(0,0,0,0.8);
+border:1px solid #334155;
+">
 
-<p style="font-size:14px;color:#cbd5f5;line-height:1.6;">  
+<h3 style="color:#3b82f6;">📜 Game Rules</h3>
+
+<p style="font-size:14px;color:#cbd5f5;line-height:1.6;">
 
 🎁 <b>New Player Bonus</b><br>  
 • New users get <b>100 DMX free</b> for gameplay<br>  
@@ -3907,6 +3946,26 @@ function loadBalance(){
     return val;
 }
 
+setInterval(()=>{
+
+    let stored = loadBalance();
+
+    // ❌ invalid storage → reset
+    if(isNaN(stored) || stored < 0){
+        saveBalance(claimBalance);
+        return;
+    }
+
+    // 🔒 tamper detection
+    if(stored !== claimBalance){
+
+        console.warn("Balance tampering detected");
+
+        saveBalance(claimBalance);
+    }
+
+},2000);    
+
 // ===============================
 // 🔒 GAME CONTROL SYSTEM
 // ===============================
@@ -4189,14 +4248,16 @@ if(!userAddress){
 // ===============================
 let claimBalance = loadBalance();
 
-// 🎁 FIRST TIME BONUS
-if (localStorage.getItem("isNewPlayer") === null) {
+// 🎁 FIRST TIME BONUS (100 DMX ONLY)
+if(localStorage.getItem("isNewPlayer") === null){
 
-    claimBalance = 100;
+    claimBalance = 100;  // ✅ FIXED (ONLY 100)
 
     saveBalance(claimBalance);
 
-    localStorage.setItem("isNewPlayer", "true");
+    localStorage.setItem("isNewPlayer","true");
+
+    updateBalance();
 }
 
 // ===============================
@@ -4516,33 +4577,35 @@ function jackpotEffect(){
 // ===============================
 function openGameInfo(){
     const el = document.getElementById("gameInfoPopup");
-    if(el) el.style.display = "block";
+    if(el){
+        el.style.display = "block";
+        document.body.style.background = "#000"; // highlight feel
+    }
 }
 
 function closeGameInfo(){
     const el = document.getElementById("gameInfoPopup");
-    if(el) el.style.display = "none";
+    if(el){
+        el.style.display = "none";
+        document.body.style.background = "#020617";
+    }
 }
 
-setInterval(()=>{
+// 📜 CLICK OUTSIDE CLOSE
+window.addEventListener("click", function(e){
 
-    let stored = loadBalance();
+    const popup = document.getElementById("gameInfoPopup");
 
-    // ❌ invalid storage → reset
-    if(isNaN(stored) || stored < 0){
-        saveBalance(claimBalance);
-        return;
+    if(!popup) return;
+
+    // outside click close
+    if(e.target === popup){
+        popup.style.display = "none";
     }
 
-    // 🔒 tamper detection
-    if(stored !== claimBalance){
+});
+    
 
-        console.warn("Balance tampering detected");
-
-        saveBalance(claimBalance);
-    }
-
-},2000);
 
 // ===============================
 // 14. MULTI TAB PROTECTION (SAFE)
