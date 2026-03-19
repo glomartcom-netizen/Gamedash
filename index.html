@@ -4388,22 +4388,23 @@ function loadBalance(){
 
 
 // ===============================
-// 🎁 FIRST TIME BONUS (100 DMX)
+// 🎁 FIRST TIME BONUS FIX FINAL
 // ===============================
-let claimBalance;
+let claimBalance = Number(localStorage.getItem("claimBalance")) || 0;
 
+// 👉 first time only
 if(localStorage.getItem("isNewPlayer") === null){
 
     claimBalance = 100;
+
     saveBalance(claimBalance);
 
     localStorage.setItem("isNewPlayer","true");
 
 }else{
+    // 👉 normal load
     claimBalance = loadBalance();
 }
-
-updateBalance();
 
 // ===============================
 // 🔄 UI UPDATE
@@ -4421,7 +4422,7 @@ function updateBalance(){
     }
 }
 
-// 🔥 CALL AFTER EVERYTHING
+// 🔥 INITIAL CALL
 updateBalance();
 
 
