@@ -2741,9 +2741,7 @@ box-shadow:0 0 10px rgba(59,130,246,0.6);
 ">
 📜 Game Rules
 </button>
-</div>
 
-<!-- RULES POPUP (FULL SCREEN FIX) -->
 <div id="gameInfoPopup" style="
 display:none;
 position:fixed;
@@ -4649,16 +4647,23 @@ function jackpotEffect(){
 }
     
 // ===============================
-// 12. RULES POPUP
+// 📜 RULES POPUP FINAL FIX
 // ===============================
+
 // OPEN
 function openGameInfo(){
-    document.getElementById("gameInfoPopup").style.display = "block";
+    const popup = document.getElementById("gameInfoPopup");
+    if(popup){
+        popup.style.display = "block";
+    }
 }
 
 // CLOSE
 function closeGameInfo(){
-    document.getElementById("gameInfoPopup").style.display = "none";
+    const popup = document.getElementById("gameInfoPopup");
+    if(popup){
+        popup.style.display = "none";
+    }
 }
 
 // OUTSIDE CLICK CLOSE (PERFECT FIX)
@@ -4667,7 +4672,10 @@ window.addEventListener("click", function(e){
     const popup = document.getElementById("gameInfoPopup");
     const content = document.getElementById("rulesContent");
 
-    if(popup.style.display === "block" && !content.contains(e.target)){
+    if(!popup || !content) return;
+
+    // 👉 only close when clicking BACKGROUND (not button)
+    if(e.target === popup){
         popup.style.display = "none";
     }
 
