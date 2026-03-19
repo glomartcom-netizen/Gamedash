@@ -2743,10 +2743,21 @@ box-shadow:0 0 10px rgba(59,130,246,0.6);
 </button>
 </div>
 
-<!-- RULES POPUP -->
+<!-- RULES POPUP (FULL SCREEN FIX) -->
 <div id="gameInfoPopup" style="
 display:none;
 position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+z-index:99999;
+">
+
+<!-- INNER CONTENT -->
+<div id="rulesContent" style="
+position:absolute;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
@@ -2754,10 +2765,25 @@ background:#020617;
 padding:20px;
 width:320px;
 border-radius:15px;
-z-index:99999;
-box-shadow:0 0 30px rgba(0,0,0,0.8);
 border:1px solid #334155;
+animation:fadeIn 0.3s;
 ">
+
+<!-- CLOSE BUTTON -->
+<button onclick="closeGameInfo()" style="
+position:absolute;
+top:10px;
+right:10px;
+background:red;
+color:white;
+border:none;
+border-radius:50%;
+width:30px;
+height:30px;
+cursor:pointer;
+">
+✖
+</button>
 
 <h3 style="color:#3b82f6;">📜 Game Rules</h3>
 
@@ -4572,40 +4598,31 @@ function jackpotEffect(){
         document.body.classList.remove("win-flash");
     },1200);
 }
+    
 // ===============================
 // 12. RULES POPUP
 // ===============================
+// OPEN
 function openGameInfo(){
-    const el = document.getElementById("gameInfoPopup");
-    if(el){
-        el.style.display = "block";
-        document.body.style.background = "#000"; // highlight feel
-    }
+    document.getElementById("gameInfoPopup").style.display = "block";
 }
 
+// CLOSE
 function closeGameInfo(){
-    const el = document.getElementById("gameInfoPopup");
-    if(el){
-        el.style.display = "none";
-        document.body.style.background = "#020617";
-    }
+    document.getElementById("gameInfoPopup").style.display = "none";
 }
 
-// 📜 CLICK OUTSIDE CLOSE
+// OUTSIDE CLICK CLOSE (PERFECT FIX)
 window.addEventListener("click", function(e){
 
     const popup = document.getElementById("gameInfoPopup");
+    const content = document.getElementById("rulesContent");
 
-    if(!popup) return;
-
-    // outside click close
-    if(e.target === popup){
+    if(popup.style.display === "block" && !content.contains(e.target)){
         popup.style.display = "none";
     }
 
 });
-    
-
 
 // ===============================
 // 14. MULTI TAB PROTECTION (SAFE)
