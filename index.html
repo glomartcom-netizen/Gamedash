@@ -4358,25 +4358,30 @@ function saveBalance(val){
 }
 
 
-// LOAD
+// ===============================
+// 💰 LOAD BALANCE (FINAL FIX)
+// ===============================
 function loadBalance(){
 
     let val = Number(localStorage.getItem("claimBalance")) || 0;
     let hash = localStorage.getItem("balanceHash");
     let salt = localStorage.getItem("balanceSalt");
 
-    // ✅ first time மட்டும்
+    // ✅ FIRST TIME SAFE
     if(!hash || !salt){
-        saveBalance(val); // ❗ 0 fix remove
+        saveBalance(val);
         return val;
     }
 
     const verify = btoa(val + SECRET_KEY + salt);
 
+    // ❌ DON'T RESET TO 0 (IMPORTANT FIX)
     if(verify !== hash){
-        console.warn("🚨 Balance tampering detected!");
-        val = 0;
+        console.warn("Balance mismatch detected");
+
+        // 🔥 FIX: just re-save instead of reset
         saveBalance(val);
+        return val;
     }
 
     return val;
@@ -4386,23 +4391,20 @@ function loadBalance(){
 // ===============================
 // 🎁 FIRST TIME BONUS (100 DMX)
 // ===============================
-let claimBalance = loadBalance();
+let claimBalance;
 
 if(localStorage.getItem("isNewPlayer") === null){
 
     claimBalance = 100;
-
     saveBalance(claimBalance);
 
     localStorage.setItem("isNewPlayer","true");
 
-    // 🔥 RE-SYNC
+}else{
     claimBalance = loadBalance();
 }
 
-// 🔥 ALWAYS SYNC AFTER LOAD
-claimBalance = loadBalance();
-
+updateBalance();
 
 // ===============================
 // 🔄 UI UPDATE
