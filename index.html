@@ -4194,7 +4194,7 @@ function showGame(selector, sound){
 }
     
 // ===============================
-// 🔒 CORE GAME STATE
+// 🔒 CORE GAME STATE (FINAL)
 // ===============================
 
 // USER ID
@@ -4211,8 +4211,9 @@ if(!userAddress){
 // ===============================
 let currentBet = 0;
 
+
 // ===============================
-// 🏆 JACKPOT SAFE LOAD
+// 🏆 SAFE STORAGE HELPER
 // ===============================
 function safeNumber(key, defaultVal = 0){
 
@@ -4220,32 +4221,38 @@ function safeNumber(key, defaultVal = 0){
 
     if(isNaN(val) || val < 0){
         val = defaultVal;
-        localStorage.setItem(key, val);
+        localStorage.setItem(key, val.toString());
     }
 
     return val;
 }
 
-let jackpotPool = safeNumber("jackpotPool", 5000);
 
+// ===============================
+// 💰 GAME STATS
+// ===============================
+let jackpotPool = safeNumber("jackpotPool", 5000);
 const MAX_WIN_PROTECTION = 100000;
 
 let totalBet = safeNumber("totalBet", 0);
 let totalPayout = safeNumber("totalPayout", 0);
 
+
 // ===============================
-// ⚠️ REFRESH PROTECTION
+// ⚠️ REFRESH PROTECTION (SAFE)
 // ===============================
-window.onbeforeunload = function(){
+window.addEventListener("beforeunload", function(e){
 
     if(gameRunning){
-        return "Game running. Refresh may lose bet.";
+        e.preventDefault();
+        e.returnValue = "Game running. Refresh may lose bet.";
     }
 
-};
+});
+
 
 // ===============================
-// 🎯 SMART WIN ENGINE
+// 🎯 SMART WIN ENGINE (FINAL)
 // ===============================
 function getWinChance(){
 
@@ -4255,7 +4262,7 @@ function getWinChance(){
 
     let percent = totalBet > 0 ? (profit / totalBet) * 100 : 0;
 
-    let base = 0.30;
+    let base;
 
     if(percent < 10){
         base = 0.25;
@@ -4267,30 +4274,46 @@ function getWinChance(){
         base = 0.42;
     }
 
-    return base + (Math.random() * 0.05 - 0.025);
-    }
+    // 🔥 RANDOM SAFE RANGE
+    let variation = (Math.random() * 0.05) - 0.025;
+
+    let finalChance = base + variation;
+
+    // 🔒 clamp (VERY IMPORTANT)
+    if(finalChance < 0.05) finalChance = 0.05;
+    if(finalChance > 0.95) finalChance = 0.95;
+
+    return finalChance;
+}
 
 
 // ===============================
-// 4. ANTI BOT PROTECTION
+// 🛡️ ANTI BOT PROTECTION (FINAL)
 // ===============================
 let lastClickTime = 0;
 let betCounter = 0;
 let blockUntil = 0;
+let lastResetTime = Date.now();
 
 function antiExploitCheck(){
 
     let now = Date.now();
 
-    // ⛔ temporary block
+    // 🔄 RESET counter every 10 sec
+    if(now - lastResetTime > 10000){
+        betCounter = 0;
+        lastResetTime = now;
+    }
+
+    // ⛔ BLOCK CHECK
     if(now < blockUntil){
-        alert("Slow down!");
+        showLose("⏱ Wait a moment...");
         return false;
     }
 
-    // ⏱ click speed check
-    if(now - lastClickTime < 250){ // reduced strictness
-        alert("Too fast!");
+    // ⚡ CLICK SPEED CHECK
+    if(now - lastClickTime < 250){
+        showLose("⚠ Too fast!");
         return false;
     }
 
@@ -4298,13 +4321,13 @@ function antiExploitCheck(){
 
     betCounter++;
 
-    // 🔥 progressive punishment
+    // 🔥 LIMIT (30 actions / 10 sec)
     if(betCounter > 30){
 
         blockUntil = now + 5000; // 5 sec block
         betCounter = 0;
 
-        alert("Too many bets! Wait 5 seconds");
+        showLose("🚫 Too many actions! Wait 5s");
         return false;
     }
 
@@ -4372,19 +4395,32 @@ if(localStorage.getItem("isNewPlayer") === null){
     saveBalance(claimBalance);
 
     localStorage.setItem("isNewPlayer","true");
+
+    // 🔥 RE-SYNC
+    claimBalance = loadBalance();
 }
+
+// 🔥 ALWAYS SYNC AFTER LOAD
+claimBalance = loadBalance();
 
 
 // ===============================
 // 🔄 UI UPDATE
 // ===============================
 function updateBalance(){
+
     const el = document.getElementById("balanceValue");
+
+    if(isNaN(claimBalance) || claimBalance < 0){
+        claimBalance = 0;
+    }
+
     if(el){
-        el.innerText = claimBalance;
+        el.innerText = Math.floor(claimBalance);
     }
 }
 
+// 🔥 CALL AFTER EVERYTHING
 updateBalance();
 
 
